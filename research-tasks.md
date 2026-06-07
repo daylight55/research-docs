@@ -16,3 +16,4 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] Beginner expansion: Add a Japanese beginner-friendly deep-dive section explaining MCP's motivation, concepts, protocol stack, implementation design, and risks.
 - [x] Latest refresh: Re-check official MCP spec, Chrome WebMCP, Claude MCP, AWS MCP / Agent Toolkit, FastMCP OpenAPI, and GitHub star counts on 2026-06-07.
 - [x] Transport deep dive: Expand connection protocol notes with stdio, Streamable HTTP, legacy HTTP+SSE, WebSocket/custom transports, and connection flow diagrams.
+- [x] CLI/MCP/browser comparison: Add token-use, flow stability, provider-perspective analysis, and restructure the Marp deck as developer-centered Q&A.

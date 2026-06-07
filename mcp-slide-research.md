@@ -1399,6 +1399,183 @@ Management recommendations:
 
 ## Important MCP rules
 
+## CLI / MCP / browser operation comparison
+
+This section explains why an engineering team should prefer MCP when a suitable MCP server exists, while still keeping CLI and browser automation in the toolbox.
+
+### What is being compared
+
+The comparison is not "which interface is always best". It is "which interface gives an AI coding agent the most reliable, least wasteful path to an external system".
+
+- CLI:
+  - The agent writes shell commands and reads stdout/stderr.
+  - Examples: `gh pr view`, `aws logs filter-log-events`, `curl`, `jq`, `grep`, `npm test`.
+  - Strength: deterministic local execution, scriptability, mature ecosystem.
+  - Weakness: flags and output formats are human/terminal-oriented; output can be very large; auth and environment vary by machine.
+- Browser operation:
+  - The agent navigates a UI using screenshots, accessibility trees, DOM snapshots, selectors, DevTools, or Playwright-style control.
+  - Examples: opening GitHub checks page, clicking a SaaS admin screen, inspecting console/network in a live app.
+  - Strength: best when the UI itself is the product or when the only available interface is a web UI.
+  - Weakness: layout, selectors, viewport, loading state, auth state, modals, and animations make the flow brittle and token-heavy.
+- MCP:
+  - The agent calls typed tools/resources/prompts exposed by a server through JSON-RPC and a supported transport.
+  - Examples: GitHub issue/PR tools, Sentry error tools, Context7 docs lookup, Playwright MCP, AWS MCP, internal API MCP.
+  - Strength: schema-based discovery, bounded inputs/outputs, service-side validation, auth boundary, and explicit capability metadata.
+  - Weakness: requires a server to exist and be operated correctly; poorly designed tools can still leak data or return oversized results.
+
+### Token-count model
+
+Exact token counts depend on the model, client, tool result, and prompt history. The numbers below should be presented as engineering estimates, not benchmark results. A useful mental model is: every command, page snapshot, tool schema, raw log, JSON response, retry, and explanatory message consumes context.
+
+| Task | CLI typical context cost | Browser typical context cost | MCP typical context cost |
+|---|---:|---:|---:|
+| Check PR status and inspect failing CI | 3k-20k tokens | 5k-30k tokens | 800-4k tokens |
+| Search current library/API docs | 2k-15k tokens | 5k-25k tokens | 500-3k tokens |
+| Create or update an issue/PR | 1k-8k tokens | 5k-20k tokens | 500-2k tokens |
+| Inspect UI console/network/performance | 3k-20k tokens | 4k-25k tokens | 1k-8k tokens with Chrome DevTools MCP |
+| Query operational data with filters | 2k-30k tokens | 5k-30k tokens | 800-5k tokens |
+
+Why CLI can be expensive:
+
+- Raw stdout/stderr is usually optimized for humans, not agents.
+- Logs and test output often include repeated context, stack traces, progress bars, and unrelated lines.
+- The agent spends tokens deciding and correcting flags, parsing text, and issuing follow-up grep/jq commands.
+- A command failure often requires another command to inspect auth, config, region, profile, or path state.
+
+Why browser operation can be expensive:
+
+- Browser agents need page state: accessibility tree, DOM structure, screenshot context, network logs, console logs, or all of them.
+- UI actions are sequential and stateful: navigate, wait, inspect, click, wait, inspect again.
+- The same semantic action may require many low-level operations because the UI is not a stable machine contract.
+- Screenshots are useful for visual verification, but they do not replace structured data when the task is data/action-oriented.
+
+Why MCP can be cheaper:
+
+- Tool search can defer full tool definitions until needed. Claude Code's current docs state that only tool names and server instructions load at session start when tool search is enabled; tools are discovered on demand.
+- Tool descriptions and input schemas make the correct call easier to select.
+- Results can be structured, summarized, paginated, and capped by the server.
+- The server can expose task-level operations, such as `get_failing_check_log(pr_number)`, instead of forcing the agent to navigate or parse raw logs.
+
+### Flow stability comparison
+
+| Dimension | CLI | Browser operation | MCP |
+|---|---|---|---|
+| Interface contract | Command syntax and text output | UI layout, DOM, visual state | Tool/resource schema |
+| Auth boundary | Local env, credential files, CLI login | Browser session/cookies | Server auth/OAuth/scopes |
+| Failure mode | Wrong flags, env drift, huge output | Selector drift, modal/loading/viewport issues | Schema error, permission error, server error |
+| Human approval | External to protocol unless client wraps it | Usually manual or client-specific | Expected in host UX for tool calls |
+| Output control | Caller must pipe/filter | Snapshot size varies | Server can paginate/summarize/cap |
+| Best use | Local build/test/devops commands | UI and visual validation | Repeatable data/action workflows |
+
+The practical distinction is that MCP moves intent from "infer the right low-level action" to "call a declared capability". This reduces two common failure classes:
+
+1. The agent invents or misremembers a CLI flag, selector, URL path, or page flow.
+2. The agent receives too much undifferentiated output and spends additional turns summarizing or filtering it.
+
+### Same task example: failing CI investigation
+
+CLI flow:
+
+```text
+gh pr view --json statusCheckRollup
+gh run list --branch <branch>
+gh run view <run-id> --log-failed
+grep/sed/awk/jq to narrow logs
+possibly rerun with different flags
+```
+
+This is powerful and often the right local choice, but raw failed logs can dominate the context window.
+
+Browser flow:
+
+```text
+Open PR page
+Inspect checks area
+Click failing check
+Wait for log page
+Search within UI
+Possibly switch tabs/views
+```
+
+This is useful when the UI state matters, but it is usually the least stable path for pure data extraction.
+
+MCP flow:
+
+```text
+github.get_pull_request(owner, repo, number)
+github.list_check_runs(ref)
+github.get_failed_check_log(run_id, max_lines=200)
+```
+
+If the MCP server provides focused tools, the agent receives the data shape it needs with less navigation and less raw output.
+
+### Why prefer MCP when available
+
+Use MCP first when the task is a repeatable interaction with a service, API, repository, database, or operational system.
+
+- The model sees a typed capability instead of guessing a command or UI path.
+- The host can show users what tool is being invoked and ask for approval on sensitive operations.
+- The server can enforce least privilege, rate limits, tenant boundaries, and audit logging.
+- The service provider can update implementation details without requiring agents to relearn CLI flags or UI flows.
+- The response can be bounded and structured, which reduces token waste and makes follow-up automation safer.
+
+### When CLI is still better
+
+- Local filesystem work, package scripts, compilation, tests, one-off shell inspection, and low-level debugging.
+- Operations where the CLI is already the canonical interface and output can be constrained with flags.
+- Tasks that need arbitrary shell composition or direct access to local process state.
+- Cases where no trustworthy MCP server exists.
+
+### When browser operation is still better
+
+- Visual QA, layout inspection, screenshot verification, accessibility checks, performance tracing, and live UI debugging.
+- Workflows where no API or MCP surface exists.
+- Tasks that depend on a user's active browser session, cookies, or tab-specific state.
+- Frontend agent experiences where WebMCP can declare page-level capabilities tied to the live site.
+
+### Service provider perspective
+
+For service providers, the question is not "should we publish a CLI, API, browser UI, or MCP?" Mature products often need all of them. The question is which interface should be agent-native.
+
+| Provider surface | Primary audience | Agent effectiveness | Provider control |
+|---|---|---|---|
+| Browser UI | Humans | Low to medium; high friction for agents | High visual control, low machine predictability |
+| CLI | Developers/operators | Medium; strong for local automation | Medium; hard to constrain arbitrary output/use |
+| REST/OpenAPI | Applications | High for software, medium for agents | High, but agents need descriptions and workflows |
+| MCP | AI clients/agents | High when tools are curated | High: scopes, audit, consent, output caps, task-level tools |
+
+MCP is especially effective for a provider when:
+
+- The product has many workflows that agents can perform on behalf of users.
+- The public API is broad, but the agent-safe surface should be narrower.
+- The provider wants to preserve auth, policy, and audit boundaries.
+- The provider wants to reduce agent-driven screen scraping or brittle browser automation.
+- The provider can expose higher-level tools such as `summarize_incident`, `create_release_note`, or `get_customer_health_snapshot`, not just raw CRUD.
+
+### Token-aware MCP server design
+
+The best MCP server is not the one with the most tools. It is the one that lets the agent find the right tool and receive the smallest sufficient result.
+
+- Provide a search/list tool first, then a detail/read tool second.
+- Return summaries plus stable IDs, not entire logs or documents by default.
+- Use pagination, cursors, `limit`, `since`, `severity`, `status`, and `fields` parameters.
+- Include `structuredContent` or schema-shaped JSON for data the agent must reason over.
+- Use resources for large read-only context and tools for actions.
+- Keep tool descriptions concise; put critical rules at the beginning because some clients truncate long descriptions.
+- Separate dangerous writes from safe reads and require explicit confirmation for state changes.
+- Avoid one mega-tool such as `call_api(method, path, body)` unless it is gated by a strict allowlist.
+- Add provider-side defaults such as max lines, max rows, max bytes, and safe timeouts.
+- Make error messages actionable: include missing scope, invalid parameter, rate limit, or retry guidance.
+
+### Recommended interface choice
+
+Use this decision rule in the presentation:
+
+1. If the task is a repeatable service/API/data action and a trusted MCP exists, use MCP.
+2. If the task is local build/test/debugging or shell-native, use CLI.
+3. If the task is visual, UI-stateful, or browser-session-specific, use browser operation or WebMCP.
+4. If the provider owns the service and wants agent adoption, build MCP on top of the API and keep the browser UI for humans.
+
 Security and trust:
 
 - Treat MCP servers as code/data trust boundaries.
