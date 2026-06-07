@@ -17,3 +17,4 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] Latest refresh: Re-check official MCP spec, Chrome WebMCP, Claude MCP, AWS MCP / Agent Toolkit, FastMCP OpenAPI, and GitHub star counts on 2026-06-07.
 - [x] Transport deep dive: Expand connection protocol notes with stdio, Streamable HTTP, legacy HTTP+SSE, WebSocket/custom transports, and connection flow diagrams.
 - [x] CLI/MCP/browser comparison: Add token-use, flow stability, provider-perspective analysis, and restructure the Marp deck as developer-centered Q&A.
+- [x] Claude registration: Add Claude Code Remote MCP registration steps, OAuth variants, scopes, JSON config, and Claude.ai connector notes.

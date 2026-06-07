@@ -347,6 +347,69 @@ productionではHTTPS、OAuth/token validation、rate limit、audit logを前提
 _class: dense
 -->
 
+## Q. Claude Codeへの登録手順は？
+
+| step | 作業 | command / check |
+|---:|---|---|
+| 1 | Remote MCP endpointを用意 | `https://mcp.example.com/mcp` |
+| 2 | HTTP transportで登録 | `claude mcp add --transport http inventory <url>` |
+| 3 | 必要ならscopeを指定 | `--scope local` / `--scope project` / `--scope user` |
+| 4 | Bearer tokenならheaderを追加 | `--header "Authorization: Bearer $TOKEN"` |
+| 5 | OAuthならClaude Code内で認証 | `/mcp` -> browser login |
+| 6 | 接続確認 | `claude mcp list` / `claude mcp get inventory` / `/mcp` |
+
+Teamで共有する設定は`--scope project`、個人横断利用は`--scope user`を使う。
+
+---
+
+<!--
+_class: dense
+-->
+
+## Q. OAuth付きRemote MCPはどう登録する？
+
+```bash
+# Dynamic Client Registrationが使える場合
+claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
+
+# redirect URIを事前登録するserver
+claude mcp add --transport http \
+  --callback-port 8080 \
+  inventory https://mcp.example.com/mcp
+
+# client id / secretを事前発行するserver
+claude mcp add --transport http \
+  --client-id "$MCP_CLIENT_ID" --client-secret --callback-port 8080 \
+  inventory https://mcp.example.com/mcp
+
+# 認証開始
+/mcp
+```
+
+scopeを絞る場合は`.mcp.json`の`oauth.scopes`で固定する。
+
+---
+
+<!--
+_class: dense
+-->
+
+## Q. Claude.ai Connectorとして登録するには？
+
+| 対象 | 手順 | 注意点 |
+|---|---|---|
+| Pro / Max | Claude settingsのConnectorsでRemote MCP URLを追加 | 必要ならOAuth client情報を入力 |
+| Team / Enterprise | adminが組織設定でcustom connectorを追加 | memberは個別に認証して使う |
+| Claude Code連携 | Claude.ai accountでloginし、`/mcp`で確認 | API key / Bedrock / Vertex認証時は表示されない場合がある |
+
+Claude.ai connectorにする場合、Remote MCP serverはAnthropic cloud側から到達可能なHTTPS endpointである必要がある。
+
+---
+
+<!--
+_class: dense
+-->
+
 ## Q. stdioとStreamable HTTPはどう選ぶ？
 
 | transport | 向く用途 | 接続フロー |

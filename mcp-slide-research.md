@@ -540,11 +540,96 @@ claude mcp list
 claude mcp get inventory
 ```
 
+Step-by-step registration checklist for Claude Code:
+
+1. Prepare a reachable Remote MCP endpoint:
+   - Recommended transport for remote services: HTTP / Streamable HTTP.
+   - Example endpoint: `https://mcp.example.com/mcp`.
+   - The endpoint must be reachable from the user's environment for Claude Code, and from Anthropic cloud infrastructure if the same server is used as a Claude.ai custom connector.
+2. Decide configuration scope:
+   - `--scope local`: available only to the current project/user; good for private experiments and credentials that should not be committed.
+   - `--scope project`: stored in project `.mcp.json`; good for team-shared server definitions, but requires trust/approval before use.
+   - `--scope user`: available across projects for the current user.
+3. Register the server:
+   - Basic remote HTTP:
+     ```bash
+     claude mcp add --transport http inventory https://mcp.example.com/mcp
+     ```
+   - User-wide:
+     ```bash
+     claude mcp add --transport http inventory --scope user https://mcp.example.com/mcp
+     ```
+   - Project-shared:
+     ```bash
+     claude mcp add --transport http inventory --scope project https://mcp.example.com/mcp
+     ```
+4. Add auth:
+   - Static bearer token for development:
+     ```bash
+     claude mcp add --transport http inventory https://mcp.example.com/mcp \
+       --header "Authorization: Bearer $INVENTORY_MCP_TOKEN"
+     ```
+   - OAuth-backed server:
+     ```bash
+     claude mcp add --transport http inventory https://mcp.example.com/mcp
+     ```
+     Then run `/mcp` inside Claude Code and complete the browser login flow.
+5. Verify registration:
+   - `claude mcp list`
+   - `claude mcp get inventory`
+   - `/mcp` inside Claude Code to inspect connection/auth state.
+6. Test with a low-risk read-only prompt:
+   - Example: "Use the inventory MCP server to list available tools and show the first 5 catalog items."
+   - Confirm that tool names, descriptions, auth errors, and output sizes are reasonable.
+7. Lock down production configuration:
+   - Prefer OAuth over long-lived static bearer tokens.
+   - Pin scopes where possible.
+   - Keep write-capable tools behind explicit approval.
+   - Use short output limits and pagination.
+   - Review project-scoped `.mcp.json` before committing it.
+
 Authenticate OAuth-backed servers from inside Claude Code:
 
 ```text
 /mcp
 ```
+
+OAuth-specific Claude Code notes:
+
+- Some OAuth servers support Dynamic Client Registration; in that case, `claude mcp add --transport http <name> <url>` followed by `/mcp` is enough.
+- If a server requires a pre-registered redirect URI, add a fixed callback port:
+  ```bash
+  claude mcp add --transport http \
+    --callback-port 8080 \
+    inventory https://mcp.example.com/mcp
+  ```
+- If the server requires a pre-created OAuth client, pass the client ID and enter the client secret securely:
+  ```bash
+  claude mcp add --transport http \
+    --client-id "$MCP_CLIENT_ID" --client-secret --callback-port 8080 \
+    inventory https://mcp.example.com/mcp
+  ```
+- If using JSON config, keep the secret outside the JSON and pass `--client-secret`:
+  ```bash
+  claude mcp add-json inventory \
+    '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}' \
+    --client-secret
+  ```
+- Pin OAuth scopes in `.mcp.json` when security review requires a narrow scope set:
+  ```json
+  {
+    "mcpServers": {
+      "inventory": {
+        "type": "http",
+        "url": "https://mcp.example.com/mcp",
+        "oauth": {
+          "scopes": "inventory:read inventory:reserve"
+        }
+      }
+    }
+  }
+  ```
+- For internal SSO or short-lived non-OAuth tokens, use `headersHelper` to generate request headers at connection time. The helper must print a JSON object of string headers to stdout.
 
 Project-shared `.mcp.json` example:
 
@@ -567,6 +652,8 @@ Claude.ai custom connector usage:
 
 - Pro/Max users can add a custom connector from Claude settings by entering the Remote MCP server URL and optional OAuth client information.
 - Team/Enterprise owners add custom connectors from organization settings; members then connect individually.
+- If the user is logged into Claude Code with a Claude.ai account, Claude.ai connectors can also appear in Claude Code. Use `/mcp` to inspect and authenticate them.
+- If a connector does not appear in Claude Code, check `/status`; API-key, Bedrock, Vertex, or third-party auth modes can prevent Claude.ai connectors from loading.
 - Treat every connector as a privileged integration. Review scopes, disable unnecessary tools, and be careful with "always allow" behavior for write-capable tools.
 
 ## MCP server design rules for engineers
