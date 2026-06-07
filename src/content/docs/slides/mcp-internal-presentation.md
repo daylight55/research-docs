@@ -55,6 +55,7 @@ _class: dense ch00
 | Function calling | tool名、description、schema | app側関数呼び出し | 自前アプリ内の軽量tool |
 | Built-in tools | provider定義tool | search / file / computerなど | すぐ使える標準能力 |
 | Connectors / Remote MCP | SaaS/APIのtool catalog | authenticated tool call | 組織data、業務SaaS |
+| Agent Skills | 手順、判断基準、参照資料 | workflow orchestration | 反復支援の型 |
 | Codex plugins/apps | skills、apps、MCP、browser/computer | repo操作、外部app操作 | 開発・調査・レビュー |
 | WebMCP | HTML/JSで宣言されたpage capability | browser内agent action | frontend上の構造化操作 |
 | A2A | 他agentのcapability/task | agent間message/task | 複数agent協調 |
@@ -69,12 +70,32 @@ _class: compact ch00
 
 <p class="chapter-label">00 / 全体像</p>
 
+## Agent Skills + MCPで支援範囲が広がる
+
+Skillは「どう進めるか」、MCPは「何を読める/実行できるか」を持つ。
+
+| レイヤー | 役割 | 開発現場での例 |
+|---|---|---|
+| Agent Skill | 手順、判断基準、検証、出力形式 | PR review、incident triage、release手順 |
+| MCP server | live data/action、認証、schema、承認 | GitHub、Sentry、Slack、AWS、社内API |
+| Plugin/App | Skill + App + MCPを配布単位にする | team workflow package |
+
+結果としてAI Agentは、助言だけでなく**調査 -> 実行 -> 検証 -> 報告**まで支援できる。
+
+---
+
+<!--
+_class: compact ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
 ## このスライドで着目すること
 
 広い選択肢の中で、この発表はMCPを**既存APIをagent-nativeにする設計手段**として扱う。
 
-- 主眼: MCP serverの構築、description/schema、auth、Remote運用
-- 比較対象: CLI、browser、function calling、WebMCP、Codex Appの外部操作
+- 主眼: MCP serverの構築、description/schema、auth、Remote運用、Skill連携
+- 比較対象: CLI、browser、function calling、Agent Skills、WebMCP、Codex Appの外部操作
 - 判断軸: token使用量、再現性、承認、監査、provider control
 - 実装例: FastAPI / OpenAPIをMCP serverへ変換する設計
 
