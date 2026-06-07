@@ -1,0 +1,48 @@
+---
+import DocsLayout from "../layouts/DocsLayout.astro";
+import { deckHref, getDocSummaries, groupDocsBySection } from "../lib/docs";
+
+const docs = await getDocSummaries();
+const groups = groupDocsBySection(docs);
+---
+
+<DocsLayout
+  title="MCP internal presentation"
+  description="MCP社内発表向けのスライド、調査メモ、参照元、タスク記録を配布するドキュメントサイト。"
+>
+  <section class="page-header">
+    <p class="eyebrow">MCP internal presentation</p>
+    <h1>スライドと調査メモをまとめて配布する</h1>
+    <p>
+      Marpスライド、通常のMarkdownレンダリング、調査元リンク、作業チェックリストを同じサイトで確認できる。
+      ページは<code>src/content/docs</code>配下のファイル構造から自動生成される。
+    </p>
+    <div class="action-row">
+      <a class="primary-action" href={deckHref()}>プレゼンHTMLを見る</a>
+      <a class="secondary-action" href={`${import.meta.env.BASE_URL}slides/mcp-internal-presentation/`}>
+        スライドMarkdownを読む
+      </a>
+    </div>
+  </section>
+
+  <section class="doc-groups" aria-label="Document groups">
+    {
+      Array.from(groups.entries()).map(([section, items]) => (
+        <section class="doc-group">
+          <h2>{section}</h2>
+          <div class="doc-list">
+            {items.map(({ entry, href, title }) => (
+              <article class="doc-card">
+                <a href={href}>
+                  <span>{entry.data.kind}</span>
+                  <strong>{title}</strong>
+                  {entry.data.description && <p>{entry.data.description}</p>}
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </section>
+</DocsLayout>

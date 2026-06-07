@@ -5,9 +5,11 @@ on:
     branches:
       - main
     paths:
-      - mcp-internal-presentation.marp.md
-      - mcp-slide-research.md
-      - research-tasks.md
+      - src/**
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
       - themes/**
       - scripts/build-pages-site.sh
       - .github/workflows/pages.yml
@@ -18,9 +20,11 @@ on:
       - synchronize
       - closed
     paths:
-      - mcp-internal-presentation.marp.md
-      - mcp-slide-research.md
-      - research-tasks.md
+      - src/**
+      - package.json
+      - package-lock.json
+      - astro.config.mjs
+      - tsconfig.json
       - themes/**
       - scripts/build-pages-site.sh
       - .github/workflows/pages.yml
@@ -47,9 +51,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
 
-      - name: Build Marp site
+      - name: Install dependencies
         if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        run: npm ci
+
+      - name: Test site structure
+        if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        run: npm test
+
+      - name: Build main site
+        if: github.event_name != 'pull_request'
+        env:
+          SITE_BASE: /research-docs/
+          OUT_DIR: site
+        run: scripts/build-pages-site.sh site
+
+      - name: Build pull request preview site
+        if: github.event_name == 'pull_request' && github.event.action != 'closed'
+        env:
+          SITE_BASE: /research-docs/pr-preview/pr-${{ github.event.number }}/
+          OUT_DIR: site
         run: scripts/build-pages-site.sh site
 
       - name: Upload site artifact

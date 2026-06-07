@@ -1,3 +1,11 @@
+---
+title: MCP slide research tasks
+navTitle: Research task checklist
+description: MCP社内発表資料の調査・構成・検証タスクチェックリスト。
+kind: task
+order: 40
+---
+
 # MCP slide research tasks
 
 Objective: Produce a source-grounded internal presentation outline for Model Context Protocol (MCP), focusing on essentials rather than exhaustive detail.
