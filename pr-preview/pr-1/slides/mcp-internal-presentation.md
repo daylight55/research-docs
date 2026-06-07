@@ -29,14 +29,14 @@ _class: compact
 
 ## 本日の流れ
 
-1. MCPが解く問題と、CLI / browser / APIとの違い
-2. 既存APIをMCP serverとして公開する設計
-3. Remote MCPとしてClaudeや複数Agentへ接続する方法
-4. 接続protocol、JSON-RPC、tool call生成の中身
-5. Frontend / AWS / 開発向けMCPの実用例
-6. 社内導入、運用ルール、今後の重要ポイント
+1. MCPとは何か。Host / Client / Server / Toolなどの言葉を揃える
+2. CLI / browser / APIと比べ、なぜMCPを使うのかを理解する
+3. 既存APIをMCP serverとして公開する設計を学ぶ
+4. Remote MCPとしてClaudeや複数Agentへ接続する方法を見る
+5. 接続protocol、JSON-RPC、tool call生成の中身へ進む
+6. Frontend / AWS / 開発向けMCP、社内導入、運用ルールへ広げる
 
-基本説明を進めながら、開発者が引っかかりやすい箇所だけQ&Aで補足する。
+基本概念から順番に積み上げ、疑問が出やすい箇所だけQ&Aで補足する。
 
 ---
 
@@ -44,7 +44,106 @@ _class: compact
 _class: compact
 -->
 
-## MCPが解く問題
+## まず押さえる用語
+
+| 用語 | 何を指すか | この発表での見方 |
+|---|---|---|
+| Agent | LLMを使って作業を進める実行主体 | 判断し、toolを選ぶ側 |
+| Host | Claude / Cursor / VS Codeなどの実行環境 | MCP接続と承認を管理する側 |
+| MCP Client | Host内でserverと通信する部品 | JSON-RPCを送受信する側 |
+| MCP Server | 外部機能をtool/resourceとして公開する部品 | 既存APIをagent向けに整える側 |
+
+最初に分けるべきは「賢いmodel」ではなく、**modelを囲む実行境界**。
+
+---
+
+<!--
+_class: compact
+-->
+
+## MCPとは？
+
+Model Context Protocol。AI agentが外部のdata / action / workflowを使うための標準protocol。
+
+- 何を公開するか: tool、resource、prompt
+- どう説明するか: name、description、input schema、output schema
+- どう運ぶか: stdio、Streamable HTTPなどのtransport
+- どう守るか: auth、scope、approval、audit、rate limit
+
+MCPは「LLMを賢くする技術」ではなく、**LLMが安全に外部世界へ出るための接続契約**。
+
+---
+
+<!--
+_class: compact
+-->
+
+## Host / Client / Serverとは？
+
+```text
+User
+  -> Host: Claude, Cursor, VS Code, Codex
+      -> MCP Client: server discovery, JSON-RPC, auth/session
+          -> MCP Server: tools/resources/prompts
+              -> Backend: GitHub, AWS, DB, internal API
+```
+
+- Host: user、model、tool承認、接続設定をまとめる
+- Client: MCP protocolを話す通信部品
+- Server: agent向けに機能を宣言して実行する
+- Backend: 既存のSaaS、API、DB、社内system
+
+MCP serverはbackendそのものではなく、**agent向けadapter**として設計する。
+
+---
+
+<!--
+_class: compact
+-->
+
+## Tool / Resource / Promptとは？
+
+| 種類 | 役割 | 例 |
+|---|---|---|
+| Tool | agentが実行できるaction | `search_items`, `create_issue`, `deploy_stack` |
+| Resource | agentが読めるcontext/data | file、log、ticket、schema、document |
+| Prompt | 再利用できる指示template | incident調査手順、PR review手順 |
+
+開発で最初に使うのは多くの場合tool。
+
+ただし良いMCP serverは、actionだけでなく**判断材料となるresource**も一緒に設計する。
+
+---
+
+<!--
+_class: compact
+-->
+
+## Protocol / Transportとは？
+
+- Protocol: どんなmessageを、どんな順序でやり取りするか
+- Transport: そのmessageをどう運ぶか
+- JSON-RPC: MCP messageの基本的なenvelope
+- Auth: 誰が、どのscopeで、どのserver/toolを使えるか
+
+```text
+MCP protocol message
+  initialize -> tools/list -> tools/call
+
+Transport
+  stdio: local processのstdin/stdout
+  Streamable HTTP: remote endpoint over HTTPS
+```
+
+後半のJSON-RPCやRemote MCPは、この用語の上に乗る。
+
+---
+
+<!--
+_class: compact
+-->
+
+## なぜMCPが必要なのか
 
 AIエージェントが外部システムを安全に使うための標準インターフェースを作る。
 

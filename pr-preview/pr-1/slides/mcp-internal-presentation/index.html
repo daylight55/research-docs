@@ -10,19 +10,137 @@ _class: compact
 -->
 <h2 id="本日の流れ"><a href="#本日の流れ">本日の流れ</a></h2>
 <ol>
-<li>MCPが解く問題と、CLI / browser / APIとの違い</li>
-<li>既存APIをMCP serverとして公開する設計</li>
-<li>Remote MCPとしてClaudeや複数Agentへ接続する方法</li>
-<li>接続protocol、JSON-RPC、tool call生成の中身</li>
-<li>Frontend / AWS / 開発向けMCPの実用例</li>
-<li>社内導入、運用ルール、今後の重要ポイント</li>
+<li>MCPとは何か。Host / Client / Server / Toolなどの言葉を揃える</li>
+<li>CLI / browser / APIと比べ、なぜMCPを使うのかを理解する</li>
+<li>既存APIをMCP serverとして公開する設計を学ぶ</li>
+<li>Remote MCPとしてClaudeや複数Agentへ接続する方法を見る</li>
+<li>接続protocol、JSON-RPC、tool call生成の中身へ進む</li>
+<li>Frontend / AWS / 開発向けMCP、社内導入、運用ルールへ広げる</li>
 </ol>
-<p>基本説明を進めながら、開発者が引っかかりやすい箇所だけQ&#x26;Aで補足する。</p>
+<p>基本概念から順番に積み上げ、疑問が出やすい箇所だけQ&#x26;Aで補足する。</p>
 <hr>
 <!--
 _class: compact
 -->
-<h2 id="mcpが解く問題"><a href="#mcpが解く問題">MCPが解く問題</a></h2>
+<h2 id="まず押さえる用語"><a href="#まず押さえる用語">まず押さえる用語</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>用語</th><th>何を指すか</th><th>この発表での見方</th></tr></thead><tbody><tr><td>Agent</td><td>LLMを使って作業を進める実行主体</td><td>判断し、toolを選ぶ側</td></tr><tr><td>Host</td><td>Claude / Cursor / VS Codeなどの実行環境</td><td>MCP接続と承認を管理する側</td></tr><tr><td>MCP Client</td><td>Host内でserverと通信する部品</td><td>JSON-RPCを送受信する側</td></tr><tr><td>MCP Server</td><td>外部機能をtool/resourceとして公開する部品</td><td>既存APIをagent向けに整える側</td></tr></tbody></table>
+<p>最初に分けるべきは「賢いmodel」ではなく、<strong>modelを囲む実行境界</strong>。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="mcpとは"><a href="#mcpとは">MCPとは？</a></h2>
+<p>Model Context Protocol。AI agentが外部のdata / action / workflowを使うための標準protocol。</p>
+<ul>
+<li>何を公開するか: tool、resource、prompt</li>
+<li>どう説明するか: name、description、input schema、output schema</li>
+<li>どう運ぶか: stdio、Streamable HTTPなどのtransport</li>
+<li>どう守るか: auth、scope、approval、audit、rate limit</li>
+</ul>
+<p>MCPは「LLMを賢くする技術」ではなく、<strong>LLMが安全に外部世界へ出るための接続契約</strong>。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="host--client--serverとは"><a href="#host--client--serverとは">Host / Client / Serverとは？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>User</span></span>
+<span class="line"><span>  -> Host: Claude, Cursor, VS Code, Codex</span></span>
+<span class="line"><span>      -> MCP Client: server discovery, JSON-RPC, auth/session</span></span>
+<span class="line"><span>          -> MCP Server: tools/resources/prompts</span></span>
+<span class="line"><span>              -> Backend: GitHub, AWS, DB, internal API</span></span></code></pre>
+<ul>
+<li>Host: user、model、tool承認、接続設定をまとめる</li>
+<li>Client: MCP protocolを話す通信部品</li>
+<li>Server: agent向けに機能を宣言して実行する</li>
+<li>Backend: 既存のSaaS、API、DB、社内system</li>
+</ul>
+<p>MCP serverはbackendそのものではなく、<strong>agent向けadapter</strong>として設計する。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="tool--resource--promptとは"><a href="#tool--resource--promptとは">Tool / Resource / Promptとは？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>種類</th><th>役割</th><th>例</th></tr></thead><tbody><tr><td>Tool</td><td>agentが実行できるaction</td><td><code>search_items</code>, <code>create_issue</code>, <code>deploy_stack</code></td></tr><tr><td>Resource</td><td>agentが読めるcontext/data</td><td>file、log、ticket、schema、document</td></tr><tr><td>Prompt</td><td>再利用できる指示template</td><td>incident調査手順、PR review手順</td></tr></tbody></table>
+<p>開発で最初に使うのは多くの場合tool。</p>
+<p>ただし良いMCP serverは、actionだけでなく<strong>判断材料となるresource</strong>も一緒に設計する。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="protocol--transportとは"><a href="#protocol--transportとは">Protocol / Transportとは？</a></h2>
+<ul>
+<li>Protocol: どんなmessageを、どんな順序でやり取りするか</li>
+<li>Transport: そのmessageをどう運ぶか</li>
+<li>JSON-RPC: MCP messageの基本的なenvelope</li>
+<li>Auth: 誰が、どのscopeで、どのserver/toolを使えるか</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>MCP protocol message</span></span>
+<span class="line"><span>  initialize -> tools/list -> tools/call</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Transport</span></span>
+<span class="line"><span>  stdio: local processのstdin/stdout</span></span>
+<span class="line"><span>  Streamable HTTP: remote endpoint over HTTPS</span></span></code></pre>
+<p>後半のJSON-RPCやRemote MCPは、この用語の上に乗る。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="なぜmcpが必要なのか"><a href="#なぜmcpが必要なのか">なぜMCPが必要なのか</a></h2>
 <p>AIエージェントが外部システムを安全に使うための標準インターフェースを作る。</p>
 <ul>
 <li>外部システム: GitHub、AWS、Sentry、DB、社内API、ブラウザ、Docs</li>
