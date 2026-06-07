@@ -1,3 +1,11 @@
+---
+title: MCP internal presentation research notes
+navTitle: Research notes
+description: MCP概要、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。
+kind: research
+order: 20
+---
+
 # MCP internal presentation research notes
 
 Date: 2026-06-07

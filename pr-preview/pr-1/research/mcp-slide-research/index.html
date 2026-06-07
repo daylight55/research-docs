@@ -1,0 +1,2107 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP internal presentation research notes | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP internal presentation research notes</h1> <p>MCP概要、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p>  </header> <div class="markdown-body"> <h1 id="mcp-internal-presentation-research-notes"><a href="#mcp-internal-presentation-research-notes">MCP internal presentation research notes</a></h1>
+<p>Date: 2026-06-07</p>
+<h2 id="research-stance"><a href="#research-stance">Research stance</a></h2>
+<p>This is a technical specification review plus ecosystem survey, not a formal academic literature review. Primary sources were prioritized:</p>
+<ul>
+<li>MCP official docs/specification: <a href="https://modelcontextprotocol.io/">https://modelcontextprotocol.io/</a></li>
+<li>Anthropic launch post: <a href="https://www.anthropic.com/news/model-context-protocol">https://www.anthropic.com/news/model-context-protocol</a></li>
+<li>OpenAI API docs for remote MCP/connectors: <a href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp">https://developers.openai.com/api/docs/guides/tools-connectors-mcp</a></li>
+<li>GitHub MCP docs/repo: <a href="https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/use-the-github-mcp-server">https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/use-the-github-mcp-server</a> and <a href="https://github.com/github/github-mcp-server">https://github.com/github/github-mcp-server</a></li>
+<li>Stripe MCP docs: <a href="https://docs.stripe.com/mcp">https://docs.stripe.com/mcp</a></li>
+<li>MCP reference servers/registry: <a href="https://github.com/modelcontextprotocol/servers">https://github.com/modelcontextprotocol/servers</a> and <a href="https://github.com/modelcontextprotocol/registry">https://github.com/modelcontextprotocol/registry</a></li>
+<li>MCP build server/client guides: <a href="https://modelcontextprotocol.io/docs/develop/build-server">https://modelcontextprotocol.io/docs/develop/build-server</a> and <a href="https://modelcontextprotocol.io/docs/develop/build-client">https://modelcontextprotocol.io/docs/develop/build-client</a></li>
+<li>FastMCP documentation: <a href="https://github.com/jlowin/fastmcp">https://github.com/jlowin/fastmcp</a></li>
+<li>FastAPI OpenAPI documentation: <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">https://fastapi.tiangolo.com/how-to/extending-openapi/</a></li>
+<li>Claude Remote MCP / custom connectors: <a href="https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp">https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp</a> and <a href="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</a></li>
+<li>Chrome WebMCP comparison: <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja">https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja</a></li>
+<li>Playwright MCP: <a href="https://github.com/microsoft/playwright-mcp">https://github.com/microsoft/playwright-mcp</a></li>
+<li>Chrome DevTools MCP: <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">https://github.com/ChromeDevTools/chrome-devtools-mcp</a></li>
+<li>AWS MCP Server GA / Agent Toolkit: <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/</a> and <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/</a></li>
+<li>AgentCore Gateway / Identity: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html</a>, <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html</a>, and <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html</a></li>
+<li>GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.</li>
+</ul>
+<h2 id="expanded-beginner-friendly-notes-2026-06-07"><a href="#expanded-beginner-friendly-notes-2026-06-07">Expanded beginner-friendly notes, 2026-06-07</a></h2>
+<p>This section is the beginner-oriented source material for the final talk. It intentionally explains the concepts underneath MCP before moving into implementation details.</p>
+<h3 id="1-mcpが解こうとしている問題"><a href="#1-mcpが解こうとしている問題">1. MCPが解こうとしている問題</a></h3>
+<p>LLMは文章を読む・書く・推論する能力を持つが、そのままでは社内システム、GitHub、AWS、ブラウザ、DB、SaaSの「現在の状態」を知らない。モデルの学習時点より後に生まれたAPIや社内仕様も知らない。人間が毎回ログ、Issue、API仕様、画面状態をコピーして貼ると、遅い、漏れる、権限管理が曖昧になる、再現性が低い。</p>
+<p>MCPはこの問題を「AIアプリと外部システムをつなぐ標準プロトコル」として解く。各AIアプリがGitHub連携、Slack連携、AWS連携、社内API連携を個別に実装するのではなく、AIアプリ側はMCP clientを実装し、各システム側はMCP serverを実装する。これにより、同じMCP serverをClaude、Codex、Cursor、VS Code系ツールなど複数のhostから使える。</p>
+<p>初心者向けの要点:</p>
+<ul>
+<li>MCPはAIモデルそのものではない。</li>
+<li>MCPはAPIそのものでもない。</li>
+<li>MCPは「AIが外部の文脈を読み、必要な操作を安全に呼び出すための接続規約」。</li>
+<li>既存APIをMCP化すると、モデルはAPI仕様を推測せず、名前・説明・入力schema付きのtoolとして呼び出せる。</li>
+</ul>
+<h3 id="2-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い"><a href="#2-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い">2. MCPの位置づけ: tool calling、OpenAPI、API Gatewayとの違い</a></h3>
+<p>MCPはFunction CallingやTool Callingの代替ではない。Function Callingは「モデルが関数呼び出し形式の出力を返せる」モデル/アプリ内の仕組み。MCPは「その関数群をどこから発見し、どう実行し、どう権限・transport・session・metadataを扱うか」を標準化する仕組み。</p>
+<p>OpenAPIはHTTP APIの契約を記述する仕様。MCPはAI clientに対してResources、Tools、Promptsを提供するプロトコル。OpenAPIはMCP serverを作るための良い入力になり得るが、OpenAPIをそのまま全部MCP公開するのは危険。admin、internal、write系endpointは、AIが呼んでよい操作かを別途判断する必要がある。</p>
+<p>API Gatewayは人間/アプリケーション向けAPIの入口。MCP serverはAI agent向けの入口。両者は役割が異なる。実運用では、既存API Gatewayの後ろにあるAPIをMCP adapterから呼び出す構成がわかりやすい。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>仕組み</th><th>主な役割</th><th>MCPとの関係</th></tr></thead><tbody><tr><td>Function Calling</td><td>モデルが関数呼び出しを表現する</td><td>MCP tool呼び出しの内側で使われることがある</td></tr><tr><td>OpenAPI</td><td>HTTP APIの契約</td><td>MCP server生成の入力になる</td></tr><tr><td>API Gateway</td><td>APIの入口、認証、rate limit</td><td>MCP adapterが既存APIを呼ぶ入口になり得る</td></tr><tr><td>MCP</td><td>AI clientと外部tool/contextの接続規約</td><td>発見、schema、実行、transport、auth、sessionを扱う</td></tr></tbody></table>
+<h3 id="3-hostclientserverを誰が担うか"><a href="#3-hostclientserverを誰が担うか">3. Host、Client、Serverを誰が担うか</a></h3>
+<p>MCPの構成はHost、Client、Serverに分かれる。公式仕様では、Hostは複数のclientを作り、各clientが1つのserverと1対1のsessionを持つ。ServerはResources、Tools、Promptsを公開する。重要なのは、Hostがserver間の境界とユーザー承認を管理する点である。</p>
+<p>具体例:</p>
+<ul>
+<li>Claude Desktop、Claude Code、Codex、Cursor、VS Code拡張などがHost。</li>
+<li>Host内でGitHub MCP用、Playwright MCP用、社内API MCP用のClientが別々に動く。</li>
+<li>GitHub MCP Server、Chrome DevTools MCP、社内Inventory MCPなどがServer。</li>
+</ul>
+<p>この分離により、GitHub MCP serverはSlack MCP serverのデータを勝手に読めない。各serverは「自分に渡された入力」と「自分が持つ権限」の範囲でだけ動く。これは実装上の都合ではなく、MCPのセキュリティ境界である。</p>
+<h3 id="4-resourcestoolspromptsの違い"><a href="#4-resourcestoolspromptsの違い">4. Resources、Tools、Promptsの違い</a></h3>
+<p>初心者が最初につまずくのは、ResourcesとToolsの違いである。</p>
+<ul>
+<li>Resourceは読むもの。</li>
+<li>Toolは実行するもの。</li>
+<li>Promptは作業テンプレート。</li>
+</ul>
+<p>例:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>種類</th><th>例</th><th>モデルから見た意味</th></tr></thead><tbody><tr><td>Resource</td><td><code>file:///README.md</code>、DB schema、issue本文、API仕様</td><td>判断材料として読む</td></tr><tr><td>Tool</td><td><code>create_pull_request</code>、<code>search_docs</code>、<code>reserve_inventory</code></td><td>外部世界に問い合わせる、または変更する</td></tr><tr><td>Prompt</td><td><code>review_pr</code>、<code>summarize_incident</code></td><td>作業の型を呼び出す</td></tr></tbody></table>
+<p>Toolは特に強力で、外部API実行、ファイル変更、ブラウザ操作、クラウド操作、決済操作まで可能になる。だからToolは「便利な関数」ではなく「権限を持った操作」として扱う。説明文、入力schema、出力schema、承認UI、監査ログが重要になる。</p>
+<h3 id="5-capability-negotiationとは何か"><a href="#5-capability-negotiationとは何か">5. Capability negotiationとは何か</a></h3>
+<p>MCPでは、clientとserverが接続時に「自分が何をサポートしているか」を宣言する。これがcapability negotiationである。</p>
+<p>なぜ必要か:</p>
+<ul>
+<li>あるserverはtoolsだけを持つかもしれない。</li>
+<li>別のserverはresourcesやpromptsも持つかもしれない。</li>
+<li>あるclientはsamplingに対応しているが、別のclientは対応していないかもしれない。</li>
+<li>protocol versionによって利用可能な機能が異なる。</li>
+</ul>
+<p>MCPでは、接続後に「このserverはtools capabilityを宣言しているからtools/listできる」「このclientはsamplingを宣言していないからserverからLLM呼び出しを依頼してはいけない」という判断ができる。これはWeb APIでいうfeature negotiationや、LSPでのcapabilities交換に近い。</p>
+<h3 id="6-transport-stdioとstreamable-http"><a href="#6-transport-stdioとstreamable-http">6. Transport: stdioとStreamable HTTP</a></h3>
+<p>MCPのmessageはJSON-RPC 2.0で表現される。そのmessageをどの経路で運ぶかがtransportである。</p>
+<p>stdio:</p>
+<ul>
+<li>clientがserverプロセスをローカルで起動する。</li>
+<li>stdin/stdoutでJSON-RPC messageをやり取りする。</li>
+<li>filesystem、local git、local browser、developer toolに向く。</li>
+<li>stdoutはprotocol用なので、ログをstdoutに書くと壊れる。ログはstderrへ出す。</li>
+</ul>
+<p>Streamable HTTP:</p>
+<ul>
+<li>serverがHTTP endpointを公開する。</li>
+<li>remote MCP、SaaS、社内共通server、組織管理に向く。</li>
+<li>2025-03-26以降の方向性としてHTTP+SSEを置き換える標準transport。</li>
+<li>HTTP POST/GET、SSE streaming、session id、protocol version header、Origin validationなどを扱う。</li>
+</ul>
+<p>実務上の選び方:</p>
+<ul>
+<li>個人開発・ローカルツール: stdio。</li>
+<li>社内共通・Claude custom connector・SaaS連携: Streamable HTTP。</li>
+<li>旧SSE serverは残っているが、新規ならHTTPを優先する。</li>
+</ul>
+<h3 id="7-authorization-なぜoauth-21とaudienceが重要か"><a href="#7-authorization-なぜoauth-21とaudienceが重要か">7. Authorization: なぜOAuth 2.1とaudienceが重要か</a></h3>
+<p>Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。</p>
+<p>初心者向けに言うと、Remote MCPの認証で避けたい事故は3つ。</p>
+<ol>
+<li>他のサービス向けtokenをMCP serverが受け入れてしまう。</li>
+<li>MCP serverが受け取ったtokenを下流APIへそのまま渡してしまう。</li>
+<li>どのserver向けに発行されたtokenかを検証しない。</li>
+</ol>
+<p>MCP specはtoken passthroughを禁じ、Resource Indicatorsでtokenの対象resourceを明示する方向を強めている。productionのRemote MCPでは、単にBearer tokenを受け取るだけでは足りない。誰のtokenか、どのserver向けか、どのscopeか、いつ失効するか、どの操作に使えるかを検証する。</p>
+<h3 id="8-既存apiをmcp化するときの設計原則"><a href="#8-既存apiをmcp化するときの設計原則">8. 既存APIをMCP化するときの設計原則</a></h3>
+<p>既存APIをMCP対応させる最短路は、API本体を書き換えることではない。APIはそのまま残し、MCP adapterを追加する。</p>
+<p>推奨構成:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>FastAPI app -> OpenAPI schema -> MCP adapter -> MCP client</span></span>
+<span class="line"><span>                         |</span></span>
+<span class="line"><span>                         +-> route policy / description policy / auth policy</span></span></code></pre>
+<p>設計原則:</p>
+<ul>
+<li>既存APIをsource of truthにする。</li>
+<li>OpenAPIをAI向け契約として整える。</li>
+<li>MCP adapterは公開面を絞る場所にする。</li>
+<li>API handlerを直接importして呼ぶより、まずはHTTP clientで既存APIを呼ぶほうが安全。</li>
+<li>direct service-layer callは高速だが、auth、middleware、logging、validationを再実装する必要がある。</li>
+</ul>
+<p>FastMCPはOpenAPI specからMCP serverを作れる。FastMCP v2.8以降のdefault mappingは「全routeをtool化」する方向なので、productionではRouteMapで明示的に除外・allowlist化するのが重要である。admin/internal/debug endpointを除外し、write系endpointを特別扱いする。</p>
+<h3 id="9-tool-descriptionはapi-docsではなくモデル向けuiである"><a href="#9-tool-descriptionはapi-docsではなくモデル向けuiである">9. Tool descriptionはAPI docsではなくモデル向けUIである</a></h3>
+<p>Tool descriptionは人間向けのAPI説明ではない。モデルが「このtoolを使うべきか」「どの入力で呼ぶべきか」「呼ぶと外部世界が変わるか」を判断するためのUIである。</p>
+<p>良いdescriptionに含めるもの:</p>
+<ul>
+<li>このtoolが何をするか。</li>
+<li>いつ使うべきか。</li>
+<li>いつ使ってはいけないか。</li>
+<li>入力の形式、単位、制約。</li>
+<li>read-onlyか、状態変更があるか。</li>
+<li>ユーザー確認が必要か。</li>
+<li>返すstructured outputの形。</li>
+<li>似たtoolとの使い分け。</li>
+</ul>
+<p>悪いdescription:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Inventory endpoint.</span></span></code></pre>
+<p>良いdescription:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Reserve stock for an inventory item after explicit user confirmation.</span></span>
+<span class="line"><span>This decreases available stock. Requires exact SKU and positive quantity.</span></span>
+<span class="line"><span>Returns reserved quantity and remaining stock. Do not use for price quotes</span></span>
+<span class="line"><span>or order creation.</span></span></code></pre>
+<p>descriptionに「必ず確認する」と書くだけでは不十分である。server側でもwrite操作のauth、idempotency、audit log、rate limitを実装する。</p>
+<h3 id="10-webmcpはmcpの置き換えではない"><a href="#10-webmcpはmcpの置き換えではない">10. WebMCPはMCPの置き換えではない</a></h3>
+<p>ChromeのWebMCP docsは、WebMCPとMCPを「競合ではなく補完」と位置づけている。MCPはbackend/service layer向けで、どのplatformからでも利用できる永続的なserver。WebMCPはfrontend/live web UI向けで、ユーザーが開いているtabに紐づくエフェメラルな仕組みである。</p>
+<p>使い分け:</p>
+<ul>
+<li>MCP: core business logic、API操作、DB検索、バックグラウンド処理、社内システム連携。</li>
+<li>WebMCP: ユーザーが開いているWeb画面上の操作、DOMやCookieやlive sessionに紐づく機能。</li>
+<li>Playwright MCP / Chrome DevTools MCP: 開発時に実際のブラウザを操作・検査するためのbridge。</li>
+</ul>
+<p>WebアプリをAI agent対応にする場合、「backendはMCP」「frontendはWebMCP」「開発・検証はPlaywright MCP / Chrome DevTools MCP」という三層で考えると整理しやすい。</p>
+<h3 id="11-claudecodexopenaiでのremote-mcpの考え方"><a href="#11-claudecodexopenaiでのremote-mcpの考え方">11. Claude、Codex、OpenAIでのRemote MCPの考え方</a></h3>
+<p>Claude Codeではremote HTTP serverが推奨され、<code>claude mcp add --transport http &#x3C;name> &#x3C;url></code> で追加できる。SSEはdeprecated扱いで、可能ならHTTPを使う。stdio serverはローカルプロセスとして起動され、filesystemやlocal browserのような手元環境に強い。</p>
+<p>Claude.ai custom connectorsではRemote MCP server URLを設定し、必要に応じてOAuth client情報を入れる。Team/Enterpriseでは管理者がconnectorを組織に追加し、メンバーが個別に接続する。Remote MCP serverはAnthropic cloud infrastructureから到達可能である必要があるため、VPN内やprivate networkだけに置いたserverはそのままでは使えない。</p>
+<p>OpenAIのResponses APIやDeep Research系docsでもMCP connectorsが使われる。ここで重要なのは、MCPは特定vendorの閉じた機能ではなく、複数clientが採用するintegration layerになっていること。ただし、各clientのsupported transport、tool search、output limit、OAuth実装、approval UXは異なる。社内MCP serverを作るなら、公式spec準拠を軸にしつつ、主要clientごとの差分をテストする。</p>
+<h3 id="12-aws-mcp--agent-toolkit-for-awsの意味"><a href="#12-aws-mcp--agent-toolkit-for-awsの意味">12. AWS MCP / Agent Toolkit for AWSの意味</a></h3>
+<p>AWS MCP Serverは2026-05-06にGAし、Agent Toolkit for AWSの中核になった。AWSの発表では、managed remote MCP serverとして、coding agentがAWSへ安全にアクセスするための小さな固定tool setを提供すると説明されている。</p>
+<p>主なtool:</p>
+<ul>
+<li><code>call_aws</code>: 15,000+ AWS API operationをIAM credentialsで実行。</li>
+<li><code>search_documentation</code>: 最新AWS documentationを検索。</li>
+<li><code>read_documentation</code>: AWS docs/best practicesを読む。</li>
+<li><code>run_script</code>: sandboxed server-side Pythonで複数API呼び出しや集計を1 round-tripにまとめる。</li>
+</ul>
+<p>運用上の価値:</p>
+<ul>
+<li>最新docsをその場で引けるため、modelのknowledge cutoffを補える。</li>
+<li>IAM context keys、IAM/SCP、CloudWatch <code>AWS-MCP</code> metrics、CloudTrailでagent操作を人間操作と分けて管理できる。</li>
+<li>read-onlyから始め、write権限は明示的に分離できる。</li>
+</ul>
+<p>社内発表では「AWS MCPは便利なAWS操作tool」ではなく、「agentにAWS権限を渡すときの監査・権限制御モデル」として説明するのが重要。</p>
+<h3 id="13-開発向けmcpの現状ランキング-2026-06-07"><a href="#13-開発向けmcpの現状ランキング-2026-06-07">13. 開発向けMCPの現状ランキング, 2026-06-07</a></h3>
+<p>GitHub API / <code>gh api</code> で2026-06-07に再取得したstar数。star数は人気・認知のsignalであり、品質や安全性の保証ではない。大規模product repoとMCP専用repoが混ざるため、採用判断ではmaintainer、release頻度、security posture、client互換性を見る。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Repo</th><th align="right">Stars</th><th>Notes</th></tr></thead><tbody><tr><td><code>mendableai/firecrawl</code></td><td align="right">129,670</td><td>Web search/scrape/crawl product repo。MCP server単体ではない。</td></tr><tr><td><code>modelcontextprotocol/servers</code></td><td align="right">86,854</td><td>reference servers集。公式/参考実装の入口。</td></tr><tr><td><code>upstash/context7</code></td><td align="right">56,904</td><td>current docs lookup。coding agent向けdocs contextで強い。</td></tr><tr><td><code>ChromeDevTools/chrome-devtools-mcp</code></td><td align="right">43,030</td><td>Chrome DevTools for coding agents。frontend debug/perfに強い。</td></tr><tr><td><code>microsoft/playwright-mcp</code></td><td align="right">33,574</td><td>live browser操作、E2E生成、UI再現に強い。</td></tr><tr><td><code>github/github-mcp-server</code></td><td align="right">30,495</td><td>official GitHub MCP server。repo/issue/PR/search。</td></tr><tr><td><code>oraios/serena</code></td><td align="right">25,036</td><td>semantic code retrieval/editing。大規模repo向け。</td></tr><tr><td><code>GLips/Figma-Context-MCP</code></td><td align="right">15,012</td><td>Figma layout contextをcoding agentへ渡す。</td></tr><tr><td><code>awslabs/mcp</code></td><td align="right">9,224</td><td>AWS service-specific open-source MCP servers。</td></tr><tr><td><code>modelcontextprotocol/registry</code></td><td align="right">6,896</td><td>MCP server discovery/publishing基盤。</td></tr><tr><td><code>firecrawl/firecrawl-mcp-server</code></td><td align="right">6,510</td><td>Firecrawl official MCP server。</td></tr><tr><td><code>browserbase/mcp-server-browserbase</code></td><td align="right">3,365</td><td>managed browser automation。</td></tr><tr><td><code>supabase/mcp</code></td><td align="right">2,723</td><td>Supabase project/database連携。</td></tr><tr><td><code>stripe/ai</code></td><td align="right">1,591</td><td>Stripe AI/agent toolkit。</td></tr><tr><td><code>mongodb-js/mongodb-mcp-server</code></td><td align="right">1,044</td><td>MongoDB/Atlas連携。</td></tr><tr><td><code>getsentry/sentry-mcp</code></td><td align="right">720</td><td>Sentry issues/errors。</td></tr></tbody></table>
+<p>初期導入のおすすめ:</p>
+<ol>
+<li>GitHub MCP: PR/issue/code search/CI。</li>
+<li>Context7: 依存ライブラリの最新docs。</li>
+<li>Playwright MCP: UI操作、E2E生成、回帰再現。</li>
+<li>Chrome DevTools MCP: console/network/performance/Lighthouse。</li>
+<li>Serena: 大規模repoのsemantic retrieval/editing。</li>
+<li>Firecrawl MCP: web調査、公式docs取り込み。</li>
+<li>AWS MCP / Agent Toolkit: AWS docs/API/CloudWatch/CloudTrail。</li>
+<li>Figma/Sentry/Supabase/MongoDB/Stripe: チームの業務領域に合わせて追加。</li>
+</ol>
+<h3 id="14-mcpのリスクを初学者にどう説明するか"><a href="#14-mcpのリスクを初学者にどう説明するか">14. MCPのリスクを初学者にどう説明するか</a></h3>
+<p>MCP serverは便利な連携部品である一方、外部データを読み、外部操作を実行できる。したがって「installして終わり」ではない。</p>
+<p>主要リスク:</p>
+<ul>
+<li>Supply chain risk: npm/pipで入れるserver自体が信頼できるか。</li>
+<li>Permission risk: tokenやIAM roleが広すぎないか。</li>
+<li>Prompt injection: external contentがmodelの判断を誘導しないか。</li>
+<li>Tool confusion: 似たtoolが多すぎてmodelが誤選択しないか。</li>
+<li>Data leakage: serverに渡したcontextが外部へ流れないか。</li>
+<li>Local execution risk: stdio serverがlocal filesystemやshellへアクセスできるか。</li>
+<li>Audit gap: 誰が何を実行したか追えないか。</li>
+</ul>
+<p>対策:</p>
+<ul>
+<li>official/vendor-maintained serverを優先。</li>
+<li>read-onlyから始める。</li>
+<li>allowed tools / route allowlistでtool surfaceを絞る。</li>
+<li>write toolはuser confirmation、server-side auth、idempotency、audit logを必須にする。</li>
+<li>secretはenv/secret managerから渡し、repoに置かない。</li>
+<li>outputはbounded structured JSONにし、巨大な生データを返さない。</li>
+<li>Remote MCPはOAuth/audience/scope/expiryを確認する。</li>
+<li>ローカルstdio serverは実行commandと権限をレビューする。</li>
+</ul>
+<h3 id="15-初学者向けの説明順序"><a href="#15-初学者向けの説明順序">15. 初学者向けの説明順序</a></h3>
+<p>最終資料を誰が読んでも理解できるようにするなら、次の順序がよい。</p>
+<ol>
+<li>LLMは外部システムを知らない、だから接続規約が必要。</li>
+<li>MCPはAIアプリと外部システムをつなぐ標準protocol。</li>
+<li>Host / Client / Serverで責務を分ける。</li>
+<li>Resources / Tools / Promptsで「読む・実行する・作業テンプレート」を分ける。</li>
+<li>stdio / Streamable HTTPでlocalとremoteを分ける。</li>
+<li>Authとconsentがproductionの本体。</li>
+<li>既存APIはOpenAPIを整えてMCP adapterで公開する。</li>
+<li>descriptionはモデル向けのUIとして設計する。</li>
+<li>WebMCPとブラウザ操作MCPでfrontendもagent対応する。</li>
+<li>AWS MCPやGitHub MCPなど、開発workflowに効くMCPから導入する。</li>
+<li>最後にリスク、管理、ロードマップを説明する。</li>
+</ol>
+<h2 id="one-slide-thesis"><a href="#one-slide-thesis">One-slide thesis</a></h2>
+<p>MCP is becoming the standard interface layer between AI agents and external systems. Its core value is not “more tools”; it is a common protocol for discovery, permissioning, context exchange, tool invocation, and future multi-client interoperability.</p>
+<p>Good shorthand:</p>
+<blockquote>
+<p>MCP is the USB-C-like connector for AI applications, but with security, consent, and protocol lifecycle concerns that USB-C does not have.</p>
+</blockquote>
+<h2 id="what-mcp-is"><a href="#what-mcp-is">What MCP is</a></h2>
+<p>Official definition: MCP is an open protocol that standardizes integration between LLM applications and external data sources/tools. It uses JSON-RPC 2.0, stateful sessions, and capability negotiation.</p>
+<p>Core architectural terms:</p>
+<ul>
+<li>Host: the AI application/container, such as Claude Desktop, ChatGPT, Codex, VS Code, Cursor, or another agent app.</li>
+<li>Client: a connector instance inside the host; each client maintains one isolated session to one server.</li>
+<li>Server: a local process or remote service that exposes context and capabilities.</li>
+</ul>
+<p>Key analogy:</p>
+<ul>
+<li>Like Language Server Protocol standardized programming-language support across editors, MCP aims to standardize tool/context integration across AI clients.</li>
+</ul>
+<h2 id="core-concepts"><a href="#core-concepts">Core concepts</a></h2>
+<p>Server-side primitives:</p>
+<ul>
+<li>Resources: readable context/data, such as files, schemas, docs, database metadata, or business objects.</li>
+<li>Prompts: reusable prompt templates/workflows, typically user-selected.</li>
+<li>Tools: callable operations, model-controlled by default, such as search, API calls, database queries, issue creation, browser automation, or payment link creation.</li>
+</ul>
+<p>Client-side primitives:</p>
+<ul>
+<li>Roots: host-provided filesystem/URI boundaries.</li>
+<li>Sampling: server-initiated LLM calls through the client.</li>
+<li>Elicitation: server requests for additional user input.</li>
+<li>Tasks: experimental durable request tracking and deferred result retrieval in the 2025-11-25 spec.</li>
+</ul>
+<p>Important framing:</p>
+<ul>
+<li>Resources are context.</li>
+<li>Prompts are workflows.</li>
+<li>Tools are actions.</li>
+<li>Host/client isolation is a security boundary, not just an implementation detail.</li>
+</ul>
+<h2 id="basic-flow"><a href="#basic-flow">Basic flow</a></h2>
+<ol>
+<li>Host configures or discovers an MCP server.</li>
+<li>Host creates an MCP client for that server.</li>
+<li>Client and server initialize:
+<ul>
+<li>negotiate protocol version</li>
+<li>exchange capabilities</li>
+<li>exchange implementation metadata</li>
+</ul>
+</li>
+<li>Client discovers resources/prompts/tools as needed.</li>
+<li>Model or user selects relevant capabilities.</li>
+<li>Host enforces approvals, permissions, and context controls.</li>
+<li>Client sends JSON-RPC requests to the server.</li>
+<li>Server returns tool results, resources, prompts, logs, progress, or errors.</li>
+<li>Shutdown occurs through the transport.</li>
+</ol>
+<h2 id="mcp-server-construction-engineer-focused-patterns"><a href="#mcp-server-construction-engineer-focused-patterns">MCP server construction: engineer-focused patterns</a></h2>
+<p>The most useful internal angle is not only “what MCP is”, but “how we expose our existing systems safely as model-usable tools”. There are three practical patterns:</p>
+<ol>
+<li>Hand-write a small MCP server around a few high-value operations.</li>
+<li>Generate an MCP surface from an existing OpenAPI spec, then filter and harden it.</li>
+<li>Deploy it as a Remote MCP server over HTTPS so Claude, Claude Code, or other MCP clients can connect.</li>
+</ol>
+<h3 id="pattern-a-hand-written-tools-with-fastmcp"><a href="#pattern-a-hand-written-tools-with-fastmcp">Pattern A: hand-written tools with FastMCP</a></h3>
+<p>This is best for a small, curated tool surface. Type hints and docstrings become the schema and descriptions that the model sees.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> mcp.server.fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">mcp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastMCP(</span><span style="color:#9ECBFF">"inventory"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@mcp.tool</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> get_stock</span><span style="color:#E1E4E8">(item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """Return current inventory stock for one item."""</span></span>
+<span class="line"><span style="color:#6A737D">    # Replace with DB/API call.</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"item_id"</span><span style="color:#E1E4E8">: item_id, </span><span style="color:#9ECBFF">"stock"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">42</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@mcp.tool</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> reserve_stock</span><span style="color:#E1E4E8">(item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, quantity: </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">) -> </span><span style="color:#79B8FF">dict</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """Reserve inventory for an order. Use only after user confirmation."""</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> quantity </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#79B8FF"> ValueError</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"quantity must be positive"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"item_id"</span><span style="color:#E1E4E8">: item_id, </span><span style="color:#9ECBFF">"reserved"</span><span style="color:#E1E4E8">: quantity}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> "__main__"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">    # Local MCP for desktop clients.</span></span>
+<span class="line"><span style="color:#E1E4E8">    mcp.run(</span><span style="color:#FFAB70">transport</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"stdio"</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>For stdio servers, never write ordinary logs to stdout because stdout is the protocol channel. Use stderr or structured logging.</p>
+<h3 id="pattern-b-existing-fastapi-plus-openapi-to-mcp"><a href="#pattern-b-existing-fastapi-plus-openapi-to-mcp">Pattern B: existing FastAPI plus OpenAPI to MCP</a></h3>
+<p>FastAPI automatically exposes OpenAPI at <code>/openapi.json</code>, and <code>app.openapi()</code> returns the same schema in-process. This makes FastAPI a good source for an MCP wrapper.</p>
+<p>Existing API:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># inventory_api.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastAPI, HTTPException</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pydantic </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BaseModel</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">app </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastAPI(</span><span style="color:#FFAB70">title</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Inventory API"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">version</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"1.0.0"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> Item</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">BaseModel</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#79B8FF">    id</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">str</span></span>
+<span class="line"><span style="color:#E1E4E8">    name: </span><span style="color:#79B8FF">str</span></span>
+<span class="line"><span style="color:#E1E4E8">    stock: </span><span style="color:#79B8FF">int</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">ITEMS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#9ECBFF">    "sku-001"</span><span style="color:#E1E4E8">: Item(</span><span style="color:#FFAB70">id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"sku-001"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Notebook"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">stock</span><span style="color:#F97583">=</span><span style="color:#79B8FF">42</span><span style="color:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@app.get</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/items/</span><span style="color:#79B8FF">{item_id}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">tags</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">"items"</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> get_item</span><span style="color:#E1E4E8">(item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">) -> Item:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """Get a single item by SKU."""</span></span>
+<span class="line"><span style="color:#E1E4E8">    item </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> ITEMS</span><span style="color:#E1E4E8">.get(item_id)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> item </span><span style="color:#F97583">is</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#E1E4E8"> HTTPException(</span><span style="color:#FFAB70">status_code</span><span style="color:#F97583">=</span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">detail</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"item not found"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> item</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@app.post</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/items/</span><span style="color:#79B8FF">{item_id}</span><span style="color:#9ECBFF">/reserve"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">tags</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">"inventory"</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> reserve_item</span><span style="color:#E1E4E8">(item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, quantity: </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">) -> dict[</span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#9ECBFF">    """Reserve stock for an item."""</span></span>
+<span class="line"><span style="color:#E1E4E8">    item </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> ITEMS</span><span style="color:#E1E4E8">.get(item_id)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> item </span><span style="color:#F97583">is</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#E1E4E8"> HTTPException(</span><span style="color:#FFAB70">status_code</span><span style="color:#F97583">=</span><span style="color:#79B8FF">404</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">detail</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"item not found"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> quantity </span><span style="color:#F97583">&#x3C;=</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> or</span><span style="color:#E1E4E8"> quantity </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> item.stock:</span></span>
+<span class="line"><span style="color:#F97583">        raise</span><span style="color:#E1E4E8"> HTTPException(</span><span style="color:#FFAB70">status_code</span><span style="color:#F97583">=</span><span style="color:#79B8FF">400</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">detail</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"invalid quantity"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    item.stock </span><span style="color:#F97583">-=</span><span style="color:#E1E4E8"> quantity</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"reserved"</span><span style="color:#E1E4E8">: quantity, </span><span style="color:#9ECBFF">"remaining"</span><span style="color:#E1E4E8">: item.stock}</span></span></code></pre>
+<p>MCP wrapper from the OpenAPI schema:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># inventory_mcp.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> httpx</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> inventory_api </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> app</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">openapi_spec </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> app.openapi()</span></span>
+<span class="line"><span style="color:#E1E4E8">api_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> httpx.AsyncClient(</span><span style="color:#FFAB70">base_url</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"http://127.0.0.1:9000"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">mcp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastMCP.from_openapi(</span></span>
+<span class="line"><span style="color:#FFAB70">    openapi_spec</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">openapi_spec,</span></span>
+<span class="line"><span style="color:#FFAB70">    client</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_client,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Inventory MCP"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#79B8FF"> __name__</span><span style="color:#F97583"> ==</span><span style="color:#9ECBFF"> "__main__"</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">    # Remote-capable HTTP transport. Put HTTPS/auth in front for production.</span></span>
+<span class="line"><span style="color:#E1E4E8">    mcp.run(</span><span style="color:#FFAB70">transport</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">host</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"0.0.0.0"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">port</span><span style="color:#F97583">=</span><span style="color:#79B8FF">8000</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>Run locally:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">uvicorn</span><span style="color:#9ECBFF"> inventory_api:app</span><span style="color:#79B8FF"> --host</span><span style="color:#79B8FF"> 127.0.0.1</span><span style="color:#79B8FF"> --port</span><span style="color:#79B8FF"> 9000</span></span>
+<span class="line"><span style="color:#B392F0">python</span><span style="color:#9ECBFF"> inventory_mcp.py</span></span></code></pre>
+<p>The important point for slides: OpenAPI generation is only the starting point. A production MCP server should not blindly expose every endpoint. The model-facing tool surface must be curated.</p>
+<h3 id="pattern-c-filter-generated-tools-before-publishing"><a href="#pattern-c-filter-generated-tools-before-publishing">Pattern C: filter generated tools before publishing</a></h3>
+<p>Use route mapping to exclude internal or dangerous endpoints and to decide whether a route should become a tool, resource, or resource template.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp.server.providers.openapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MCPType</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp.utilities.openapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> HTTPRoute</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> route_map_fn</span><span style="color:#E1E4E8">(route: HTTPRoute, mcp_type: MCPType) -> MCPType </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.path.startswith(</span><span style="color:#9ECBFF">"/admin/"</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#9ECBFF"> "internal"</span><span style="color:#F97583"> in</span><span style="color:#79B8FF"> set</span><span style="color:#E1E4E8">(route.tags </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> []):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PUT"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PATCH"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"DELETE"</span><span style="color:#E1E4E8">}:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.path.startswith(</span><span style="color:#9ECBFF">"/items/"</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">RESOURCE_TEMPLATE</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">mcp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastMCP.from_openapi(</span></span>
+<span class="line"><span style="color:#FFAB70">    openapi_spec</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">openapi_spec,</span></span>
+<span class="line"><span style="color:#FFAB70">    client</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_client,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Inventory MCP"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    route_map_fn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">route_map_fn,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>For internal APIs, this filtering layer is where engineering judgment matters most:</p>
+<ul>
+<li>Keep only operations that an AI assistant should actually call.</li>
+<li>Prefer read-only tools first; gate write tools behind confirmation and authorization.</li>
+<li>Give every operation a stable <code>operationId</code>, clear tags, precise request/response schemas, and concise descriptions.</li>
+<li>Avoid exposing endpoints with ambiguous side effects.</li>
+<li>Add pagination and output caps; large raw API responses become poor model context.</li>
+</ul>
+<h2 id="remote-mcp-for-claude-build-and-use"><a href="#remote-mcp-for-claude-build-and-use">Remote MCP for Claude: build and use</a></h2>
+<p>Claude can connect to local stdio MCP servers and Remote MCP servers. For Claude.ai custom connectors and team-wide usage, Remote MCP is the relevant architecture.</p>
+<p>Minimal deployment shape:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">flowchart LR</span></span>
+<span class="line"><span style="color:#E1E4E8">    Claude["Claude / Claude Code"] -->|"HTTPS MCP transport"| Gateway["Public HTTPS endpoint"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    Gateway --> Auth["OAuth / token validation"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    Auth --> MCP["MCP server"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    MCP --> API["Existing API / DB / SaaS"]</span></span></code></pre>
+<p>Production requirements:</p>
+<ul>
+<li>Expose the MCP endpoint over public HTTPS. Claude connects from Anthropic cloud infrastructure, even when the user is on Claude Desktop or Cowork.</li>
+<li>Private networks, VPN-only hosts, and firewalled internal services will not work unless access from Anthropic IP ranges is allowed or an approved gateway is used.</li>
+<li>For Claude custom connectors, OAuth is the preferred user-scoped authorization model. For Claude Code development, static headers can be useful, but they are not the best production default.</li>
+<li>Validate <code>Origin</code> where applicable, enforce auth on every request, rate limit, and log tool calls for audit.</li>
+<li>Keep server instructions and tool descriptions short and precise; Claude Code truncates server instructions and tool descriptions around a documented size limit.</li>
+</ul>
+<p>Claude Code remote MCP example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --header</span><span style="color:#9ECBFF"> "Authorization: Bearer </span><span style="color:#E1E4E8">$MCP_TOKEN</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> inventory</span></span></code></pre>
+<p>Step-by-step registration checklist for Claude Code:</p>
+<ol>
+<li>Prepare a reachable Remote MCP endpoint:
+<ul>
+<li>Recommended transport for remote services: HTTP / Streamable HTTP.</li>
+<li>Example endpoint: <code>https://mcp.example.com/mcp</code>.</li>
+<li>The endpoint must be reachable from the user’s environment for Claude Code, and from Anthropic cloud infrastructure if the same server is used as a Claude.ai custom connector.</li>
+</ul>
+</li>
+<li>Decide configuration scope:
+<ul>
+<li><code>--scope local</code>: available only to the current project/user; good for private experiments and credentials that should not be committed.</li>
+<li><code>--scope project</code>: stored in project <code>.mcp.json</code>; good for team-shared server definitions, but requires trust/approval before use.</li>
+<li><code>--scope user</code>: available across projects for the current user.</li>
+</ul>
+</li>
+<li>Register the server:
+<ul>
+<li>Basic remote HTTP:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+</li>
+<li>User-wide:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> user</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+</li>
+<li>Project-shared:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+</li>
+</ul>
+</li>
+<li>Add auth:
+<ul>
+<li>Static bearer token for development:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --header</span><span style="color:#9ECBFF"> "Authorization: Bearer </span><span style="color:#E1E4E8">$INVENTORY_MCP_TOKEN</span><span style="color:#9ECBFF">"</span></span></code></pre>
+</li>
+<li>OAuth-backed server:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+Then run <code>/mcp</code> inside Claude Code and complete the browser login flow.</li>
+</ul>
+</li>
+<li>Verify registration:
+<ul>
+<li><code>claude mcp list</code></li>
+<li><code>claude mcp get inventory</code></li>
+<li><code>/mcp</code> inside Claude Code to inspect connection/auth state.</li>
+</ul>
+</li>
+<li>Test with a low-risk read-only prompt:
+<ul>
+<li>Example: “Use the inventory MCP server to list available tools and show the first 5 catalog items.”</li>
+<li>Confirm that tool names, descriptions, auth errors, and output sizes are reasonable.</li>
+</ul>
+</li>
+<li>Lock down production configuration:
+<ul>
+<li>Prefer OAuth over long-lived static bearer tokens.</li>
+<li>Pin scopes where possible.</li>
+<li>Keep write-capable tools behind explicit approval.</li>
+<li>Use short output limits and pagination.</li>
+<li>Review project-scoped <code>.mcp.json</code> before committing it.</li>
+</ul>
+</li>
+</ol>
+<p>Authenticate OAuth-backed servers from inside Claude Code:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>/mcp</span></span></code></pre>
+<p>OAuth-specific Claude Code notes:</p>
+<ul>
+<li>Some OAuth servers support Dynamic Client Registration; in that case, <code>claude mcp add --transport http &#x3C;name> &#x3C;url></code> followed by <code>/mcp</code> is enough.</li>
+<li>If a server requires a pre-registered redirect URI, add a fixed callback port:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --callback-port</span><span style="color:#79B8FF"> 8080</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+</li>
+<li>If the server requires a pre-created OAuth client, pass the client ID and enter the client secret securely:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --client-id</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$MCP_CLIENT_ID</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF"> --client-secret</span><span style="color:#79B8FF"> --callback-port</span><span style="color:#79B8FF"> 8080</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+</li>
+<li>If using JSON config, keep the secret outside the JSON and pass <code>--client-secret</code>:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add-json</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  '{"type":"http","url":"https://mcp.example.com/mcp","oauth":{"clientId":"your-client-id","callbackPort":8080}}'</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --client-secret</span></span></code></pre>
+</li>
+<li>Pin OAuth scopes in <code>.mcp.json</code> when security review requires a narrow scope set:
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "oauth"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "scopes"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory:read inventory:reserve"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+</li>
+<li>For internal SSO or short-lived non-OAuth tokens, use <code>headersHelper</code> to generate request headers at connection time. The helper must print a JSON object of string headers to stdout.</li>
+</ul>
+<p>Project-shared <code>.mcp.json</code> example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"${INVENTORY_MCP_URL:-https://mcp.example.com/mcp}"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${INVENTORY_MCP_TOKEN}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "timeout"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">60000</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Claude.ai custom connector usage:</p>
+<ul>
+<li>Pro/Max users can add a custom connector from Claude settings by entering the Remote MCP server URL and optional OAuth client information.</li>
+<li>Team/Enterprise owners add custom connectors from organization settings; members then connect individually.</li>
+<li>If the user is logged into Claude Code with a Claude.ai account, Claude.ai connectors can also appear in Claude Code. Use <code>/mcp</code> to inspect and authenticate them.</li>
+<li>If a connector does not appear in Claude Code, check <code>/status</code>; API-key, Bedrock, Vertex, or third-party auth modes can prevent Claude.ai connectors from loading.</li>
+<li>Treat every connector as a privileged integration. Review scopes, disable unnecessary tools, and be careful with “always allow” behavior for write-capable tools.</li>
+</ul>
+<h2 id="mcp-server-design-rules-for-engineers"><a href="#mcp-server-design-rules-for-engineers">MCP server design rules for engineers</a></h2>
+<p>These are the rules worth putting into the slide deck:</p>
+<ul>
+<li>Tool surface is product design, not only API wrapping. The model sees names, descriptions, parameters, and results; design them intentionally.</li>
+<li>OpenAPI quality directly determines MCP quality. Poor <code>operationId</code>, weak schemas, vague descriptions, and huge response bodies become poor tools.</li>
+<li>Start from read-only, then add write actions with explicit confirmation, authorization, and audit.</li>
+<li>Never expose internal/admin endpoints by default.</li>
+<li>Return structured JSON results, not long prose.</li>
+<li>Separate tool execution errors from protocol errors. Business/API validation failures should come back as tool results or tool execution errors, not broken MCP sessions.</li>
+<li>Keep results bounded with pagination, filters, and summarizable fields.</li>
+<li>Treat prompts, tool descriptions, resource content, and API output as possible prompt-injection surfaces.</li>
+<li>For stdio servers, stdout is reserved for MCP messages.</li>
+<li>For remote servers, HTTPS, OAuth/token handling, rate limits, observability, and key rotation are part of the server, not optional extras.</li>
+</ul>
+<h2 id="recommended-design-for-adapting-an-existing-api-server"><a href="#recommended-design-for-adapting-an-existing-api-server">Recommended design for adapting an existing API server</a></h2>
+<p>For an existing API server, the recommended design is an adapter layer, not a rewrite. Keep the existing API as the source of truth, use OpenAPI as the contract, and publish only a curated MCP surface.</p>
+<h3 id="recommended-layer-structure"><a href="#recommended-layer-structure">Recommended layer structure</a></h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>app/</span></span>
+<span class="line"><span>  api/</span></span>
+<span class="line"><span>    main.py              # Existing FastAPI app</span></span>
+<span class="line"><span>    routers/</span></span>
+<span class="line"><span>      inventory.py       # HTTP routes, response_model, operation_id, tags</span></span>
+<span class="line"><span>  domain/</span></span>
+<span class="line"><span>    inventory_service.py # Business logic shared by API and jobs</span></span>
+<span class="line"><span>  mcp/</span></span>
+<span class="line"><span>    server.py            # MCP adapter</span></span>
+<span class="line"><span>    route_policy.py      # OpenAPI route filtering / mapping</span></span>
+<span class="line"><span>    descriptions.py      # Tool/server description text</span></span>
+<span class="line"><span>  tests/</span></span>
+<span class="line"><span>    test_openapi_contract.py</span></span>
+<span class="line"><span>    test_mcp_tools.py</span></span></code></pre>
+<p>Recommended dependency direction:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">flowchart LR</span></span>
+<span class="line"><span style="color:#E1E4E8">    Domain["domain service"] --> API["FastAPI routes"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    API --> OpenAPI["OpenAPI schema"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    OpenAPI --> MCP["MCP adapter"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    MCP --> Client["Claude / Codex / other MCP clients"]</span></span></code></pre>
+<p>Do not let MCP become a second business-logic implementation. Either:</p>
+<ul>
+<li>call the existing public API through <code>httpx.AsyncClient</code>, which preserves auth, validation, rate limits, and observability; or</li>
+<li>call the shared domain/service layer directly if the MCP server runs in the same trusted service boundary.</li>
+</ul>
+<p>For most teams, the first version should call the existing API over HTTP because it is easier to reason about and test. Direct service-layer calls are attractive later, but they bypass API middleware unless recreated carefully.</p>
+<h3 id="import-policy"><a href="#import-policy">Import policy</a></h3>
+<p>Use one MCP SDK style consistently per server:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># Official MCP SDK quickstart style for hand-written tools.</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> mcp.server.fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># FastMCP v2 style for OpenAPI/FastAPI adaptation.</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span></code></pre>
+<p>For an existing FastAPI API, keep the imports explicit and boring:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># app/mcp/server.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> httpx</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.api.main </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> app </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> fastapi_app</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.config </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> settings</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.mcp.route_policy </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> route_map_fn</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">openapi_spec </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fastapi_app.openapi()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">api_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> httpx.AsyncClient(</span></span>
+<span class="line"><span style="color:#FFAB70">    base_url</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"http://127.0.0.1:9000"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">30.0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Bearer </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">settings.api_token</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">mcp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastMCP.from_openapi(</span></span>
+<span class="line"><span style="color:#FFAB70">    openapi_spec</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">openapi_spec,</span></span>
+<span class="line"><span style="color:#FFAB70">    client</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_client,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Inventory MCP"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    route_map_fn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">route_map_fn,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>Design guidance:</p>
+<ul>
+<li>Import the FastAPI <code>app</code> only to obtain the OpenAPI schema.</li>
+<li>Keep the outbound API client as the integration boundary.</li>
+<li>Keep route filtering in a separate module so security review is easy.</li>
+<li>Do not scatter MCP decorators across existing HTTP route files unless the service is intentionally MCP-first.</li>
+<li>Do not import private route handlers and call them as normal functions. That often skips request validation, auth dependencies, middleware, tracing, and error handling.</li>
+</ul>
+<h3 id="fastapi-route-design-for-ai-ready-openapi"><a href="#fastapi-route-design-for-ai-ready-openapi">FastAPI route design for AI-ready OpenAPI</a></h3>
+<p>OpenAPI quality directly affects generated MCP tool quality. Design routes with explicit metadata:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> APIRouter, HTTPException</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> pydantic </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> BaseModel, Field</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">router </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> APIRouter(</span><span style="color:#FFAB70">prefix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"/items"</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">tags</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">"inventory"</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> ReserveRequest</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">BaseModel</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    quantity: </span><span style="color:#79B8FF">int</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> Field(</span><span style="color:#79B8FF">...</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">gt</span><span style="color:#F97583">=</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">description</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Number of units to reserve."</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> ReserveResponse</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">BaseModel</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">    item_id: </span><span style="color:#79B8FF">str</span></span>
+<span class="line"><span style="color:#E1E4E8">    reserved: </span><span style="color:#79B8FF">int</span></span>
+<span class="line"><span style="color:#E1E4E8">    remaining: </span><span style="color:#79B8FF">int</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">@router.post</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    "/</span><span style="color:#79B8FF">{item_id}</span><span style="color:#9ECBFF">/reserve"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    operation_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"reserve_inventory_item"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    summary</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Reserve inventory for an item"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Reserve stock for a known inventory item. "</span></span>
+<span class="line"><span style="color:#9ECBFF">        "This changes inventory state and should be called only after explicit user confirmation."</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#FFAB70">    response_model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">ReserveResponse,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> reserve_inventory_item</span><span style="color:#E1E4E8">(item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">, request: ReserveRequest) -> ReserveResponse:</span></span>
+<span class="line"><span style="color:#79B8FF">    ...</span></span></code></pre>
+<p>Recommended route metadata:</p>
+<ul>
+<li><code>operation_id</code>: stable, unique, verb-first, model-readable. Example: <code>reserve_inventory_item</code>, not <code>post_items_item_id_reserve</code>.</li>
+<li><code>summary</code>: one-line action name.</li>
+<li><code>description</code>: when to use it, side effects, constraints, and confirmation requirements.</li>
+<li><code>tags</code>: route grouping used for MCP filtering.</li>
+<li><code>response_model</code>: concrete structured output.</li>
+<li>Pydantic <code>Field(description=...)</code>: parameter semantics, units, allowed values, and examples.</li>
+<li><code>include_in_schema=False</code>: hide internal routes from OpenAPI and therefore from generated MCP.</li>
+</ul>
+<h3 id="route-publication-policy"><a href="#route-publication-policy">Route publication policy</a></h3>
+<p>Use tags and path conventions to make MCP exposure reviewable:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># app/mcp/route_policy.py</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp.server.providers.openapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MCPType</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp.utilities.openapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> HTTPRoute</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">BLOCKED_TAGS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"internal"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"admin"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"debug"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#79B8FF">WRITE_METHODS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PUT"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PATCH"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"DELETE"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> route_map_fn</span><span style="color:#E1E4E8">(route: HTTPRoute, default_type: MCPType) -> MCPType </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    tags </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> set</span><span style="color:#E1E4E8">(route.tags </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> [])</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> tags.intersection(</span><span style="color:#79B8FF">BLOCKED_TAGS</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.path.startswith((</span><span style="color:#9ECBFF">"/admin"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/debug"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/internal"</span><span style="color:#E1E4E8">)):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> WRITE_METHODS</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "GET"</span><span style="color:#F97583"> and</span><span style="color:#9ECBFF"> "catalog"</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> tags:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">RESOURCE_TEMPLATE</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span></code></pre>
+<p>Recommended policy:</p>
+<ul>
+<li>GET/search/list routes can become tools or resources depending on client support.</li>
+<li>Write routes should remain tools because they are explicit actions.</li>
+<li>Admin/debug/internal routes should be excluded twice: first from OpenAPI with <code>include_in_schema=False</code>, then from MCP route policy.</li>
+<li>Start with an allowlist for production if the API is large or sensitive.</li>
+</ul>
+<h3 id="description-design-policy"><a href="#description-design-policy">Description design policy</a></h3>
+<p>Descriptions are not normal API docs. They are model-facing decision aids. A good description answers:</p>
+<ol>
+<li>What action does this tool perform?</li>
+<li>When should the model use it?</li>
+<li>What inputs are required, and what format/units do they use?</li>
+<li>Does it read data or change state?</li>
+<li>What user confirmation or permission is required?</li>
+<li>What output shape should the model expect?</li>
+<li>When should the model not use it?</li>
+</ol>
+<p>Good read-only example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Read a single inventory item by exact SKU. Use when the user asks for current</span></span>
+<span class="line"><span>stock, item name, or item status for a known SKU. No side effects. Returns</span></span>
+<span class="line"><span>JSON with id, name, stock, and status.</span></span></code></pre>
+<p>Good write-action example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Reserve stock for an inventory item after explicit user confirmation. This</span></span>
+<span class="line"><span>decreases available stock. Requires exact SKU and positive quantity. Returns</span></span>
+<span class="line"><span>reserved quantity and remaining stock. Do not use for price quotes or order</span></span>
+<span class="line"><span>creation.</span></span></code></pre>
+<p>Poor description:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Inventory endpoint.</span></span></code></pre>
+<p>Reason: it does not explain action, timing, side effects, input expectations, or output.</p>
+<p>Description rules:</p>
+<ul>
+<li>Put the most important instruction first. Claude Code truncates tool descriptions and server instructions at a documented limit, so late caveats may disappear.</li>
+<li>Prefer concrete verbs: <code>read</code>, <code>search</code>, <code>reserve</code>, <code>create</code>, <code>cancel</code>, <code>summarize</code>.</li>
+<li>State side effects explicitly: <code>No side effects</code>, <code>Creates a ticket</code>, <code>Deletes a draft</code>, <code>Sends an email</code>.</li>
+<li>Use business names users know, not only internal table/API names.</li>
+<li>Include disambiguation for similar tools: “Use this for current stock; use <code>search_inventory_items</code> when SKU is unknown.”</li>
+<li>Keep auth and confirmation requirements in the description for write tools.</li>
+<li>Avoid vague promises such as “gets data”, “handles inventory”, or “does the operation”.</li>
+<li>Avoid embedding secrets, internal URLs, or policy text that should live in server-side enforcement.</li>
+</ul>
+<h3 id="server-instructions-design"><a href="#server-instructions-design">Server instructions design</a></h3>
+<p>Server instructions help the client decide when to search or load tools, especially when tool search is enabled.</p>
+<p>Recommended shape:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>This server provides inventory lookup and reservation tools for the internal</span></span>
+<span class="line"><span>commerce platform. Use it when the user asks about item stock, SKU availability,</span></span>
+<span class="line"><span>or reserving inventory. Prefer read-only lookup tools before reservation tools.</span></span>
+<span class="line"><span>Reservation tools change inventory state and require explicit user confirmation.</span></span></code></pre>
+<p>Keep server instructions short and front-load:</p>
+<ul>
+<li>domain/category of tasks</li>
+<li>when to search these tools</li>
+<li>key capabilities</li>
+<li>safety rule for write tools</li>
+</ul>
+<h3 id="test-plan-for-api-to-mcp-adaptation"><a href="#test-plan-for-api-to-mcp-adaptation">Test plan for API-to-MCP adaptation</a></h3>
+<p>Minimum tests:</p>
+<ul>
+<li>OpenAPI contract test: every exposed route has <code>operationId</code>, <code>summary</code>, <code>description</code>, tags, and response schema.</li>
+<li>Route policy test: admin/internal/debug routes are excluded.</li>
+<li>Tool list smoke test: generated MCP server exposes expected tool names only.</li>
+<li>Tool execution test: representative GET and write endpoints call the API and return structured results.</li>
+<li>Auth test: unauthenticated remote calls fail.</li>
+<li>Output-size test: list/search tools paginate or cap results.</li>
+</ul>
+<p>Example contract test:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> test_mcp_exposed_routes_have_ai_ready_metadata</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">    spec </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fastapi_app.openapi()</span></span>
+<span class="line"><span style="color:#F97583">    for</span><span style="color:#E1E4E8"> path, methods </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> spec[</span><span style="color:#9ECBFF">"paths"</span><span style="color:#E1E4E8">].items():</span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> method, operation </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> methods.items():</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#9ECBFF"> "internal"</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"tags"</span><span style="color:#E1E4E8">, []):</span></span>
+<span class="line"><span style="color:#F97583">                continue</span></span>
+<span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"operationId"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"summary"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"description"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"responses"</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h2 id="connection-protocols--transports"><a href="#connection-protocols--transports">Connection protocols / transports</a></h2>
+<p>MCP has one protocol message format and multiple ways to carry those messages. The message format is JSON-RPC 2.0. The transport answers a different question: “how do the client and server physically exchange those JSON-RPC messages?”</p>
+<p>Beginner framing:</p>
+<ul>
+<li>Protocol message: <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>, result, error, notification.</li>
+<li>Transport: stdio, HTTP, SSE stream, or another bidirectional channel.</li>
+<li>Lifecycle: every transport still follows the same MCP lifecycle: initialize -> initialized -> normal operation -> shutdown.</li>
+</ul>
+<h3 id="common-lifecycle-for-all-transports"><a href="#common-lifecycle-for-all-transports">Common lifecycle for all transports</a></h3>
+<p>The initialization phase is not optional. The client starts with <code>initialize</code>, the server returns protocol version, capabilities, and server info, then the client sends <code>notifications/initialized</code>.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant S as MCP Server</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: initialize(protocolVersion, clientCapabilities, clientInfo)</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: InitializeResult(protocolVersion, serverCapabilities, serverInfo)</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: notifications/initialized</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: tools/list or resources/list</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: available capabilities</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: tools/call</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: tool result or error</span></span></code></pre>
+<p>Key rule:</p>
+<ul>
+<li>Both sides must respect the negotiated protocol version and capabilities.</li>
+<li>A client should not call <code>tools/list</code> unless the server declared tool capability.</li>
+<li>A server should not use client-side features such as sampling unless the client declared support.</li>
+</ul>
+<h3 id="transport-comparison"><a href="#transport-comparison">Transport comparison</a></h3>
+<ul>
+<li>
+<p>stdio:</p>
+<ul>
+<li>Client launches server as subprocess.</li>
+<li>Good for local tools and developer workflows.</li>
+<li>Credentials should usually come from environment/config, not OAuth flow.</li>
+<li>stdout must contain only valid MCP messages; stderr is for logs.</li>
+<li>Best for filesystem, local git, local browser, local scripts, and developer-only tools.</li>
+</ul>
+</li>
+<li>
+<p>Streamable HTTP:</p>
+<ul>
+<li>Server exposes a single MCP endpoint using HTTP POST and GET.</li>
+<li>Supports JSON response or SSE streaming.</li>
+<li>Replaces the older HTTP+SSE transport from the 2024-11-05 spec.</li>
+<li>Better for remote servers, hosted services, organization-wide deployment.</li>
+<li>Best for SaaS, internal platform MCP, Claude custom connectors, and shared team servers.</li>
+</ul>
+</li>
+<li>
+<p>HTTP+SSE, legacy:</p>
+<ul>
+<li>Older transport from protocol version 2024-11-05.</li>
+<li>Deprecated for new servers, but clients may maintain backwards compatibility.</li>
+<li>Uses a GET-established SSE stream plus a POST endpoint announced by the server.</li>
+</ul>
+</li>
+<li>
+<p>WebSocket / custom transports:</p>
+<ul>
+<li>Not one of the two current standard transports in the MCP spec.</li>
+<li>The spec allows custom transports if they preserve JSON-RPC message format and lifecycle requirements.</li>
+<li>Claude Code supports remote WebSocket server configuration, but recommends HTTP for request/response style remote servers because HTTP has better OAuth support in the CLI flow.</li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Transport</th><th>Standard status</th><th>Connection ownership</th><th>Best fit</th><th>Main caution</th></tr></thead><tbody><tr><td>stdio</td><td>Current standard</td><td>Client starts local process</td><td>Local tools, dev workflows</td><td>stdout is protocol-only; local process privileges are powerful</td></tr><tr><td>Streamable HTTP</td><td>Current standard</td><td>Server exposes HTTP endpoint</td><td>Remote/shared servers</td><td>auth, Origin validation, session handling</td></tr><tr><td>HTTP+SSE</td><td>Deprecated legacy</td><td>SSE stream + POST endpoint</td><td>Older servers</td><td>use only for compatibility</td></tr><tr><td>WebSocket/custom</td><td>Implementation-specific</td><td>Persistent bidirectional socket</td><td>event-heavy custom clients</td><td>less portable; document handshake and auth clearly</td></tr></tbody></table>
+<h3 id="stdio-overview-and-connection-flow"><a href="#stdio-overview-and-connection-flow">stdio overview and connection flow</a></h3>
+<p>stdio is the simplest local transport. The host launches the MCP server command as a subprocess, then talks to it through stdin/stdout. Each JSON-RPC message is newline-delimited. The server may log to stderr, but must not write non-protocol text to stdout.</p>
+<p>Typical config shape:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "filesystem"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@modelcontextprotocol/server-filesystem"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/path/to/project"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant H as Host</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant P as Server Process</span></span>
+<span class="line"><span style="color:#E1E4E8">    H->>C: Load server config</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>P: spawn command/args/env</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>P: stdin: initialize JSON-RPC</span></span>
+<span class="line"><span style="color:#E1E4E8">    P-->>C: stdout: InitializeResult</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>P: stdin: notifications/initialized</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>P: stdin: tools/list</span></span>
+<span class="line"><span style="color:#E1E4E8">    P-->>C: stdout: tool definitions</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>P: stdin: tools/call</span></span>
+<span class="line"><span style="color:#E1E4E8">    P-->>C: stdout: tool result</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>P: close stdin or terminate process</span></span></code></pre>
+<p>Good fit:</p>
+<ul>
+<li>Local filesystem and git access.</li>
+<li>Browser automation that needs local Chrome.</li>
+<li>Small custom scripts.</li>
+<li>Developer-only tools where remote hosting would add overhead.</li>
+</ul>
+<p>Avoid:</p>
+<ul>
+<li>Shared enterprise services.</li>
+<li>Multi-user SaaS connectors.</li>
+<li>Long-lived org-wide tools needing OAuth, audit, rate limiting, and centralized lifecycle.</li>
+</ul>
+<p>Security notes:</p>
+<ul>
+<li>Treat the command exactly like running a local program.</li>
+<li>Review package source and command arguments.</li>
+<li>Use env vars or secret managers for credentials; do not commit secrets into <code>.mcp.json</code>.</li>
+<li>For stdio, <code>print()</code> / <code>console.log()</code> can break the protocol if they write to stdout.</li>
+</ul>
+<h3 id="streamable-http-overview-and-connection-flow"><a href="#streamable-http-overview-and-connection-flow">Streamable HTTP overview and connection flow</a></h3>
+<p>Streamable HTTP is the current remote-friendly standard. The server exposes a single MCP endpoint, commonly like <code>https://example.com/mcp</code>, that supports POST and optionally GET. POST carries JSON-RPC messages from client to server. A request can return a normal JSON response or open an SSE stream for streaming responses. GET can be used to open a server-to-client SSE stream for notifications or server-initiated messages.</p>
+<p>Typical Claude Code config:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span></code></pre>
+<p>Typical JSON config:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${INVENTORY_MCP_TOKEN}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Basic request/response flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant S as HTTP MCP Server</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /mcp initialize&#x3C;br/>Accept: application/json, text/event-stream</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 200 JSON InitializeResult&#x3C;br/>MCP-Session-Id: abc</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /mcp notifications/initialized&#x3C;br/>MCP-Session-Id: abc&#x3C;br/>MCP-Protocol-Version: 2025-11-25</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 202 Accepted</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /mcp tools/list</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 200 JSON tools</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /mcp tools/call</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 200 JSON result</span></span></code></pre>
+<p>Streaming flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant S as HTTP MCP Server</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /mcp tools/call&#x3C;br/>Accept: application/json, text/event-stream</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 200 text/event-stream</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: SSE event id: 1, progress/log message</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: SSE event id: 2, final JSON-RPC response</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: close stream</span></span></code></pre>
+<p>Optional server-to-client stream:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant S as HTTP MCP Server</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: GET /mcp&#x3C;br/>Accept: text/event-stream</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 200 text/event-stream</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: server notification or request</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /mcp response/notification</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: 202 Accepted</span></span></code></pre>
+<p>Session and recovery details:</p>
+<ul>
+<li>Server may return <code>MCP-Session-Id</code> during initialization.</li>
+<li>Client must include <code>MCP-Session-Id</code> on later HTTP requests when the server gave one.</li>
+<li>Client must include <code>MCP-Protocol-Version</code> on subsequent HTTP requests.</li>
+<li>SSE events may include IDs; client can use <code>Last-Event-ID</code> to resume after disconnection.</li>
+<li>Client can send HTTP DELETE with <code>MCP-Session-Id</code> to explicitly terminate a session if the server supports it.</li>
+</ul>
+<p>Security notes:</p>
+<ul>
+<li>Validate <code>Origin</code> on incoming HTTP connections to reduce DNS rebinding risk.</li>
+<li>Local HTTP MCP servers should bind to <code>127.0.0.1</code>, not <code>0.0.0.0</code>, unless they are intentionally exposed.</li>
+<li>Remote servers should implement authentication and authorization.</li>
+<li>For production, prefer OAuth 2.1-compatible flows and audience-bound tokens over static shared tokens.</li>
+</ul>
+<h3 id="httpsse-legacy-overview-and-flow"><a href="#httpsse-legacy-overview-and-flow">HTTP+SSE legacy overview and flow</a></h3>
+<p>HTTP+SSE was the older remote transport used by the 2024-11-05 protocol. It is deprecated for new work, but compatibility matters because existing servers and clients may still use it.</p>
+<p>High-level difference:</p>
+<ul>
+<li>Old HTTP+SSE: client first opens an SSE stream and receives an <code>endpoint</code> event; client sends JSON-RPC messages to the announced POST endpoint; server replies over the SSE stream.</li>
+<li>Streamable HTTP: client sends JSON-RPC messages to one MCP endpoint via POST; the server may respond with JSON or SSE; GET to the same endpoint is optional for server-to-client streaming.</li>
+</ul>
+<p>Legacy flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant S as Legacy HTTP+SSE Server</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: GET /sse</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: SSE endpoint event&#x3C;br/>data: /messages</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /messages initialize</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: SSE message InitializeResult</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /messages notifications/initialized</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /messages tools/list</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: SSE message tool definitions</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: POST /messages tools/call</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: SSE message tool result</span></span></code></pre>
+<p>Compatibility detection:</p>
+<ul>
+<li>A client can try POST initialize to the supplied server URL.</li>
+<li>If it fails with expected status codes such as 400, 404, or 405, the client can try GET and look for the old SSE <code>endpoint</code> event.</li>
+<li>New servers should prefer Streamable HTTP; old servers may host both old and new endpoints during migration.</li>
+</ul>
+<h3 id="websocket-and-custom-transports"><a href="#websocket-and-custom-transports">WebSocket and custom transports</a></h3>
+<p>The latest MCP specification is transport-agnostic beyond the two standard transports. Custom transports are allowed if they preserve JSON-RPC message format and MCP lifecycle. WebSocket is one common custom option because it gives a persistent bidirectional channel.</p>
+<p>Claude Code supports remote WebSocket configuration through JSON, for example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "events-server"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ws"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"wss://mcp.example.com/socket"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${EVENTS_TOKEN}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Generic custom WebSocket flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">sequenceDiagram</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant C as MCP Client</span></span>
+<span class="line"><span style="color:#E1E4E8">    participant S as WebSocket MCP Server</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: WebSocket connect wss://...</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: initialize JSON-RPC message</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: InitializeResult JSON-RPC message</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: notifications/initialized</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: tools/list</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: tool definitions</span></span>
+<span class="line"><span style="color:#E1E4E8">    S-->>C: server notification or pushed request</span></span>
+<span class="line"><span style="color:#E1E4E8">    C->>S: response or tool call</span></span></code></pre>
+<p>When to consider:</p>
+<ul>
+<li>Server needs continuous push events.</li>
+<li>Client explicitly supports the custom transport.</li>
+<li>You control both client and server or can document the connection contract clearly.</li>
+</ul>
+<p>When not to choose it:</p>
+<ul>
+<li>You want broad MCP client compatibility.</li>
+<li>You need standard OAuth setup through existing MCP client commands.</li>
+<li>Request/response HTTP is enough.</li>
+</ul>
+<h3 id="webmcp-is-not-an-mcp-transport"><a href="#webmcp-is-not-an-mcp-transport">WebMCP is not an MCP transport</a></h3>
+<p>WebMCP should not be grouped with stdio, Streamable HTTP, or WebSocket. WebMCP is a browser-side API proposal for exposing web page capabilities to browser-based agents. It is inspired by MCP, but it is not a direct JavaScript implementation of MCP and not a transport for MCP JSON-RPC messages.</p>
+<p>Practical mental model:</p>
+<ul>
+<li>MCP transport: how an MCP client talks to an MCP server.</li>
+<li>WebMCP: how a live web page declares frontend capabilities to a browser agent.</li>
+<li>Browser-operation MCPs such as Playwright MCP and Chrome DevTools MCP: MCP servers that let an agent inspect/control a browser during development.</li>
+</ul>
+<p>Security points for HTTP:</p>
+<ul>
+<li>Validate Origin headers to reduce DNS rebinding risk.</li>
+<li>Local HTTP servers should bind to localhost, not 0.0.0.0.</li>
+<li>Use authentication for remote or sensitive servers.</li>
+<li>Include MCP-Protocol-Version on subsequent HTTP requests after negotiation.</li>
+</ul>
+<h2 id="auth-specification"><a href="#auth-specification">Auth specification</a></h2>
+<p>MCP authorization is optional overall, but HTTP-based protected servers should follow the MCP authorization spec.</p>
+<p>Current direction:</p>
+<ul>
+<li>OAuth 2.1 based flow.</li>
+<li>MCP server acts as OAuth resource server.</li>
+<li>MCP client acts as OAuth client.</li>
+<li>Authorization server issues access tokens.</li>
+<li>Protected Resource Metadata (RFC 9728) is required for server authorization discovery.</li>
+<li>Authorization Server Metadata (RFC 8414) or OpenID Connect Discovery 1.0 is required on the auth server side.</li>
+<li>Resource Indicators (RFC 8707) bind tokens to the intended MCP server.</li>
+<li>PKCE is required for authorization code protection.</li>
+<li>Client ID Metadata Documents were added/recommended in 2025-11-25 for no-prior-relationship client registration.</li>
+<li>Dynamic Client Registration remains possible but is no longer the main recommended path in the latest spec.</li>
+</ul>
+<p>Rules to emphasize:</p>
+<ul>
+<li>Send bearer tokens in Authorization headers, not query strings.</li>
+<li>Include authorization on every HTTP request.</li>
+<li>Do not accept or forward tokens that were not issued for the MCP server.</li>
+<li>Token passthrough is forbidden.</li>
+<li>Treat scopes as least-privilege and support incremental/step-up authorization where possible.</li>
+</ul>
+<h2 id="history"><a href="#history">History</a></h2>
+<ul>
+<li>2024-11-25: Anthropic announced and open-sourced MCP, including the spec/SDKs, local MCP support in Claude Desktop, and a repository of prebuilt servers.</li>
+<li>Early examples included Google Drive, Slack, GitHub, Git, Postgres, and Puppeteer.</li>
+<li>Early adopters/participants named by Anthropic included Block, Apollo, Zed, Replit, Codeium, and Sourcegraph.</li>
+<li>The initial transport included HTTP+SSE.</li>
+<li>Later specs introduced Streamable HTTP, stronger auth, better security guidance, and richer capabilities.</li>
+<li>2025-11-25 latest spec changes include OIDC discovery support, Client ID Metadata Documents, incremental scope consent, icon metadata, URL elicitation, tool calling support in sampling, experimental tasks, SDK tiering, governance, and working/interest groups.</li>
+<li>The old third-party server list in <code>modelcontextprotocol/servers</code> has been retired in favor of the MCP Registry.</li>
+<li>The MCP Registry preview launched 2025-09-08; its v0.1 API entered a freeze on 2025-10-24 according to the registry repo.</li>
+</ul>
+<h2 id="main-use-cases"><a href="#main-use-cases">Main use cases</a></h2>
+<p>Engineering:</p>
+<ul>
+<li>Repo/issue/PR operations through GitHub MCP.</li>
+<li>Local file and Git context through Filesystem/Git reference servers.</li>
+<li>Browser/web fetch automation through Fetch/Puppeteer-like servers.</li>
+<li>Documentation lookup through docs MCPs such as OpenAI docs, Context7, or DeepWiki.</li>
+<li>Design-to-code workflows through Figma MCP.</li>
+<li>Observability triage through Sentry MCP.</li>
+</ul>
+<p>Enterprise knowledge:</p>
+<ul>
+<li>Search and fetch private docs from Google Drive, Notion, SharePoint, Slack, Gmail, etc.</li>
+<li>Bring database schemas, project artifacts, and customer-support context into agents.</li>
+<li>Use MCP as a controlled context layer rather than copying data manually into prompts.</li>
+</ul>
+<p>Business operations:</p>
+<ul>
+<li>Payments/billing operations via Stripe MCP.</li>
+<li>Calendar/email workflows via Google/Microsoft connectors.</li>
+<li>CRM/BI/internal tool workflows through company-owned MCP servers.</li>
+</ul>
+<p>Agent platform:</p>
+<ul>
+<li>Standardize how agents discover external tools.</li>
+<li>Enable cross-client reuse.</li>
+<li>Move from prompt-only automation to governed action execution.</li>
+</ul>
+<p>Frontend / browser agents:</p>
+<ul>
+<li>WebMCP is a Chrome proposal for exposing frontend capabilities to browser-based agents.</li>
+<li>WebMCP is not a replacement for MCP. Chrome positions MCP as the backend/service-layer integration and WebMCP as the frontend/live-tab integration.</li>
+<li>WebMCP is tab-bound and ephemeral, while MCP servers are persistent local or remote services.</li>
+<li>Browser automation MCPs such as Playwright MCP and Chrome DevTools MCP bridge the gap today: they let agents inspect DOM, click, navigate, collect screenshots, inspect network/console logs, and generate tests.</li>
+<li>Chrome DevTools MCP also exposes WebMCP-related tools in its tool catalog, making it relevant for debugging pages that adopt WebMCP.</li>
+</ul>
+<h2 id="well-known-mcp-servers--surfaces"><a href="#well-known-mcp-servers--surfaces">Well-known MCP servers / surfaces</a></h2>
+<p>Official or high-signal examples:</p>
+<ul>
+<li>GitHub MCP Server: official GitHub server for repositories, issues, PRs, search, security alerts, Copilot-related tools.</li>
+<li>Stripe MCP: public preview remote MCP server for Stripe API operations and Stripe knowledge search.</li>
+<li>OpenAI connectors / remote MCP: Responses API supports <code>type: "mcp"</code> for remote servers and built-in connectors.</li>
+<li>MCP reference servers: Everything, Fetch, Filesystem, Git, Memory, Sequential Thinking, Time.</li>
+<li>MCP Registry: emerging “app store”-like server discovery/publishing infrastructure.</li>
+</ul>
+<p>OpenAI connector examples:</p>
+<ul>
+<li>Dropbox</li>
+<li>Gmail</li>
+<li>Google Calendar</li>
+<li>Google Drive</li>
+<li>Microsoft Teams</li>
+<li>Outlook Calendar</li>
+<li>Outlook Email</li>
+<li>SharePoint</li>
+</ul>
+<p>Developer-useful MCPs in this Codex environment:</p>
+<ul>
+<li>GitHub: repos, issues, PRs, CI/PR workflows.</li>
+<li>Figma: design context, screenshots, design-to-code and deck/diagram workflows.</li>
+<li>Google Drive/Docs/Sheets/Slides: private docs and collaborative artifacts.</li>
+<li>Slack: message/thread/channel context and drafting.</li>
+<li>Notion: knowledge base, specs, docs, task/project context.</li>
+<li>Sentry: issue/error context.</li>
+<li>Firecrawl: web search/scraping/crawling.</li>
+<li>Context7: current library/framework docs.</li>
+<li>OpenAI Developer Docs: current official OpenAI API/Codex docs.</li>
+<li>1Password: environment/secrets workflows.</li>
+<li>Node REPL: runtime-backed JS execution.</li>
+<li>AWS knowledge / AWS plugins: cloud/agent infrastructure guidance.</li>
+</ul>
+<p>Developer-useful MCPs from GitHub/community signals:</p>
+<p>Star counts below were fetched from GitHub API on 2026-06-07. They should be treated as popularity signals, not quality guarantees.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>MCP / repo</th><th align="right">Stars</th><th>Practical development value</th></tr></thead><tbody><tr><td><code>mendableai/firecrawl</code></td><td align="right">129,668</td><td>Web search/scrape/crawl for research and docs ingestion. This is the product repo, not only the MCP server repo.</td></tr><tr><td><code>modelcontextprotocol/servers</code></td><td align="right">86,854</td><td>Reference filesystem, git, memory, fetch, time, and protocol example servers.</td></tr><tr><td><code>upstash/context7</code></td><td align="right">56,903</td><td>Current library/framework docs for coding agents.</td></tr><tr><td><code>ChromeDevTools/chrome-devtools-mcp</code></td><td align="right">43,029</td><td>Browser debugging, performance trace, network/console inspection, screenshots, Lighthouse, WebMCP tools.</td></tr><tr><td><code>microsoft/playwright-mcp</code></td><td align="right">33,574</td><td>Browser operation and E2E test generation from live DOM/app state.</td></tr><tr><td><code>github/github-mcp-server</code></td><td align="right">30,495</td><td>Repository, issue, PR, code search, and workflow operations.</td></tr><tr><td><code>oraios/serena</code></td><td align="right">25,034</td><td>Semantic code retrieval and editing for large codebases.</td></tr><tr><td><code>awslabs/mcp</code></td><td align="right">9,224</td><td>AWS service-specific open-source MCP servers; Agent Toolkit for AWS is now the recommended managed path.</td></tr><tr><td><code>mendableai/firecrawl-mcp-server</code></td><td align="right">6,509</td><td>Official Firecrawl MCP server package.</td></tr><tr><td><code>modelcontextprotocol/registry</code></td><td align="right">6,896</td><td>MCP server discovery and publishing infrastructure.</td></tr><tr><td><code>browserbase/mcp-server-browserbase</code></td><td align="right">3,365</td><td>Managed browser automation with Browserbase/Stagehand.</td></tr><tr><td><code>supabase-community/supabase-mcp</code></td><td align="right">2,723</td><td>Supabase database/project access for AI assistants.</td></tr><tr><td><code>figma/mcp-server-guide</code></td><td align="right">1,554</td><td>Official Figma MCP usage guide; Figma also provides hosted/desktop MCP options.</td></tr><tr><td><code>getsentry/sentry-mcp</code></td><td align="right">720</td><td>Sentry issue/error context for coding assistants.</td></tr></tbody></table>
+<p>Recommended adoption order for development teams:</p>
+<ol>
+<li>GitHub MCP for repository operations.</li>
+<li>Context7 for current docs.</li>
+<li>Playwright MCP for UI operation and E2E test generation.</li>
+<li>Chrome DevTools MCP for frontend debugging, network, console, performance, screenshots, and WebMCP inspection.</li>
+<li>Serena for semantic code understanding/editing.</li>
+<li>Firecrawl MCP for web research and documentation ingestion.</li>
+<li>AWS MCP / Agent Toolkit for AWS for cloud documentation, API calls, metrics, and audit-friendly operations.</li>
+<li>Figma and Sentry MCPs when design-to-code or runtime triage are central to the workflow.</li>
+</ol>
+<h2 id="frontend-webmcp-and-browser-operation-mcps"><a href="#frontend-webmcp-and-browser-operation-mcps">Frontend: WebMCP and browser-operation MCPs</a></h2>
+<p>Chrome’s WebMCP documentation frames WebMCP and MCP as complementary:</p>
+<ul>
+<li>MCP is for backend/service logic: agents can use data/actions from anywhere.</li>
+<li>WebMCP is for frontend/live web UI: browser agents understand capabilities in the user’s current tab.</li>
+<li>MCP has persistent local/remote server lifecycle; WebMCP is ephemeral and tied to page visits.</li>
+<li>MCP discovery is through agent/client configuration; WebMCP discovery occurs when the user visits a page that declares tools.</li>
+</ul>
+<p>Design implication:</p>
+<ul>
+<li>Use MCP for core API actions and data retrieval.</li>
+<li>Use WebMCP to declare frontend actions and page-specific affordances.</li>
+<li>Use Playwright MCP and Chrome DevTools MCP during development to inspect, test, and debug the actual UI.</li>
+</ul>
+<p>Playwright MCP:</p>
+<ul>
+<li>Official Microsoft server at <code>microsoft/playwright-mcp</code>.</li>
+<li>Gives AI coding assistants direct access to a live browser session.</li>
+<li>Useful for DOM inspection, clicking, navigation, test generation, and reproducing user flows.</li>
+<li>Typical configuration:</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "playwright"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"@playwright/mcp@latest"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Chrome DevTools MCP:</p>
+<ul>
+<li>Official Chrome DevTools server at <code>ChromeDevTools/chrome-devtools-mcp</code>.</li>
+<li>Tool categories include input automation, navigation, emulation, performance, network, debugging, memory, extensions, third-party developer tools, and WebMCP tools.</li>
+<li>Useful for console/network inspection, Lighthouse, performance traces, screenshots, heap snapshots, and connecting to running Chrome.</li>
+<li>Typical configuration:</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "chrome-devtools"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">        "chrome-devtools-mcp@latest"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "--headless=true"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "--isolated=true"</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Important Chrome DevTools MCP options:</p>
+<ul>
+<li><code>--autoConnect</code>: connect to a local Chrome instance with remote debugging enabled.</li>
+<li><code>--browserUrl=http://127.0.0.1:9222</code>: connect to a running debuggable Chrome instance.</li>
+<li><code>--isolated=true</code>: use a temporary Chrome profile per session.</li>
+<li><code>--slim</code>: expose only a small navigation/script/screenshot tool set.</li>
+<li><code>--category-experimental-webmcp</code>: enable WebMCP debugging tools; Chrome flags are required.</li>
+</ul>
+<h2 id="aws-mcp-and-agent-toolkit-for-aws"><a href="#aws-mcp-and-agent-toolkit-for-aws">AWS MCP and Agent Toolkit for AWS</a></h2>
+<p>AWS announced the AWS MCP Server general availability on 2026-05-06. It is now part of Agent Toolkit for AWS.</p>
+<p>Key points:</p>
+<ul>
+<li>Managed remote MCP server.</li>
+<li>Supports secure authenticated access to AWS services through a small fixed tool set.</li>
+<li><code>call_aws</code> can execute AWS API operations using IAM credentials.</li>
+<li><code>search_documentation</code> and <code>read_documentation</code> retrieve current AWS documentation.</li>
+<li><code>run_script</code> executes Python server-side in a sandboxed environment.</li>
+<li>CloudWatch metrics are published under the <code>AWS-MCP</code> namespace.</li>
+<li>CloudTrail captures API calls for audit.</li>
+<li>IAM context keys can distinguish agent-initiated actions and support read-only or blocked action policies.</li>
+<li>Agent Toolkit for AWS is the recommended successor to AWS Labs MCP servers, plugins, and skills, while AWS Labs continues to work and accept contributions.</li>
+</ul>
+<p>Claude Code setup example from AWS:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add-json</span><span style="color:#9ECBFF"> aws-mcp</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> user</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  '{"command":"uvx","args":["mcp-proxy-for-aws@latest","https://aws-mcp.us-east-1.api.aws/mcp","--metadata","AWS_REGION=us-west-2"]}'</span></span></code></pre>
+<p>Generic MCP configuration:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "aws-mcp"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"uvx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "timeout"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">100000</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "transport"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"stdio"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">        "mcp-proxy-for-aws@latest"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "https://aws-mcp.us-east-1.api.aws/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "--metadata"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"AWS_REGION=us-west-2"</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Management recommendations:</p>
+<ul>
+<li>Start read-only.</li>
+<li>Separate human permissions from agent permissions.</li>
+<li>Use IAM/SCP controls and AWS MCP context keys where available.</li>
+<li>Monitor <code>AWS-MCP</code> CloudWatch metrics.</li>
+<li>Review CloudTrail for agent-initiated changes.</li>
+<li>Prefer Agent Toolkit for AWS for managed enterprise rollout; keep AWS Labs MCPs for service-specific local workflows and experimentation.</li>
+</ul>
+<h2 id="building-remote-mcp-on-aws-with-agentcore-gateway-and-identity"><a href="#building-remote-mcp-on-aws-with-agentcore-gateway-and-identity">Building Remote MCP on AWS with AgentCore Gateway and Identity</a></h2>
+<p>This section is about building a Remote MCP surface on AWS for internal or product APIs. It is different from using the AWS MCP Server. The AWS MCP Server gives agents access to AWS APIs and AWS documentation. AgentCore Gateway lets a team expose its own tools and APIs through a managed MCP-compatible gateway.</p>
+<h3 id="mental-model"><a href="#mental-model">Mental model</a></h3>
+<p>AgentCore Gateway is an agent-to-tool connectivity layer:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Claude / Codex / app agent</span></span>
+<span class="line"><span>  -> AgentCore Gateway MCP endpoint</span></span>
+<span class="line"><span>  -> Gateway targets</span></span>
+<span class="line"><span>  -> existing APIs, Lambda functions, external MCP servers, AWS services, SaaS</span></span></code></pre>
+<p>The direction matters:</p>
+<ul>
+<li>If “my agent needs to call my API”, use AgentCore Gateway as a tool gateway.</li>
+<li>If “my app needs to invoke my agent”, invoke AgentCore Runtime directly, not Gateway.</li>
+<li>If “my agent needs to call an existing MCP server”, add that MCP server as a Gateway target.</li>
+</ul>
+<p>AWS documentation describes Gateway as a single access point where agents discover and interact with tools and services. In aggregation mode, Gateway acts as a virtual MCP server and combines capabilities from multiple MCP targets into one consolidated catalog.</p>
+<h3 id="what-gateway-can-expose-as-mcp-tools"><a href="#what-gateway-can-expose-as-mcp-tools">What Gateway can expose as MCP tools</a></h3>
+<p>Target options:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Target type</th><th>When to use</th><th>Notes</th></tr></thead><tbody><tr><td>OpenAPI specification</td><td>Existing REST/FastAPI service</td><td>Gateway translates MCP calls to REST calls. Good for existing API servers.</td></tr><tr><td>Lambda function</td><td>Custom tool logic</td><td>Good when the tool is small or when you want IAM execution role control.</td></tr><tr><td>MCP server</td><td>Third-party or internal Remote MCP server</td><td>Gateway discovers tools/prompts/resources and exposes them through the unified catalog.</td></tr><tr><td>API Gateway REST API</td><td>Existing API Gateway-backed service</td><td>Useful when the API is already fronted by AWS API Gateway.</td></tr><tr><td>Smithy model</td><td>AWS/custom service model</td><td>Useful for strongly described service interfaces.</td></tr><tr><td>Built-in integration provider templates</td><td>Standard SaaS/tool integrations</td><td>Use where AWS provides a managed template.</td></tr></tbody></table>
+<p>For existing FastAPI/OpenAPI APIs, this gives a managed alternative to writing and operating a custom FastMCP adapter. The trade-off is that Gateway becomes the central policy/auth/catalog layer, while the existing API remains the business-logic source of truth.</p>
+<h3 id="gateway-and-mcp-protocol-behavior"><a href="#gateway-and-mcp-protocol-behavior">Gateway and MCP protocol behavior</a></h3>
+<p>Gateway has two broad target categories:</p>
+<ul>
+<li>MCP targets:
+<ul>
+<li>Operate in aggregation mode.</li>
+<li>Gateway combines capabilities into a single virtual MCP server.</li>
+<li>Clients see one <code>tools/list</code> response.</li>
+<li>Supports capability synchronization, semantic tool search, and target-level 3-legged OAuth.</li>
+</ul>
+</li>
+<li>HTTP targets:
+<ul>
+<li>Gateway proxies requests directly.</li>
+<li>No MCP aggregation/protocol translation.</li>
+<li>Used for HTTP services such as AgentCore Runtime agents.</li>
+</ul>
+</li>
+</ul>
+<p>For MCP server targets, AWS docs call out:</p>
+<ul>
+<li>Tools are required; prompts and resources are optional.</li>
+<li>Supported MCP protocol versions include <code>2025-06-18</code>, <code>2025-03-26</code>, and <code>2025-11-25</code>.</li>
+<li>DEFAULT listing mode discovers capabilities through <code>SynchronizeGatewayTargets</code> and caches/indexes the catalog.</li>
+<li>DYNAMIC listing mode discovers capabilities at invocation time, but is not currently interoperable with semantic search or outbound 3-legged OAuth.</li>
+<li>When tools, prompts, or resources change for DEFAULT targets, call <code>SynchronizeGatewayTargets</code>.</li>
+<li>If the target MCP server is hosted on AgentCore Runtime, enabling MCP sessions or allowing <code>Mcp-Session-Id</code> request/response headers avoids repeated initialization and can reduce latency.</li>
+</ul>
+<h3 id="agentcore-identitys-role"><a href="#agentcore-identitys-role">AgentCore Identity’s role</a></h3>
+<p>AgentCore Identity complements Gateway by handling identity and credential management for agents and tool access:</p>
+<ul>
+<li>Workload identity:
+<ul>
+<li>Gives each agent/workload a distinct identity.</li>
+<li>Lets Gateway and tools reason about “which agent is acting”.</li>
+</ul>
+</li>
+<li>Token vault:
+<ul>
+<li>Stores OAuth access/refresh tokens, API keys, and OAuth client secrets.</li>
+<li>Uses AWS KMS encryption and access controls.</li>
+</ul>
+</li>
+<li>OAuth flow orchestration:
+<ul>
+<li>Supports OAuth 2.0 Client Credentials (2LO) and Authorization Code (3LO).</li>
+<li>Integrates with existing identity providers rather than forcing user migration.</li>
+</ul>
+</li>
+<li>OIDC/user context:
+<ul>
+<li>Can validate inbound user tokens and pass user context to the agent/workload.</li>
+<li>If the access token lacks full user context, the agent can call the OIDC userinfo endpoint.</li>
+</ul>
+</li>
+<li>On-Behalf-Of token exchange:
+<ul>
+<li>Exchanges an inbound user access token for a new downstream-scoped token.</li>
+<li>Preserves both agent identity and original user identity so downstream systems can enforce fine-grained authorization.</li>
+</ul>
+</li>
+</ul>
+<h3 id="inbound-and-outbound-authorization"><a href="#inbound-and-outbound-authorization">Inbound and outbound authorization</a></h3>
+<p>A useful way to explain AgentCore Gateway is “two auth boundaries”:</p>
+<ol>
+<li>Inbound authorization: who can call the Gateway MCP endpoint?</li>
+<li>Outbound authorization: how does Gateway call the target service?</li>
+</ol>
+<p>Inbound options described by AWS include:</p>
+<ul>
+<li>OAuth JWT: validates tokens from Cognito, Auth0, or other OIDC-compatible providers.</li>
+<li>IAM SigV4: AWS identity-based access.</li>
+<li>Authenticate-only: validate token but delegate authorization to the downstream target.</li>
+<li>No authorization: development/testing only.</li>
+</ul>
+<p>Outbound options vary by target type, but include:</p>
+<ul>
+<li>IAM-based outbound authorization with Gateway service role.</li>
+<li>Caller IAM credentials for use cases where the downstream target authorizes based on the original caller.</li>
+<li>OAuth client credentials grant (2LO).</li>
+<li>OAuth authorization code grant (3LO).</li>
+<li>OAuth token exchange / On-Behalf-Of (OBO).</li>
+<li>Token passthrough, only when inbound authorization is authenticate-only.</li>
+<li>API key.</li>
+<li>No authorization, not recommended.</li>
+</ul>
+<h3 id="oauthoidc-patterns-to-explain-in-the-slide-deck"><a href="#oauthoidc-patterns-to-explain-in-the-slide-deck">OAuth/OIDC patterns to explain in the slide deck</a></h3>
+<p>Pattern 1: Machine-to-machine API</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Agent -> Gateway -> target API</span></span>
+<span class="line"><span>Gateway outbound auth: OAuth client credentials or IAM service role</span></span>
+<span class="line"><span>Identity stores client secret / manages provider</span></span></code></pre>
+<p>Use when the agent acts as the application rather than a specific human user.</p>
+<p>Pattern 2: User-delegated SaaS or MCP server</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Agent user -> Gateway</span></span>
+<span class="line"><span>Gateway target -> OAuth authorization code flow</span></span>
+<span class="line"><span>Identity token vault stores user-scoped access/refresh token</span></span>
+<span class="line"><span>Gateway calls target on behalf of that user</span></span></code></pre>
+<p>Use when the tool must access GitHub, Slack, Google, or another user-scoped service.</p>
+<p>Pattern 3: On-Behalf-Of / zero-trust downstream</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Inbound OIDC user token</span></span>
+<span class="line"><span>  -> AgentCore Identity OBO token exchange</span></span>
+<span class="line"><span>  -> downstream-scoped access token</span></span>
+<span class="line"><span>  -> target API validates user + agent context</span></span></code></pre>
+<p>Use when the downstream service needs a token whose audience is that service, not the Gateway, while preserving the original user identity.</p>
+<p>Pattern 4: Token passthrough</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Inbound token validated by Gateway authenticate-only</span></span>
+<span class="line"><span>  -> same token forwarded to target</span></span>
+<span class="line"><span>  -> target validates and authorizes</span></span></code></pre>
+<p>Use carefully. It is simple, but shifts authorization responsibility to the target and is not the same as OBO token exchange.</p>
+<h3 id="oauth-protected-mcp-server-targets"><a href="#oauth-protected-mcp-server-targets">OAuth-protected MCP server targets</a></h3>
+<p>When Gateway connects to an OAuth-protected MCP server target, AWS documents two target creation approaches for Authorization Code flow:</p>
+<ol>
+<li>Implicit sync during target creation/update/synchronization:
+<ul>
+<li>Admin completes Authorization Code flow.</li>
+<li>Gateway uses the resulting access token to list tools from the MCP server.</li>
+<li>Returned tool definitions are cached and indexed.</li>
+</ul>
+</li>
+<li>Provide schema upfront during target creation/update:
+<ul>
+<li>Admin provides tool schema directly.</li>
+<li>Gateway does not need to fetch tools dynamically at creation time.</li>
+<li>This avoids human intervention during create/update and lets teams expose a curated subset of tools.</li>
+<li>Static schema targets cannot be synchronized until the static schema is removed.</li>
+</ul>
+</li>
+</ol>
+<p>At invocation time, a Gateway user invoking a protected tool may trigger Authorization Code flow for that specific MCP server. AgentCore Identity uses URL session binding to verify that the user who started the auth flow is the same user who completed consent. The session URI and authorization URL have a short validity window.</p>
+<h3 id="recommended-aws-build-patterns"><a href="#recommended-aws-build-patterns">Recommended AWS build patterns</a></h3>
+<p>Pattern A: Existing FastAPI/OpenAPI service</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>FastAPI /openapi.json</span></span>
+<span class="line"><span>  -> AgentCore Gateway OpenAPI target</span></span>
+<span class="line"><span>  -> inbound OAuth JWT or IAM</span></span>
+<span class="line"><span>  -> outbound OAuth/API key/IAM depending on API auth</span></span>
+<span class="line"><span>  -> Claude/Codex registers Gateway MCP endpoint</span></span></code></pre>
+<p>Design guidance:</p>
+<ul>
+<li>Keep OpenAPI operation IDs stable and agent-readable.</li>
+<li>Use response schemas and pagination.</li>
+<li>Exclude admin/debug/internal endpoints before publishing the target.</li>
+<li>Prefer OAuth/OIDC for user-scoped operations.</li>
+</ul>
+<p>Pattern B: Custom internal tool with Lambda</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Lambda function</span></span>
+<span class="line"><span>  -> AgentCore Gateway Lambda target</span></span>
+<span class="line"><span>  -> IAM service role outbound auth</span></span>
+<span class="line"><span>  -> Gateway exposes Lambda as MCP-compatible tool</span></span></code></pre>
+<p>Design guidance:</p>
+<ul>
+<li>Good for small, strongly scoped tools.</li>
+<li>Use IAM execution role and CloudWatch/CloudTrail for operations.</li>
+<li>Return compact structured results.</li>
+</ul>
+<p>Pattern C: Existing MCP server</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Remote MCP server</span></span>
+<span class="line"><span>  -> AgentCore Gateway MCP server target</span></span>
+<span class="line"><span>  -> capability sync / semantic search</span></span>
+<span class="line"><span>  -> Gateway virtual MCP server</span></span></code></pre>
+<p>Design guidance:</p>
+<ul>
+<li>Use DEFAULT listing mode plus <code>SynchronizeGatewayTargets</code> for stable catalogs.</li>
+<li>Use DYNAMIC mode only when live discovery is worth losing semantic search/3LO compatibility.</li>
+<li>For MCP server targets, prefer OAuth or IAM where supported; avoid no-auth for production.</li>
+<li>If a third-party MCP server only supports API-key style auth, confirm current Gateway support before choosing this path; otherwise wrap the call in OpenAPI/Lambda or handle it outside Gateway.</li>
+</ul>
+<p>Pattern D: Enterprise OIDC/OAuth delegation</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Enterprise IdP / OIDC user token</span></span>
+<span class="line"><span>  -> Gateway inbound OAuth JWT</span></span>
+<span class="line"><span>  -> AgentCore Identity workload token</span></span>
+<span class="line"><span>  -> OBO or 3LO downstream token</span></span>
+<span class="line"><span>  -> target API / SaaS / MCP server</span></span></code></pre>
+<p>Design guidance:</p>
+<ul>
+<li>Use OBO when downstream service requires its own audience-specific token.</li>
+<li>Use Authorization Code when explicit user consent is required.</li>
+<li>Keep scope sets narrow and auditable.</li>
+</ul>
+<h3 id="operational-controls"><a href="#operational-controls">Operational controls</a></h3>
+<p>For production Remote MCP on AWS:</p>
+<ul>
+<li>Require inbound auth on the Gateway endpoint.</li>
+<li>Treat Gateway target definitions as production integration contracts.</li>
+<li>Keep Gateway execution roles least-privileged.</li>
+<li>Store API keys/OAuth credentials in AgentCore Identity/Secrets Manager, not code.</li>
+<li>Use CloudTrail for API-level audit and CloudWatch for operational metrics.</li>
+<li>Enable semantic tool search when Gateway has a large catalog.</li>
+<li>Keep tool outputs bounded and paginated.</li>
+<li>Re-synchronize Gateway targets when MCP server tools/prompts/resources change.</li>
+<li>For write tools, combine user approval in the AI client with IAM/OAuth scope enforcement at Gateway/target.</li>
+<li>Explicitly document who owns each auth boundary: client -> Gateway, Gateway -> target, target -> backend.</li>
+</ul>
+<h2 id="important-mcp-rules"><a href="#important-mcp-rules">Important MCP rules</a></h2>
+<h2 id="cli--mcp--browser-operation-comparison"><a href="#cli--mcp--browser-operation-comparison">CLI / MCP / browser operation comparison</a></h2>
+<p>This section explains why an engineering team should prefer MCP when a suitable MCP server exists, while still keeping CLI and browser automation in the toolbox.</p>
+<h3 id="what-is-being-compared"><a href="#what-is-being-compared">What is being compared</a></h3>
+<p>The comparison is not “which interface is always best”. It is “which interface gives an AI coding agent the most reliable, least wasteful path to an external system”.</p>
+<ul>
+<li>CLI:
+<ul>
+<li>The agent writes shell commands and reads stdout/stderr.</li>
+<li>Examples: <code>gh pr view</code>, <code>aws logs filter-log-events</code>, <code>curl</code>, <code>jq</code>, <code>grep</code>, <code>npm test</code>.</li>
+<li>Strength: deterministic local execution, scriptability, mature ecosystem.</li>
+<li>Weakness: flags and output formats are human/terminal-oriented; output can be very large; auth and environment vary by machine.</li>
+</ul>
+</li>
+<li>Browser operation:
+<ul>
+<li>The agent navigates a UI using screenshots, accessibility trees, DOM snapshots, selectors, DevTools, or Playwright-style control.</li>
+<li>Examples: opening GitHub checks page, clicking a SaaS admin screen, inspecting console/network in a live app.</li>
+<li>Strength: best when the UI itself is the product or when the only available interface is a web UI.</li>
+<li>Weakness: layout, selectors, viewport, loading state, auth state, modals, and animations make the flow brittle and token-heavy.</li>
+</ul>
+</li>
+<li>MCP:
+<ul>
+<li>The agent calls typed tools/resources/prompts exposed by a server through JSON-RPC and a supported transport.</li>
+<li>Examples: GitHub issue/PR tools, Sentry error tools, Context7 docs lookup, Playwright MCP, AWS MCP, internal API MCP.</li>
+<li>Strength: schema-based discovery, bounded inputs/outputs, service-side validation, auth boundary, and explicit capability metadata.</li>
+<li>Weakness: requires a server to exist and be operated correctly; poorly designed tools can still leak data or return oversized results.</li>
+</ul>
+</li>
+</ul>
+<h3 id="token-count-model"><a href="#token-count-model">Token-count model</a></h3>
+<p>Exact token counts depend on the model, client, tool result, and prompt history. The numbers below should be presented as engineering estimates, not benchmark results. A useful mental model is: every command, page snapshot, tool schema, raw log, JSON response, retry, and explanatory message consumes context.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Task</th><th align="right">CLI typical context cost</th><th align="right">Browser typical context cost</th><th align="right">MCP typical context cost</th></tr></thead><tbody><tr><td>Check PR status and inspect failing CI</td><td align="right">3k-20k tokens</td><td align="right">5k-30k tokens</td><td align="right">800-4k tokens</td></tr><tr><td>Search current library/API docs</td><td align="right">2k-15k tokens</td><td align="right">5k-25k tokens</td><td align="right">500-3k tokens</td></tr><tr><td>Create or update an issue/PR</td><td align="right">1k-8k tokens</td><td align="right">5k-20k tokens</td><td align="right">500-2k tokens</td></tr><tr><td>Inspect UI console/network/performance</td><td align="right">3k-20k tokens</td><td align="right">4k-25k tokens</td><td align="right">1k-8k tokens with Chrome DevTools MCP</td></tr><tr><td>Query operational data with filters</td><td align="right">2k-30k tokens</td><td align="right">5k-30k tokens</td><td align="right">800-5k tokens</td></tr></tbody></table>
+<p>Why CLI can be expensive:</p>
+<ul>
+<li>Raw stdout/stderr is usually optimized for humans, not agents.</li>
+<li>Logs and test output often include repeated context, stack traces, progress bars, and unrelated lines.</li>
+<li>The agent spends tokens deciding and correcting flags, parsing text, and issuing follow-up grep/jq commands.</li>
+<li>A command failure often requires another command to inspect auth, config, region, profile, or path state.</li>
+</ul>
+<p>Why browser operation can be expensive:</p>
+<ul>
+<li>Browser agents need page state: accessibility tree, DOM structure, screenshot context, network logs, console logs, or all of them.</li>
+<li>UI actions are sequential and stateful: navigate, wait, inspect, click, wait, inspect again.</li>
+<li>The same semantic action may require many low-level operations because the UI is not a stable machine contract.</li>
+<li>Screenshots are useful for visual verification, but they do not replace structured data when the task is data/action-oriented.</li>
+</ul>
+<p>Why MCP can be cheaper:</p>
+<ul>
+<li>Tool search can defer full tool definitions until needed. Claude Code’s current docs state that only tool names and server instructions load at session start when tool search is enabled; tools are discovered on demand.</li>
+<li>Tool descriptions and input schemas make the correct call easier to select.</li>
+<li>Results can be structured, summarized, paginated, and capped by the server.</li>
+<li>The server can expose task-level operations, such as <code>get_failing_check_log(pr_number)</code>, instead of forcing the agent to navigate or parse raw logs.</li>
+</ul>
+<h3 id="flow-stability-comparison"><a href="#flow-stability-comparison">Flow stability comparison</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Dimension</th><th>CLI</th><th>Browser operation</th><th>MCP</th></tr></thead><tbody><tr><td>Interface contract</td><td>Command syntax and text output</td><td>UI layout, DOM, visual state</td><td>Tool/resource schema</td></tr><tr><td>Auth boundary</td><td>Local env, credential files, CLI login</td><td>Browser session/cookies</td><td>Server auth/OAuth/scopes</td></tr><tr><td>Failure mode</td><td>Wrong flags, env drift, huge output</td><td>Selector drift, modal/loading/viewport issues</td><td>Schema error, permission error, server error</td></tr><tr><td>Human approval</td><td>External to protocol unless client wraps it</td><td>Usually manual or client-specific</td><td>Expected in host UX for tool calls</td></tr><tr><td>Output control</td><td>Caller must pipe/filter</td><td>Snapshot size varies</td><td>Server can paginate/summarize/cap</td></tr><tr><td>Best use</td><td>Local build/test/devops commands</td><td>UI and visual validation</td><td>Repeatable data/action workflows</td></tr></tbody></table>
+<p>The practical distinction is that MCP moves intent from “infer the right low-level action” to “call a declared capability”. This reduces two common failure classes:</p>
+<ol>
+<li>The agent invents or misremembers a CLI flag, selector, URL path, or page flow.</li>
+<li>The agent receives too much undifferentiated output and spends additional turns summarizing or filtering it.</li>
+</ol>
+<h3 id="same-task-example-failing-ci-investigation"><a href="#same-task-example-failing-ci-investigation">Same task example: failing CI investigation</a></h3>
+<p>CLI flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>gh pr view --json statusCheckRollup</span></span>
+<span class="line"><span>gh run list --branch &#x3C;branch></span></span>
+<span class="line"><span>gh run view &#x3C;run-id> --log-failed</span></span>
+<span class="line"><span>grep/sed/awk/jq to narrow logs</span></span>
+<span class="line"><span>possibly rerun with different flags</span></span></code></pre>
+<p>This is powerful and often the right local choice, but raw failed logs can dominate the context window.</p>
+<p>Browser flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Open PR page</span></span>
+<span class="line"><span>Inspect checks area</span></span>
+<span class="line"><span>Click failing check</span></span>
+<span class="line"><span>Wait for log page</span></span>
+<span class="line"><span>Search within UI</span></span>
+<span class="line"><span>Possibly switch tabs/views</span></span></code></pre>
+<p>This is useful when the UI state matters, but it is usually the least stable path for pure data extraction.</p>
+<p>MCP flow:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>github.get_pull_request(owner, repo, number)</span></span>
+<span class="line"><span>github.list_check_runs(ref)</span></span>
+<span class="line"><span>github.get_failed_check_log(run_id, max_lines=200)</span></span></code></pre>
+<p>If the MCP server provides focused tools, the agent receives the data shape it needs with less navigation and less raw output.</p>
+<h3 id="why-prefer-mcp-when-available"><a href="#why-prefer-mcp-when-available">Why prefer MCP when available</a></h3>
+<p>Use MCP first when the task is a repeatable interaction with a service, API, repository, database, or operational system.</p>
+<ul>
+<li>The model sees a typed capability instead of guessing a command or UI path.</li>
+<li>The host can show users what tool is being invoked and ask for approval on sensitive operations.</li>
+<li>The server can enforce least privilege, rate limits, tenant boundaries, and audit logging.</li>
+<li>The service provider can update implementation details without requiring agents to relearn CLI flags or UI flows.</li>
+<li>The response can be bounded and structured, which reduces token waste and makes follow-up automation safer.</li>
+</ul>
+<h3 id="when-cli-is-still-better"><a href="#when-cli-is-still-better">When CLI is still better</a></h3>
+<ul>
+<li>Local filesystem work, package scripts, compilation, tests, one-off shell inspection, and low-level debugging.</li>
+<li>Operations where the CLI is already the canonical interface and output can be constrained with flags.</li>
+<li>Tasks that need arbitrary shell composition or direct access to local process state.</li>
+<li>Cases where no trustworthy MCP server exists.</li>
+</ul>
+<h3 id="when-browser-operation-is-still-better"><a href="#when-browser-operation-is-still-better">When browser operation is still better</a></h3>
+<ul>
+<li>Visual QA, layout inspection, screenshot verification, accessibility checks, performance tracing, and live UI debugging.</li>
+<li>Workflows where no API or MCP surface exists.</li>
+<li>Tasks that depend on a user’s active browser session, cookies, or tab-specific state.</li>
+<li>Frontend agent experiences where WebMCP can declare page-level capabilities tied to the live site.</li>
+</ul>
+<h3 id="service-provider-perspective"><a href="#service-provider-perspective">Service provider perspective</a></h3>
+<p>For service providers, the question is not “should we publish a CLI, API, browser UI, or MCP?” Mature products often need all of them. The question is which interface should be agent-native.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Provider surface</th><th>Primary audience</th><th>Agent effectiveness</th><th>Provider control</th></tr></thead><tbody><tr><td>Browser UI</td><td>Humans</td><td>Low to medium; high friction for agents</td><td>High visual control, low machine predictability</td></tr><tr><td>CLI</td><td>Developers/operators</td><td>Medium; strong for local automation</td><td>Medium; hard to constrain arbitrary output/use</td></tr><tr><td>REST/OpenAPI</td><td>Applications</td><td>High for software, medium for agents</td><td>High, but agents need descriptions and workflows</td></tr><tr><td>MCP</td><td>AI clients/agents</td><td>High when tools are curated</td><td>High: scopes, audit, consent, output caps, task-level tools</td></tr></tbody></table>
+<p>MCP is especially effective for a provider when:</p>
+<ul>
+<li>The product has many workflows that agents can perform on behalf of users.</li>
+<li>The public API is broad, but the agent-safe surface should be narrower.</li>
+<li>The provider wants to preserve auth, policy, and audit boundaries.</li>
+<li>The provider wants to reduce agent-driven screen scraping or brittle browser automation.</li>
+<li>The provider can expose higher-level tools such as <code>summarize_incident</code>, <code>create_release_note</code>, or <code>get_customer_health_snapshot</code>, not just raw CRUD.</li>
+</ul>
+<h3 id="token-aware-mcp-server-design"><a href="#token-aware-mcp-server-design">Token-aware MCP server design</a></h3>
+<p>The best MCP server is not the one with the most tools. It is the one that lets the agent find the right tool and receive the smallest sufficient result.</p>
+<ul>
+<li>Provide a search/list tool first, then a detail/read tool second.</li>
+<li>Return summaries plus stable IDs, not entire logs or documents by default.</li>
+<li>Use pagination, cursors, <code>limit</code>, <code>since</code>, <code>severity</code>, <code>status</code>, and <code>fields</code> parameters.</li>
+<li>Include <code>structuredContent</code> or schema-shaped JSON for data the agent must reason over.</li>
+<li>Use resources for large read-only context and tools for actions.</li>
+<li>Keep tool descriptions concise; put critical rules at the beginning because some clients truncate long descriptions.</li>
+<li>Separate dangerous writes from safe reads and require explicit confirmation for state changes.</li>
+<li>Avoid one mega-tool such as <code>call_api(method, path, body)</code> unless it is gated by a strict allowlist.</li>
+<li>Add provider-side defaults such as max lines, max rows, max bytes, and safe timeouts.</li>
+<li>Make error messages actionable: include missing scope, invalid parameter, rate limit, or retry guidance.</li>
+</ul>
+<h3 id="recommended-interface-choice"><a href="#recommended-interface-choice">Recommended interface choice</a></h3>
+<p>Use this decision rule in the presentation:</p>
+<ol>
+<li>If the task is a repeatable service/API/data action and a trusted MCP exists, use MCP.</li>
+<li>If the task is local build/test/debugging or shell-native, use CLI.</li>
+<li>If the task is visual, UI-stateful, or browser-session-specific, use browser operation or WebMCP.</li>
+<li>If the provider owns the service and wants agent adoption, build MCP on top of the API and keep the browser UI for humans.</li>
+</ol>
+<p>Security and trust:</p>
+<ul>
+<li>Treat MCP servers as code/data trust boundaries.</li>
+<li>Prefer official servers hosted by the service provider.</li>
+<li>Require approval for sensitive tool calls.</li>
+<li>Use <code>allowed_tools</code> or equivalent filtering to reduce tool surface.</li>
+<li>Log/review data sent to third-party MCP servers where policy permits.</li>
+<li>Consider prompt injection especially when tools can read sensitive data or take actions.</li>
+<li>Do not embed or fetch arbitrary URLs from MCP outputs without domain trust checks.</li>
+<li>Do not use broad all-access scopes by default.</li>
+<li>Avoid token passthrough and enforce audience validation.</li>
+<li>For local MCP, show exact commands before execution and sandbox where possible.</li>
+</ul>
+<p>Protocol/design:</p>
+<ul>
+<li>Keep servers focused and composable.</li>
+<li>Declare capabilities accurately.</li>
+<li>Do not assume another client supports a capability until negotiated.</li>
+<li>Validate inputs and outputs.</li>
+<li>Separate protocol errors from tool execution errors.</li>
+<li>Use structured output/schema when downstream automation matters.</li>
+<li>Use timeouts, cancellation, and progress for long-running operations.</li>
+</ul>
+<p>Operational:</p>
+<ul>
+<li>Remote servers need auth, lifecycle, rate limits, and auditability.</li>
+<li>Local stdio servers are powerful but inherit local process privileges.</li>
+<li>Large tool catalogs increase cost/latency; defer or filter tool loading.</li>
+<li>Server descriptions/tool metadata are model inputs and should be curated.</li>
+</ul>
+<h2 id="future-important-points"><a href="#future-important-points">Future important points</a></h2>
+<p>Likely strategic points:</p>
+<ul>
+<li>Remote MCP will matter more than local-only MCP as organizations standardize agent access to SaaS/internal tools.</li>
+<li>Auth and consent will be the hardest part of production MCP, not JSON-RPC.</li>
+<li>Tool registry/discovery and trust/reputation will become critical.</li>
+<li>Enterprise policy will need to distinguish:
+<ul>
+<li>approved official MCP servers</li>
+<li>internally developed MCP servers</li>
+<li>experimental/community servers</li>
+<li>blocked/untrusted servers</li>
+</ul>
+</li>
+<li>MCP Apps and UI-bearing resources may turn MCP from “tools only” into app-like agent interfaces.</li>
+<li>Durable tasks are important for long-running workflows, async operations, and agent handoff.</li>
+<li>Governance/SDK tiering suggests MCP is moving from experimental ecosystem to more formal infrastructure.</li>
+</ul>
+<h2 id="roadmap-themes"><a href="#roadmap-themes">Roadmap themes</a></h2>
+<p>Based on current official materials, present roadmap as “direction of travel”, not guaranteed product promises:</p>
+<ul>
+<li>Standardization: governance, working groups, SDK tiering, formal registry.</li>
+<li>Remote production deployment: Streamable HTTP, OAuth/OIDC discovery, protected resource metadata.</li>
+<li>Better trust UX: approvals, incremental scopes, least privilege, explicit consent.</li>
+<li>Larger tool ecosystems: registry and connectors.</li>
+<li>Richer agent workflows: elicitation, sampling with tool calling, task/durable execution.</li>
+<li>MCP Apps / UI resources: interactive components inside AI clients.</li>
+<li>Enterprise controls: policy, audit logs, server allowlists, ZDR/data-residency boundary awareness.</li>
+</ul>
+<h2 id="recommended-slide-structure"><a href="#recommended-slide-structure">Recommended slide structure</a></h2>
+<ol>
+<li>Title: MCP: AI agents and external systems need a protocol</li>
+<li>Why now: agents need live data, tools, workflows, and governance</li>
+<li>What MCP is: open protocol + JSON-RPC + capability negotiation</li>
+<li>Architecture: Host / Client / Server</li>
+<li>Core primitives: Resources / Prompts / Tools</li>
+<li>Runtime flow: initialize -> discover -> approve -> call -> return</li>
+<li>Transports: stdio vs Streamable HTTP</li>
+<li>Auth: OAuth 2.1, Protected Resource Metadata, Resource Indicators, PKCE</li>
+<li>History: Anthropic launch to current spec/registry</li>
+<li>Use cases: engineering, enterprise knowledge, business operations, agent platforms</li>
+<li>Ecosystem: GitHub, Stripe, OpenAI connectors, registry, reference servers</li>
+<li>Developer MCPs we use: GitHub, Figma, Drive, Slack, Notion, Sentry, Firecrawl, Context7, OpenAI Docs</li>
+<li>Security rules: approval, least privilege, no token passthrough, trusted servers</li>
+<li>What changes for us: build once, connect many clients; but operate like production integrations</li>
+<li>Future points: registry, remote MCP, auth maturity, MCP Apps, durable tasks</li>
+<li>Summary: MCP is the integration layer for governed agentic work</li>
+</ol>
+<h2 id="marp-slide-production-method"><a href="#marp-slide-production-method">Marp slide production method</a></h2>
+<p>Current recommended Marp practice is to keep slide content in Markdown and move visual identity into plain CSS:</p>
+<ul>
+<li>Use Marp front matter for deck-wide metadata such as <code>theme</code>, <code>paginate</code>, <code>size</code>, <code>title</code>, and <code>footer</code>.</li>
+<li>Use a custom Marpit theme CSS file with an <code>/* @theme ... */</code> meta comment when the deck needs reusable visual design.</li>
+<li>Use local class directives such as <code>_class: lead</code>, <code>_class: section</code>, <code>_class: dense</code>, or <code>_class: rank</code> to vary layouts per slide.</li>
+<li>Prefer CSS Grid/Flexbox, design tokens, <code>text-wrap: balance/pretty</code>, bounded typography, and restrained shadows/borders.</li>
+<li>Keep generated HTML/PDF out of the source repo unless the repo explicitly wants built artifacts; document repeatable <code>marp-cli</code> commands instead.</li>
+<li>Verify the deck by exporting HTML and representative PNG slides.</li>
+</ul>
+<p>Applied design decisions in this deck:</p>
+<ul>
+<li>Added <code>themes/mcp-modern.css</code> as a reusable custom Marp theme.</li>
+<li>Kept the Markdown source as the primary artifact.</li>
+<li>Added section-divider slides for Frontend, Cloud, and Developer MCPs.</li>
+<li>Added <code>compact</code>, <code>dense</code>, <code>split</code>, <code>cards</code>, and <code>rank</code> classes to control information density per slide.</li>
+<li>Used a calm technical palette with teal, vermilion, and violet accents rather than a single-hue theme.</li>
+<li>Verified with <code>marp-cli</code> HTML export and PNG export for visual inspection.</li>
+</ul>
+<h2 id="slide-essence"><a href="#slide-essence">Slide essence</a></h2>
+<p>If the presentation must be short, compress to 6 messages:</p>
+<ol>
+<li>MCP standardizes how agents connect to external context and actions.</li>
+<li>The architecture is Host -> isolated Client -> Server.</li>
+<li>The core primitives are Resources, Prompts, and Tools.</li>
+<li>Transports split into local stdio and remote Streamable HTTP.</li>
+<li>Production MCP is mostly about trust: OAuth, consent, scopes, auditing, and server allowlists.</li>
+<li>The future is registry + remote servers + MCP Apps + durable agent tasks.</li>
+</ol>
+<h2 id="open-questions-for-final-deck"><a href="#open-questions-for-final-deck">Open questions for final deck</a></h2>
+<ul>
+<li>Audience level: general internal audience or engineer-heavy?</li>
+<li>Length: 10 minutes, 20 minutes, or 45 minutes?</li>
+<li>Should examples focus on Codex workflow, Claude/Cursor workflow, or company-wide agent platform?</li>
+<li>Should we include a live demo, such as GitHub/Figma/Sentry/Firecrawl MCP usage?</li>
+</ul> </div> </article>  </main> </div> </div> </body></html>

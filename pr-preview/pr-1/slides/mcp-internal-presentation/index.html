@@ -1,0 +1,833 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP Q&amp;A、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP Q&amp;A、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
+_class: lead
+-->
+<h1 id="mcpを開発現場でどう使うべきか"><a href="#mcpを開発現場でどう使うべきか">MCPを開発現場でどう使うべきか</a></h1>
+<p>CLI、ブラウザ操作、API、MCPを比較しながら、既存APIをMCP server化する実装設計まで整理する。</p>
+<p>2026-06-07</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-結局mcpは何を解決するのか"><a href="#q-結局mcpは何を解決するのか">Q. 結局MCPは何を解決するのか？</a></h2>
+<p><strong>A. AIエージェントが外部システムを安全に使うための標準インターフェースを作る。</strong></p>
+<ul>
+<li>外部システム: GitHub、AWS、Sentry、DB、社内API、ブラウザ、Docs</li>
+<li>できること: context取得、tool実行、workflowの再利用</li>
+<li>重要点: tool名、description、schema、auth、transport、approvalをプロトコルで扱う</li>
+</ul>
+<p>MCPは「AIに便利ツールを足す」ではなく、<strong>agent-nativeなAPI境界</strong>。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-cliブラウザ操作mcpは何が違う"><a href="#q-cliブラウザ操作mcpは何が違う">Q. CLI、ブラウザ操作、MCPは何が違う？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方式</th><th>agentが見るもの</th><th>強い場面</th><th>弱い場面</th></tr></thead><tbody><tr><td>CLI</td><td>command + stdout/stderr</td><td>local test、build、git、devops</td><td>flags/env/output量に依存</td></tr><tr><td>Browser</td><td>UI、DOM、screenshot、DevTools</td><td>visual QA、live UI、session依存</td><td>layout/selector/loadingに依存</td></tr><tr><td>MCP</td><td>tool/resource schema + structured result</td><td>repeatableなAPI/data/action</td><td>server設計と運用が必要</td></tr></tbody></table>
+<p>判断軸は「人間向けインターフェースか、agent向け契約か」。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-cliで叩けばよくない"><a href="#q-cliで叩けばよくない">Q. CLIで叩けばよくない？</a></h2>
+<p><strong>A. CLIは今でも強い。ただしagentには余計な推測と出力が多い。</strong></p>
+<ul>
+<li>command syntax、flags、profile、region、envをagentが推測する</li>
+<li>stdout/stderrは人間向けで、ログやstack traceが巨大になりやすい</li>
+<li>エラー原因の切り分けに追加commandが増える</li>
+<li>出力を絞るには<code>jq</code>、<code>grep</code>、<code>--json</code>などを毎回設計する必要がある</li>
+</ul>
+<p>CLIはlocal executionに最適。外部サービスの反復操作はMCPの方が安定しやすい。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-ブラウザ操作で十分では"><a href="#q-ブラウザ操作で十分では">Q. ブラウザ操作で十分では？</a></h2>
+<p><strong>A. UIそのものを見るなら必須。データ取得や操作の主経路にすると不安定。</strong></p>
+<ul>
+<li>page遷移、modal、loading、viewport、selector変更に弱い</li>
+<li>screenshotやaccessibility treeはcontextを消費しやすい</li>
+<li>UIから意図を推測するため、操作ミスや待機ミスが起きやすい</li>
+<li>ただしvisual QA、console/network、performance、実ブラウザ再現には強い</li>
+</ul>
+<p>ブラウザ操作は「UIの検証」、MCPは「宣言された機能の実行」と分ける。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-トークン数は何が違う"><a href="#q-トークン数は何が違う">Q. トークン数は何が違う？</a></h2>
+<p>厳密値はclient/model/result次第。ここでは同一タスクの代表的なcontext消費として見る。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>タスク</th><th align="right">CLI</th><th align="right">Browser</th><th align="right">MCP</th></tr></thead><tbody><tr><td>PR状態 + 失敗CIログ確認</td><td align="right">3k-20k</td><td align="right">5k-30k</td><td align="right">800-4k</td></tr><tr><td>最新docs検索</td><td align="right">2k-15k</td><td align="right">5k-25k</td><td align="right">500-3k</td></tr><tr><td>issue/PR作成</td><td align="right">1k-8k</td><td align="right">5k-20k</td><td align="right">500-2k</td></tr><tr><td>UI console/network調査</td><td align="right">3k-20k</td><td align="right">4k-25k</td><td align="right">1k-8k</td></tr><tr><td>運用データ照会</td><td align="right">2k-30k</td><td align="right">5k-30k</td><td align="right">800-5k</td></tr></tbody></table>
+<p>MCPはtool search、schema、pagination、structured resultでcontextを小さくできる。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-なぜmcpだとフローが安定する"><a href="#q-なぜmcpだとフローが安定する">Q. なぜMCPだとフローが安定する？</a></h2>
+<p><strong>A. agentが低レベル操作を推測せず、宣言済みcapabilityを呼べるから。</strong></p>
+<ul>
+<li><code>tools/list</code>: 何ができるかを発見する</li>
+<li><code>inputSchema</code>: 必要な引数と型がわかる</li>
+<li><code>description</code>: いつ使うべきか、制約は何かがわかる</li>
+<li><code>structuredContent</code>: 返り値を機械的に扱える</li>
+<li>host UI: sensitive tool callを承認フローに載せられる</li>
+</ul>
+<p>「画面を見て推測」や「CLI flagsを思い出す」から「定義済みtoolを呼ぶ」へ移る。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-同じci調査だとどう違う"><a href="#q-同じci調査だとどう違う">Q. 同じCI調査だとどう違う？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>CLI:</span></span>
+<span class="line"><span>  gh pr view --json statusCheckRollup</span></span>
+<span class="line"><span>  gh run list --branch &#x3C;branch></span></span>
+<span class="line"><span>  gh run view &#x3C;run-id> --log-failed</span></span>
+<span class="line"><span>  grep / jq / sedで絞り込み</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Browser:</span></span>
+<span class="line"><span>  PR pageを開く -> Checksを探す -> failing checkを開く</span></span>
+<span class="line"><span>  log UIで検索 -> tabや表示状態を調整</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>MCP:</span></span>
+<span class="line"><span>  github.get_pull_request(number)</span></span>
+<span class="line"><span>  github.list_check_runs(ref)</span></span>
+<span class="line"><span>  github.get_failed_check_log(run_id, max_lines=200)</span></span></code></pre>
+<p>MCPの価値は、サービス側が「agentに必要な粒度」でtoolを切れること。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-mcpが向かない場面は"><a href="#q-mcpが向かない場面は">Q. MCPが向かない場面は？</a></h2>
+<ul>
+<li>local build/test、package scripts、任意shell調査</li>
+<li>UIの見た目、layout、accessibility、performance確認</li>
+<li>一度だけのadhoc作業でserver化する価値が薄いもの</li>
+<li>信頼できるMCP serverがないサービス</li>
+<li>広すぎる権限や雑なdescriptionで、agent-safeではないserver</li>
+</ul>
+<p>MCPは万能ではない。<strong>反復的なservice/data/action境界</strong>を標準化するもの。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-サービス提供者は何を出すべき"><a href="#q-サービス提供者は何を出すべき">Q. サービス提供者は何を出すべき？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>提供面</th><th>主な利用者</th><th>agent適性</th><th>provider control</th></tr></thead><tbody><tr><td>Browser UI</td><td>人間</td><td>低-中</td><td>見た目は制御、machine契約は弱い</td></tr><tr><td>CLI</td><td>開発者/運用者</td><td>中</td><td>便利だが出力・権限が広がりやすい</td></tr><tr><td>REST/OpenAPI</td><td>アプリ</td><td>中-高</td><td>契約は強いがagent用説明が不足しがち</td></tr><tr><td>MCP</td><td>AI client/agent</td><td>高</td><td>scope、audit、consent、output capを設計できる</td></tr></tbody></table>
+<p>provider視点では、MCPは「agent向けproduct surface」。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-既存apiはどうmcp化する"><a href="#q-既存apiはどうmcp化する">Q. 既存APIはどうMCP化する？</a></h2>
+<p><strong>A. API本体を書き換えず、adapter layerを追加する。</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>app/</span></span>
+<span class="line"><span>  api/</span></span>
+<span class="line"><span>    main.py              # existing FastAPI app</span></span>
+<span class="line"><span>    routers/</span></span>
+<span class="line"><span>      inventory.py       # operation_id, tags, response_model</span></span>
+<span class="line"><span>  domain/</span></span>
+<span class="line"><span>    inventory_service.py # business logic</span></span>
+<span class="line"><span>  mcp/</span></span>
+<span class="line"><span>    server.py            # MCP adapter</span></span>
+<span class="line"><span>    route_policy.py      # expose / exclude policy</span></span>
+<span class="line"><span>    descriptions.py      # model-facing descriptions</span></span></code></pre>
+<p>OpenAPIを契約として使い、MCPでは公開面を絞る。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-fastapi--openapiなら実装は"><a href="#q-fastapi--openapiなら実装は">Q. FastAPI + OpenAPIなら実装は？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># app/mcp/server.py</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> httpx</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.api.main </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> app </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> fastapi_app</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.config </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> settings</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.mcp.route_policy </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> route_map_fn</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">openapi_spec </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fastapi_app.openapi()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">api_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> httpx.AsyncClient(</span></span>
+<span class="line"><span style="color:#FFAB70">    base_url</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"http://127.0.0.1:9000"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">30.0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Bearer </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">settings.api_token</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">mcp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastMCP.from_openapi(</span></span>
+<span class="line"><span style="color:#FFAB70">    openapi_spec</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">openapi_spec,</span></span>
+<span class="line"><span style="color:#FFAB70">    client</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_client,</span></span>
+<span class="line"><span style="color:#FFAB70">    name</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Inventory MCP"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    route_map_fn</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">route_map_fn,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-openapiをそのまま出してよい"><a href="#q-openapiをそのまま出してよい">Q. OpenAPIをそのまま出してよい？</a></h2>
+<p><strong>A. 原則は出し過ぎない。route policyでagent-safeな面だけ公開する。</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp.server.providers.openapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> MCPType</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp.utilities.openapi </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> HTTPRoute</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">BLOCKED_TAGS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"internal"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"admin"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"debug"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#79B8FF">WRITE_METHODS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PUT"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PATCH"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"DELETE"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> route_map_fn</span><span style="color:#E1E4E8">(route: HTTPRoute, default_type: MCPType) -> MCPType </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> set</span><span style="color:#E1E4E8">(route.tags </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> []).intersection(</span><span style="color:#79B8FF">BLOCKED_TAGS</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.path.startswith((</span><span style="color:#9ECBFF">"/admin"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/debug"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/internal"</span><span style="color:#E1E4E8">)):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> WRITE_METHODS</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "GET"</span><span style="color:#F97583"> and</span><span style="color:#9ECBFF"> "catalog"</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> (route.tags </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> []):</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">RESOURCE_TEMPLATE</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span></code></pre>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-descriptionは何を書くべき"><a href="#q-descriptionは何を書くべき">Q. descriptionは何を書くべき？</a></h2>
+<p><strong>A. agentが誤用しないための実行契約を書く。</strong></p>
+<ul>
+<li>何をするtoolか</li>
+<li>いつ使うべきか、いつ使うべきでないか</li>
+<li>副作用があるか</li>
+<li>実行前にユーザー確認が必要か</li>
+<li>必須引数の意味、IDの取得元</li>
+<li>返り値の見方、失敗時の次アクション</li>
+</ul>
+<p>良いdescriptionは説明文ではなく、<strong>agentの行動制約</strong>。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-良いdescriptionの例は"><a href="#q-良いdescriptionの例は">Q. 良いdescriptionの例は？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#B392F0">@router.post</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">    "/</span><span style="color:#79B8FF">{item_id}</span><span style="color:#9ECBFF">/reserve"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    operation_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"reserve_inventory_item"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    summary</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Reserve inventory for an item"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Reserve stock for a known inventory item. "</span></span>
+<span class="line"><span style="color:#9ECBFF">        "This changes inventory state. Call only after the user "</span></span>
+<span class="line"><span style="color:#9ECBFF">        "explicitly confirms item_id, quantity, and expiration time. "</span></span>
+<span class="line"><span style="color:#9ECBFF">        "Use search_inventory_items first if item_id is unknown."</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#FFAB70">    response_model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">ReserveResponse,</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> reserve_inventory_item</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">    item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    request: ReserveRequest,</span></span>
+<span class="line"><span style="color:#E1E4E8">) -> ReserveResponse:</span></span>
+<span class="line"><span style="color:#79B8FF">    ...</span></span></code></pre>
+<p>critical ruleは先頭に置く。長すぎる説明はclient側で切られる可能性がある。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-remote-mcpとしてclaudeにつなぐには"><a href="#q-remote-mcpとしてclaudeにつなぐには">Q. Remote MCPとしてClaudeにつなぐには？</a></h2>
+<p>Remote MCPはcloud/service側で動くMCP serverをClaude Codeなどから使う形。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --header</span><span style="color:#9ECBFF"> "Authorization: Bearer </span><span style="color:#E1E4E8">$INVENTORY_MCP_TOKEN</span><span style="color:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">/mcp</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> inventory</span></span></code></pre>
+<p>productionではHTTPS、OAuth/token validation、rate limit、audit logを前提にする。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-claude-codeへの登録手順は"><a href="#q-claude-codeへの登録手順は">Q. Claude Codeへの登録手順は？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="right">step</th><th>作業</th><th>command / check</th></tr></thead><tbody><tr><td align="right">1</td><td>Remote MCP endpointを用意</td><td><code>https://mcp.example.com/mcp</code></td></tr><tr><td align="right">2</td><td>HTTP transportで登録</td><td><code>claude mcp add --transport http inventory &#x3C;url></code></td></tr><tr><td align="right">3</td><td>必要ならscopeを指定</td><td><code>--scope local</code> / <code>--scope project</code> / <code>--scope user</code></td></tr><tr><td align="right">4</td><td>Bearer tokenならheaderを追加</td><td><code>--header "Authorization: Bearer $TOKEN"</code></td></tr><tr><td align="right">5</td><td>OAuthならClaude Code内で認証</td><td><code>/mcp</code> -> browser login</td></tr><tr><td align="right">6</td><td>接続確認</td><td><code>claude mcp list</code> / <code>claude mcp get inventory</code> / <code>/mcp</code></td></tr></tbody></table>
+<p>Teamで共有する設定は<code>--scope project</code>、個人横断利用は<code>--scope user</code>を使う。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-oauth付きremote-mcpはどう登録する"><a href="#q-oauth付きremote-mcpはどう登録する">Q. OAuth付きRemote MCPはどう登録する？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Dynamic Client Registrationが使える場合</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> sentry</span><span style="color:#9ECBFF"> https://mcp.sentry.dev/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># redirect URIを事前登録するserver</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --callback-port</span><span style="color:#79B8FF"> 8080</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># client id / secretを事前発行するserver</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --client-id</span><span style="color:#9ECBFF"> "</span><span style="color:#E1E4E8">$MCP_CLIENT_ID</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF"> --client-secret</span><span style="color:#79B8FF"> --callback-port</span><span style="color:#79B8FF"> 8080</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#9ECBFF">  inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 認証開始</span></span>
+<span class="line"><span style="color:#B392F0">/mcp</span></span></code></pre>
+<p>scopeを絞る場合は<code>.mcp.json</code>の<code>oauth.scopes</code>で固定する。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-claudeai-connectorとして登録するには"><a href="#q-claudeai-connectorとして登録するには">Q. Claude.ai Connectorとして登録するには？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>対象</th><th>手順</th><th>注意点</th></tr></thead><tbody><tr><td>Pro / Max</td><td>Claude settingsのConnectorsでRemote MCP URLを追加</td><td>必要ならOAuth client情報を入力</td></tr><tr><td>Team / Enterprise</td><td>adminが組織設定でcustom connectorを追加</td><td>memberは個別に認証して使う</td></tr><tr><td>Claude Code連携</td><td>Claude.ai accountでloginし、<code>/mcp</code>で確認</td><td>API key / Bedrock / Vertex認証時は表示されない場合がある</td></tr></tbody></table>
+<p>Claude.ai connectorにする場合、Remote MCP serverはAnthropic cloud側から到達可能なHTTPS endpointである必要がある。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-stdioとstreamable-httpはどう選ぶ"><a href="#q-stdioとstreamable-httpはどう選ぶ">Q. stdioとStreamable HTTPはどう選ぶ？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>transport</th><th>向く用途</th><th>接続フロー</th></tr></thead><tbody><tr><td>stdio</td><td>local filesystem、git、script、developer-only tool</td><td>hostがserver process起動 -> stdin/stdoutでJSON-RPC</td></tr><tr><td>Streamable HTTP</td><td>remote service、team共有、SaaS、社内API</td><td>clientがHTTPS endpointへPOST/GET -> session/authで継続</td></tr><tr><td>HTTP+SSE</td><td>旧remote互換</td><td>新規では避け、HTTPへ移行</td></tr><tr><td>WebSocket/custom</td><td>push-heavy、特殊要件</td><td>client/server対応が前提</td></tr></tbody></table>
+<p>MCP message自体はJSON-RPC。transportはその運び方。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-remote-mcpの接続フローは"><a href="#q-remote-mcpの接続フローは">Q. Remote MCPの接続フローは？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="right">step</th><th>client / server interaction</th><th>実装上の要点</th></tr></thead><tbody><tr><td align="right">1</td><td>client -> server: <code>initialize</code></td><td>protocol version、capability negotiation</td></tr><tr><td align="right">2</td><td>server -> client: <code>InitializeResult</code></td><td><code>MCP-Session-Id</code>を返す場合がある</td></tr><tr><td align="right">3</td><td>client -> server: <code>tools/list</code></td><td>tool schemaとdescriptionを取得</td></tr><tr><td align="right">4</td><td>client -> server: <code>tools/call</code></td><td>session header、auth header、input validation</td></tr><tr><td align="right">5</td><td>server -> backend</td><td>token/scope検証、domain API実行</td></tr><tr><td align="right">6</td><td>server -> client</td><td>structured result、error、resource link</td></tr></tbody></table>
+<p>Streamable HTTPではsession、protocol version header、Origin validation、authが運用上の要点。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-webmcpはmcpの代わり"><a href="#q-webmcpはmcpの代わり">Q. WebMCPはMCPの代わり？</a></h2>
+<p><strong>A. 代替ではない。frontend/live tab向けの補完。</strong></p>
+<ul>
+<li>MCP: backend/service layer。永続server、どのplatformからでも使う</li>
+<li>WebMCP: web pageがbrowser agentへ能力を宣言する仕組み</li>
+<li>Browser操作MCP: PlaywrightやChrome DevToolsをagentから使う開発用bridge</li>
+</ul>
+<p>設計としては、<strong>backendはMCP、frontendはWebMCP、検証はbrowser MCP</strong>が整理しやすい。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-playwright-mcpとchrome-devtools-mcpは何に効く"><a href="#q-playwright-mcpとchrome-devtools-mcpは何に効く">Q. Playwright MCPとChrome DevTools MCPは何に効く？</a></h2>
+<ul>
+<li>Playwright MCP
+<ul>
+<li>live browser操作、E2E生成、UI再現、フォーム操作</li>
+<li>appが動いている状態でagentに試行させる</li>
+</ul>
+</li>
+<li>Chrome DevTools MCP
+<ul>
+<li>console、network、performance、screenshot、Lighthouse</li>
+<li>Chrome DevTools Protocol由来の調査に強い</li>
+<li>WebMCP debugging toolsも扱える</li>
+</ul>
+</li>
+</ul>
+<p>どちらも「ブラウザ操作をMCP tool化する」ので、通常の手動UI操作より再現性を上げやすい。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-aws-mcpは何が違う"><a href="#q-aws-mcpは何が違う">Q. AWS MCPは何が違う？</a></h2>
+<p>AWS MCP ServerはGA済みのAWS公式MCP入口として、AWS API/knowledge/architecture guidanceをagentに接続する。</p>
+<ul>
+<li>AWSサービス操作やknowledge lookupをagent workflowへ入れやすい</li>
+<li>IAM、region、profile、least privilegeの設計が重要</li>
+<li>個人開発ではlocal config、組織ではapproved server + policyで管理する</li>
+<li>Agent Toolkit for AWSではskillsやMCP serverを組み合わせて開発体験を作れる</li>
+</ul>
+<p>AWS系は権限が強いので、read-onlyから始め、write系は承認を必須にする。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-awsでremote-mcpを構築するなら"><a href="#q-awsでremote-mcpを構築するなら">Q. AWSでRemote MCPを構築するなら？</a></h2>
+<p><strong>A. AgentCore GatewayをRemote MCP入口にし、既存API/Lambda/MCP serverをtargetとして束ねる。</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Claude / Codex / Agent</span></span>
+<span class="line"><span>  -> AgentCore Gateway (MCP endpoint)</span></span>
+<span class="line"><span>  -> targets: OpenAPI API / Lambda / MCP server / Smithy / API Gateway</span></span>
+<span class="line"><span>  -> backend: AWS services / SaaS / internal APIs</span></span></code></pre>
+<ul>
+<li>Gatewayは単一MCP endpointとtool catalogを提供する</li>
+<li>OpenAPIやLambdaをMCP-compatible toolsへ変換できる</li>
+<li>複数targetを統合したvirtual MCP serverとして見せられる</li>
+<li>semantic tool searchで大きなtool catalogを扱いやすくする</li>
+</ul>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-gatewayとidentityは何を補う"><a href="#q-gatewayとidentityは何を補う">Q. GatewayとIdentityは何を補う？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>要素</th><th>役割</th><th>MCPとの関係</th></tr></thead><tbody><tr><td>AgentCore Gateway</td><td>MCP endpoint、tool aggregation、target routing</td><td><code>tools/list</code> / <code>tools/call</code>の入口</td></tr><tr><td>Gateway inbound auth</td><td>agent/clientがGatewayへ入る認証</td><td>OAuth JWT、IAM SigV4、authenticate-onlyなど</td></tr><tr><td>Gateway outbound auth</td><td>Gatewayがtargetへ出る認証</td><td>IAM、OAuth、API key、token passthroughなど</td></tr><tr><td>AgentCore Identity</td><td>OAuth provider、token vault、workload identity</td><td>2LO/3LO/OBO tokenを管理</td></tr><tr><td>OBO token exchange</td><td>inbound user tokenをdownstream向けtokenへ交換</td><td>user + agent identityを維持した委任</td></tr></tbody></table>
+<p>GatewayはMCP transportだけでなく、認証・認可・credential管理の運用面を補う。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-agentcoreでの構築フローは"><a href="#q-agentcoreでの構築フローは">Q. AgentCoreでの構築フローは？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="right">step</th><th>設計/作業</th><th>実装上の判断</th></tr></thead><tbody><tr><td align="right">1</td><td>toolを定義</td><td>OpenAPI、Lambda schema、既存MCP server</td></tr><tr><td align="right">2</td><td>Gatewayを作成</td><td>inbound auth: OAuth JWT / IAM / none for dev</td></tr><tr><td align="right">3</td><td>targetを追加</td><td>OpenAPI、Lambda、MCP server、API Gateway、Smithy</td></tr><tr><td align="right">4</td><td>outbound authを設定</td><td>IAM SigV4、OAuth 2LO/3LO/OBO、API key</td></tr><tr><td align="right">5</td><td>capability sync</td><td><code>SynchronizeGatewayTargets</code>でtool catalog更新</td></tr><tr><td align="right">6</td><td>client接続</td><td>Claude CodeなどからGateway MCP URLを登録</td></tr><tr><td align="right">7</td><td>運用</td><td>CloudTrail、CloudWatch、least privilege、policy</td></tr></tbody></table>
+<p>既存FastAPIならOpenAPI target、独自処理ならLambda target、既存MCPならMCP server targetが自然。</p>
+<hr>
+<!--
+_class: dense rank
+-->
+<h2 id="q-開発向けmcpは何から見る"><a href="#q-開発向けmcpは何から見る">Q. 開発向けMCPは何から見る？</a></h2>
+<p>GitHub starsの目安。人気は変動するため、導入判断はofficial性、権限、保守状況も見る。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>MCP / repo</th><th align="right">stars</th><th>開発で効く場面</th></tr></thead><tbody><tr><td>Firecrawl MCP</td><td align="right">129,670</td><td>web research、crawl、extract</td></tr><tr><td>modelcontextprotocol/servers</td><td align="right">86,854</td><td>reference/community servers</td></tr><tr><td>Context7</td><td align="right">56,904</td><td>latest library docs</td></tr><tr><td>Chrome DevTools MCP</td><td align="right">43,030</td><td>frontend debug</td></tr><tr><td>Playwright MCP</td><td align="right">33,574</td><td>browser automation</td></tr><tr><td>GitHub MCP</td><td align="right">30,495</td><td>issue、PR、repo workflow</td></tr><tr><td>Serena</td><td align="right">25,036</td><td>codebase理解、symbolic editing</td></tr><tr><td>AWS MCP servers</td><td align="right">9,224</td><td>AWS操作と知識</td></tr></tbody></table>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-serena-mcpはなぜ効く"><a href="#q-serena-mcpはなぜ効く">Q. Serena MCPはなぜ効く？</a></h2>
+<p><strong>A. コードを全部読ませず、symbol単位で探索・編集できるから。</strong></p>
+<ul>
+<li>symbol overviewで構造を把握する</li>
+<li>必要な関数・classだけ読む</li>
+<li>referencesを追って影響範囲を確認する</li>
+<li>file全体貼り付けよりcontext効率が良い</li>
+<li>large repoで「読む量」を制御しやすい</li>
+</ul>
+<p>MCPの価値は外部APIだけではない。local code understandingにも効く。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-mcp-server設計で守るルールは"><a href="#q-mcp-server設計で守るルールは">Q. MCP server設計で守るルールは？</a></h2>
+<ul>
+<li>trusted serverだけ接続する</li>
+<li>read/writeを分け、writeは承認を要求する</li>
+<li>token passthroughを避け、audience/scopeを検証する</li>
+<li>tool結果はsummary + ID + paginationで返す</li>
+<li>huge logやfull documentをdefaultで返さない</li>
+<li><code>search -> read detail -> act</code> の順にtoolを設計する</li>
+<li>dangerous toolは名前とdescriptionで危険性を明示する</li>
+<li>audit log、rate limit、timeout、cancellationを入れる</li>
+</ul>
+<p>最重要は「便利にする」より「誤用しにくくする」。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-token-awareなmcp設計とは"><a href="#q-token-awareなmcp設計とは">Q. token-awareなMCP設計とは？</a></h2>
+<p>悪い例:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>call_api(method, path, body) -> raw JSON / raw logを全部返す</span></span></code></pre>
+<p>良い例:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>search_incidents(query, severity, limit) -> summary + incident_id</span></span>
+<span class="line"><span>get_incident_detail(incident_id, fields) -> bounded structured detail</span></span>
+<span class="line"><span>summarize_incident(incident_id) -> agent-ready summary</span></span>
+<span class="line"><span>create_incident_update(incident_id, body) -> write with confirmation</span></span></code></pre>
+<p>agentに必要なのは「全データ」ではなく「次の判断に十分な最小context」。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-社内導入はどう進める"><a href="#q-社内導入はどう進める">Q. 社内導入はどう進める？</a></h2>
+<ol>
+<li>まずread-only MCPを作る</li>
+<li>OpenAPIからcandidate toolを生成する</li>
+<li>route policyで公開面を絞る</li>
+<li>descriptionとschemaをagent向けに整える</li>
+<li>Claude/Codex/Cursorで実タスク検証する</li>
+<li>output cap、audit、rate limit、authを入れる</li>
+<li>write toolは承認とscopeを分けて追加する</li>
+</ol>
+<p>最初から巨大serverを作らず、1つの業務フローを安定化させる。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-最終的に何を覚えるべき"><a href="#q-最終的に何を覚えるべき">Q. 最終的に何を覚えるべき？</a></h2>
+<p>MCPが使える場合にMCPを優先する理由:</p>
+<ul>
+<li>token効率: tool search、schema、bounded resultでcontextを減らせる</li>
+<li>安定性: CLI flagsやUI推測ではなくdeclared capabilityを呼べる</li>
+<li>セキュリティ: auth、scope、approval、auditをserver/host境界で扱える</li>
+<li>provider効果: agent向けの安全なproduct surfaceを設計できる</li>
+<li>開発効果: API、frontend、cloud、repo理解を同じagent workflowへ統合できる</li>
+</ul>
+<p><strong>MCPはagent時代のintegration layer。</strong></p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="主な参照-1"><a href="#主な参照-1">主な参照 1</a></h2>
+<ul>
+<li>Model Context Protocol specification: <a href="https://modelcontextprotocol.io/specification/2025-11-25">https://modelcontextprotocol.io/specification/2025-11-25</a></li>
+<li>MCP transports: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">https://modelcontextprotocol.io/specification/2025-11-25/basic/transports</a></li>
+<li>MCP tools: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">https://modelcontextprotocol.io/specification/2025-11-25/server/tools</a></li>
+<li>Claude Code MCP docs: <a href="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</a></li>
+<li>FastMCP OpenAPI docs: <a href="https://gofastmcp.com/servers/openapi">https://gofastmcp.com/servers/openapi</a></li>
+<li>Chrome WebMCP comparison: <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja">https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja</a></li>
+</ul>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="主な参照-2"><a href="#主な参照-2">主な参照 2</a></h2>
+<ul>
+<li>AWS MCP Server GA: <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/</a></li>
+<li>AgentCore Gateway concepts: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html</a></li>
+<li>AgentCore Gateway MCP targets: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html</a></li>
+<li>AgentCore Identity OBO: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html</a></li>
+<li>Playwright MCP: <a href="https://github.com/microsoft/playwright-mcp">https://github.com/microsoft/playwright-mcp</a></li>
+<li>Chrome DevTools MCP: <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">https://github.com/ChromeDevTools/chrome-devtools-mcp</a></li>
+<li>Serena: <a href="https://github.com/oraios/serena">https://github.com/oraios/serena</a></li>
+</ul> </div> </article>  </main> </div> </div> </body></html>

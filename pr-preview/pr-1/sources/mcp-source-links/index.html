@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP社内発表資料で参照した一次情報、公式ドキュメント、主要リポジトリ、AWS AgentCore関連情報のリンク集。"><title>MCP source links | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">sources</p> <h1>MCP source links</h1> <p>MCP社内発表資料で参照した一次情報、公式ドキュメント、主要リポジトリ、AWS AgentCore関連情報のリンク集。</p>  </header> <div class="markdown-body"> <h1 id="mcp-source-links"><a href="#mcp-source-links">MCP source links</a></h1>
+<p>このページは、発表スライドと調査メモの根拠になった主要な参照先をまとめる。</p>
+<h2 id="protocol-and-concepts"><a href="#protocol-and-concepts">Protocol and Concepts</a></h2>
+<ul>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25">Model Context Protocol specification</a></li>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports</a></li>
+<li><a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a></li>
+<li><a href="https://www.anthropic.com/news/model-context-protocol">Anthropic launch post</a></li>
+<li><a href="https://github.com/modelcontextprotocol/servers">MCP reference servers</a></li>
+<li><a href="https://github.com/modelcontextprotocol/registry">MCP registry</a></li>
+</ul>
+<h2 id="building-mcp-servers"><a href="#building-mcp-servers">Building MCP Servers</a></h2>
+<ul>
+<li><a href="https://gofastmcp.com/servers/openapi">FastMCP OpenAPI docs</a></li>
+<li><a href="https://github.com/jlowin/fastmcp">FastMCP repository</a></li>
+<li><a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI customization</a></li>
+<li><a href="https://modelcontextprotocol.io/docs/develop/build-server">MCP build server guide</a></li>
+<li><a href="https://modelcontextprotocol.io/docs/develop/build-client">MCP build client guide</a></li>
+</ul>
+<h2 id="claude-and-remote-mcp"><a href="#claude-and-remote-mcp">Claude and Remote MCP</a></h2>
+<ul>
+<li><a href="https://code.claude.com/docs/en/mcp">Claude Code MCP docs</a></li>
+<li><a href="https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp">Claude custom connectors with Remote MCP</a></li>
+</ul>
+<h2 id="frontend-and-browser-mcp"><a href="#frontend-and-browser-mcp">Frontend and Browser MCP</a></h2>
+<ul>
+<li><a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja">Chrome WebMCP comparison</a></li>
+<li><a href="https://github.com/microsoft/playwright-mcp">Playwright MCP</a></li>
+<li><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools MCP</a></li>
+</ul>
+<h2 id="aws-and-agentcore"><a href="#aws-and-agentcore">AWS and AgentCore</a></h2>
+<ul>
+<li><a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">AWS MCP Server GA</a></li>
+<li><a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a></li>
+<li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway concepts</a></li>
+<li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html">AgentCore Gateway MCP server targets</a></li>
+<li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-outbound-auth.html">AgentCore Gateway outbound authorization</a></li>
+<li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity On-Behalf-Of token exchange</a></li>
+<li><a href="https://aws.amazon.com/blogs/machine-learning/connecting-mcp-servers-to-amazon-bedrock-agentcore-gateway-using-authorization-code-flow/">Connecting MCP servers to AgentCore Gateway using Authorization Code flow</a></li>
+</ul>
+<h2 id="developer-useful-mcps"><a href="#developer-useful-mcps">Developer-Useful MCPs</a></h2>
+<ul>
+<li><a href="https://github.com/github/github-mcp-server">GitHub MCP server</a></li>
+<li><a href="https://github.com/upstash/context7">Context7</a></li>
+<li><a href="https://github.com/oraios/serena">Serena</a></li>
+<li><a href="https://github.com/mendableai/firecrawl">Firecrawl</a></li>
+<li><a href="https://github.com/mendableai/firecrawl-mcp-server">Firecrawl MCP server</a></li>
+<li><a href="https://github.com/awslabs/mcp">AWS Labs MCP</a></li>
+<li><a href="https://github.com/getsentry/sentry-mcp">Sentry MCP</a></li>
+<li><a href="https://github.com/supabase-community/supabase-mcp">Supabase MCP</a></li>
+</ul>
+<h2 id="site-and-presentation-tooling"><a href="#site-and-presentation-tooling">Site and Presentation Tooling</a></h2>
+<ul>
+<li><a href="https://docs.astro.build/en/guides/content-collections/">Astro content collections</a></li>
+<li><a href="https://github.com/marp-team/marp-cli">Marp CLI</a></li>
+<li><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages">GitHub Pages custom workflows</a></li>
+<li><a href="https://github.com/rossjrw/pr-preview-action">PR Preview Action</a></li>
+</ul> </div> </article>  </main> </div> </div> </body></html>
