@@ -83,6 +83,19 @@ section:not(.lead) > h2:first-child {
   position: absolute;
 }
 
+.chapter-label {
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 760;
+  inset-block-start: 28px;
+  inset-inline-start: var(--slide-pad-inline);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  margin: 0;
+  position: absolute;
+  text-transform: uppercase;
+}
+
 h3 {
   color: var(--accent);
   font-size: 26px;
@@ -215,6 +228,11 @@ section.section h1 {
 section.section p {
   color: rgba(248, 251, 251, 0.78);
   font-size: 28px;
+}
+
+section.section .kicker {
+  color: rgba(248, 251, 251, 0.72);
+  margin-bottom: 22px;
 }
 
 section.compact {
