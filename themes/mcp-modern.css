@@ -28,7 +28,7 @@ section {
   --slide-pad-bottom: 54px;
   --slide-title-top: 58px;
   --slide-title-height: 76px;
-  --slide-body-top: 136px;
+  --slide-body-top: 118px;
   background:
     linear-gradient(135deg var(--in-oklab), rgba(0, 127, 122, 0.08), transparent 34%),
     linear-gradient(315deg var(--in-oklab), rgba(212, 91, 63, 0.07), transparent 38%),
@@ -50,6 +50,56 @@ section::after {
   letter-spacing: 0.04em;
   right: 34px;
   bottom: 24px;
+}
+
+section.ch00 {
+  --chapter-icon: "🧭";
+  --chapter-name-suffix: " / 全体像";
+}
+
+section.ch01 {
+  --chapter-icon: "📘";
+  --chapter-name-suffix: " / 基本概念";
+}
+
+section.ch02 {
+  --chapter-icon: "⚖️";
+  --chapter-name-suffix: " / 比較と判断軸";
+}
+
+section.ch03 {
+  --chapter-icon: "🛠️";
+  --chapter-name-suffix: " / MCP server構築";
+}
+
+section.ch04 {
+  --chapter-icon: "🔌";
+  --chapter-name-suffix: " / Remote MCPと複数Agent設定";
+}
+
+section.ch05 {
+  --chapter-icon: "🔐";
+  --chapter-name-suffix: " / Protocol / Auth / JSON-RPC";
+}
+
+section.ch06 {
+  --chapter-icon: "☁️";
+  --chapter-name-suffix: " / AWSケーススタディ";
+}
+
+section.ch07 {
+  --chapter-icon: "💻";
+  --chapter-name-suffix: " / 開発ワークフローで使うMCP";
+}
+
+section.ch08 {
+  --chapter-icon: "🛡️";
+  --chapter-name-suffix: " / ガバナンスと導入";
+}
+
+section.ch09 {
+  --chapter-icon: "🔎";
+  --chapter-name-suffix: " / References";
 }
 
 h1,
@@ -85,15 +135,29 @@ section:not(.lead) > h2:first-child {
 
 .chapter-label {
   color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
   font-weight: 760;
   inset-block-start: 28px;
   inset-inline-start: var(--slide-pad-inline);
+  inline-size: max-content;
   letter-spacing: 0.08em;
   line-height: 1;
   margin: 0;
+  max-inline-size: calc(100% - var(--slide-pad-inline) * 2);
   position: absolute;
   text-transform: uppercase;
+}
+
+.chapter-label::before,
+.kicker::before {
+  content: var(--chapter-icon, "●");
+  font-size: 1.14em;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
 }
 
 h3 {
@@ -240,7 +304,7 @@ section.section .kicker {
 }
 
 section.compact {
-  --slide-body-top: 132px;
+  --slide-body-top: 112px;
   --slide-title-height: 70px;
   font-size: 24px;
 }
@@ -250,7 +314,7 @@ section.compact h2 {
 }
 
 section.dense {
-  --slide-body-top: 126px;
+  --slide-body-top: 106px;
   --slide-title-height: 64px;
   font-size: 21px;
 }
@@ -343,11 +407,25 @@ section.section::after {
 
 .kicker {
   color: var(--accent-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 19px;
   font-weight: 760;
   letter-spacing: 0.08em;
   margin-bottom: 18px;
   text-transform: uppercase;
+}
+
+.kicker::after {
+  content: var(--chapter-name-suffix, "");
+}
+
+@supports (text-box: trim-both cap alphabetic) {
+  .chapter-label,
+  .kicker {
+    text-box: trim-both cap alphabetic;
+  }
 }
 
 section.note {
