@@ -9,6 +9,90 @@ _class: lead
 _class: compact ch00
 -->
 <p class="chapter-label">00 / 全体像</p>
+<h2 id="なぜ今この話か"><a href="#なぜ今この話か">なぜ今この話か</a></h2>
+<p>LLMが外部情報を得て、指示を出し、実アクションする経路が急に増えている。</p>
+<ul>
+<li>Function/tool calling: modelが<code>name + arguments</code>を生成する</li>
+<li>Built-in tools / connectors: web search、file search、SaaS data、Remote MCP</li>
+<li>Apps SDK / ChatGPT Apps: MCP server + iframe UIでアプリ体験を作る</li>
+<li>Codex App: skills、plugins、MCP、browser use、computer use、terminalを組み合わせる</li>
+<li>WebMCP / A2A: frontend上のtool化、agent間連携も出てきている</li>
+</ul>
+<p>MCPは単独の流行ではなく、<strong>LLMが外部世界を扱う設計面が増えている現象の一部</strong>。</p>
+<hr>
+<!--
+_class: dense ch00
+-->
+<p class="chapter-label">00 / 全体像</p>
+<h2 id="llmが外部世界を使う選択肢"><a href="#llmが外部世界を使う選択肢">LLMが外部世界を使う選択肢</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>選択肢</th><th>LLMが得る情報</th><th>アクションの形</th><th>強い場面</th></tr></thead><tbody><tr><td>Function calling</td><td>tool名、description、schema</td><td>app側関数呼び出し</td><td>自前アプリ内の軽量tool</td></tr><tr><td>Built-in tools</td><td>provider定義tool</td><td>search / file / computerなど</td><td>すぐ使える標準能力</td></tr><tr><td>Connectors / Remote MCP</td><td>SaaS/APIのtool catalog</td><td>authenticated tool call</td><td>組織data、業務SaaS</td></tr><tr><td>Codex plugins/apps</td><td>skills、apps、MCP、browser/computer</td><td>repo操作、外部app操作</td><td>開発・調査・レビュー</td></tr><tr><td>WebMCP</td><td>HTML/JSで宣言されたpage capability</td><td>browser内agent action</td><td>frontend上の構造化操作</td></tr><tr><td>A2A</td><td>他agentのcapability/task</td><td>agent間message/task</td><td>複数agent協調</td></tr></tbody></table>
+<p>この地図の中で、MCPは<strong>外部systemをagent向けに宣言する標準接続面</strong>。</p>
+<hr>
+<!--
+_class: compact ch00
+-->
+<p class="chapter-label">00 / 全体像</p>
+<h2 id="このスライドで着目すること"><a href="#このスライドで着目すること">このスライドで着目すること</a></h2>
+<p>広い選択肢の中で、この発表はMCPを<strong>既存APIをagent-nativeにする設計手段</strong>として扱う。</p>
+<ul>
+<li>主眼: MCP serverの構築、description/schema、auth、Remote運用</li>
+<li>比較対象: CLI、browser、function calling、WebMCP、Codex Appの外部操作</li>
+<li>判断軸: token使用量、再現性、承認、監査、provider control</li>
+<li>実装例: FastAPI / OpenAPIをMCP serverへ変換する設計</li>
+</ul>
+<p>結論を先に言うと、反復的なservice/data/action境界は、UI操作やCLI推測より<strong>MCP化した方が運用しやすい</strong>。</p>
+<hr>
+<!--
+_class: compact ch00
+-->
+<p class="chapter-label">00 / 全体像</p>
 <h2 id="本日の流れ"><a href="#本日の流れ">本日の流れ</a></h2>
 <ol>
 <li>基本概念: Host / Client / Server / Tool / Transport</li>
@@ -282,6 +366,38 @@ _class: dense ch02
 
 <table><thead><tr><th>タスク</th><th align="right">CLI</th><th align="right">Browser</th><th align="right">MCP</th></tr></thead><tbody><tr><td>PR状態 + 失敗CIログ確認</td><td align="right">3k-20k</td><td align="right">5k-30k</td><td align="right">800-4k</td></tr><tr><td>最新docs検索</td><td align="right">2k-15k</td><td align="right">5k-25k</td><td align="right">500-3k</td></tr><tr><td>issue/PR作成</td><td align="right">1k-8k</td><td align="right">5k-20k</td><td align="right">500-2k</td></tr><tr><td>UI console/network調査</td><td align="right">3k-20k</td><td align="right">4k-25k</td><td align="right">1k-8k</td></tr><tr><td>運用データ照会</td><td align="right">2k-30k</td><td align="right">5k-30k</td><td align="right">800-5k</td></tr></tbody></table>
 <p>MCPはtool search、schema、pagination、structured resultでcontextを小さくできる。</p>
+<hr>
+<!--
+_class: dense graph ch02
+-->
+<p class="chapter-label">02 / 比較と判断軸</p>
+<h2 id="token使用量の比較イメージ"><a href="#token使用量の比較イメージ">Token使用量の比較イメージ</a></h2>
+<div class="token-bars" aria-label="Token usage comparison">
+  <div class="bar-row"><span>MCP: focused tool + bounded result</span><div class="bar"><b style="width: 18%">0.5-5k</b></div></div>
+  <div class="bar-row"><span>CLI: command + raw logs</span><div class="bar"><b style="width: 58%">2-20k</b></div></div>
+  <div class="bar-row"><span>Browser: screenshot / DOM / UI state</span><div class="bar"><b style="width: 72%">4-25k</b></div></div>
+  <div class="bar-row"><span>MCP tool catalog all upfront</span><div class="bar warn"><b style="width: 88%">55k+</b></div></div>
+</div>
+<ul>
+<li>上3つは同一タスクを行うときの代表レンジ。client/model/result設計で変わる。</li>
+<li>最下段はAnthropic公開例: 5 MCP servers / 58 toolsでrequest前に約55K tokens。</li>
+<li>重要なのは「MCPなら常に少ない」ではなく、<strong>tool surfaceを絞る、検索する、結果をboundedにする</strong>こと。</li>
+</ul>
+<hr>
+<!--
+_class: dense graph ch02
+-->
+<p class="chapter-label">02 / 比較と判断軸</p>
+<h2 id="公開例-tool定義を全部読むと重い"><a href="#公開例-tool定義を全部読むと重い">公開例: tool定義を全部読むと重い</a></h2>
+<div class="token-bars source-bars" aria-label="Published token overhead examples">
+  <div class="bar-row"><span>Tool search example</span><div class="bar good"><b style="width: 12%">8.7k</b></div></div>
+  <div class="bar-row"><span>Programmatic tool calling avg.</span><div class="bar"><b style="width: 34%">27.3k</b></div></div>
+  <div class="bar-row"><span>5 servers / 58 tools upfront</span><div class="bar warn"><b style="width: 68%">55k</b></div></div>
+  <div class="bar-row"><span>All tools upfront example</span><div class="bar warn"><b style="width: 94%">77k</b></div></div>
+  <div class="bar-row"><span>Expanded server set</span><div class="bar danger"><b style="width: 100%">100k+</b></div></div>
+</div>
+<p>Anthropicの例では、tool searchで約77K -> 約8.7K、programmatic tool callingで43,588 -> 27,297 tokensへ削減。</p>
+<p>MCP server設計でも、<strong>全部見せる設計はtoken・latency・誤選択を増やす</strong>。</p>
 <hr>
 <!--
 _class: compact ch02

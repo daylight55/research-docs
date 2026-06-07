@@ -36,6 +36,47 @@ This is a technical specification review plus ecosystem survey, not a formal aca
 - Hugging Face Agents Course function-calling fine-tuning note: https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning
 - GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.
 
+## 2026-06-08追加調査: MCPを含むLLM action surfaceの広がり
+
+この発表ではMCPを主題にするが、MCPだけが「LLMが外部世界を扱う方法」ではない。2026年時点では、function calling、built-in tools、connectors、Remote MCP、ChatGPT Apps / Apps SDK、Codex plugins/apps、browser use、computer use、WebMCP、Agent2Agentのように、LLMが情報を取得し、構造化された指示を出し、実アクションへつなげる選択肢が増えている。
+
+### Evidence matrix
+
+| 選択肢 | 一次情報で確認した内容 | スライド上の扱い |
+|---|---|---|
+| OpenAI tools / function calling | OpenAIのtools guideはbuilt-in tools、function calling、tool search、remote MCP serversでmodel capabilityを拡張できると説明している。function callingはcustom codeを呼び、追加data/capabilityにアクセスさせる仕組み。 | MCPをtool callingの代替ではなく、tool discovery/execution/authを含む接続面として説明する。 |
+| OpenAI Apps SDK | Apps SDK quickstartは、ChatGPT appにはMCP serverでcapability/toolsを公開し、任意でChatGPT内iframeにweb component UIを表示すると説明している。 | MCP Apps / UI-bearing surfaceの流れと、MCPがアプリ体験にも広がる文脈で扱う。 |
+| OpenAI / Anthropic computer use | OpenAI computer useはmodelがscreenshotでUIを観察し、click/type/scrollなどのactionsを返し、code側が実行して次のscreenshotを返すloop。Anthropicもscreenshot、mouse、keyboard、desktop automationを説明している。 | browser/computer useは「UIを見て操作する」選択肢として、MCPのstructured tool callと比較する。 |
+| Codex App | Codex manualではCodex Appがparallel threads、worktrees、automations、Git操作、terminal、in-app browser、browser use、computer use、skills、plugins、MCP supportを持つと説明されている。Pluginsはskills、apps、MCP serversをbundleできる。 | Codex AppはMCPだけでなく、terminal/browser/computer/pluginsを組み合わせるagent execution environmentとして紹介する。 |
+| MCP公式 | MCP公式introは、MCPをAI applicationとexternal systemsを接続するopen-source standardとし、data sources、tools、workflowsにアクセスする仕組みと説明している。 | MCPの中心定義として扱う。 |
+| Chrome WebMCP | Chromeの比較ページは、MCPはbackend向け、WebMCPはfrontend向けで、JavaScriptやHTML annotationsによりbrowser内agentがweb UIを理解・操作するための標準案と説明している。 | Frontend上のcapability宣言として、MCPとは別の広がりとして扱う。 |
+| Google Agent2Agent | GoogleのA2A発表は、agent同士が情報交換しactionをcoordinationするopen protocolと説明し、MCPを補完するものと位置づける。 | MCPはagent-to-tool、A2Aはagent-to-agentの補完関係として短く紹介する。 |
+| Anthropic advanced tool use | Anthropicは、MCP tool definitionsは重要なcontextだが、多数serverを接続するとtokensが増えると説明。5 server / 58 toolsでrequest前に約55K tokens、Jira追加でさらに約17K、100K超overheadになり得る例を示す。Tool searchは約77K -> 約8.7K、programmatic tool callingは43,588 -> 27,297 tokensの削減例を示す。 | token比較グラフの公開値として使う。ただし「MCPなら常に少ない」ではなく「tool surfaceの設計がtoken効率を決める」と説明する。 |
+
+### なぜ冒頭で広い地図を出すか
+
+MCPだけを突然説明すると、「function callingやCLIと何が違うのか」「Codex Appやbrowser操作とどう使い分けるのか」が見えにくい。実務上は、agentが外部世界へ出る経路を次のように整理すると理解しやすい。
+
+1. **Model output format**: function calling / tool calling。modelが`name + arguments`を出す。
+2. **Provider tools**: web search、file search、computer useなど、providerが用意するbuilt-in capability。
+3. **Connector / Remote MCP**: SaaSや社内APIを認証付きtool catalogとして使う。
+4. **Agent environment**: Codex Appのようにterminal、browser、computer use、plugins、MCP、skillsを束ねる実行環境。
+5. **Frontend capability**: WebMCPのようにweb page側がbrowser agent向けcapabilityを宣言する。
+6. **Agent-to-agent**: A2Aのようにagent間でtaskやmessageをやり取りする。
+
+このスライドは、その中でも **「既存APIや業務systemをagent-nativeな接続面として公開するにはどう設計するか」** に焦点を置く。そのため、MCP server構築、Remote MCP、description/schema、auth、token効率、provider controlを中心に扱う。
+
+### Token比較の扱い
+
+Token使用量はmodel、client、tool定義、result size、retrieval strategy、screenshot解像度、ログ量、承認UI、会話履歴で大きく変わる。したがってスライドのCLI/Browser/MCP token rangeは、厳密なベンチマークではなく「同じ作業をagentにさせるときにcontextへ入りやすい情報量」の概念比較である。
+
+ただし、次の定性的傾向は複数の一次情報と実務経験に整合する。
+
+- Browser/computer useはscreenshot、DOM、UI state、待機、再試行が入りやすく、視覚検証には強いがtoken/latencyが増えやすい。
+- CLIはstdout/stderr、help、stack trace、raw logが入りやすく、local executionには強いがservice操作では出力制御が必要。
+- MCPはtool名、description、schema、structured result、pagination/output capを設計できるため、反復service/data/actionではcontextを小さく保ちやすい。
+- ただしMCPも、巨大なtool catalogを全部model contextへ入れるとtoken overheadが大きい。Anthropicの公開例はこのリスクを定量的に示している。
+
 ## Expanded beginner-friendly notes, 2026-06-07
 
 This section is the beginner-oriented source material for the final talk. It intentionally explains the concepts underneath MCP before moving into implementation details.
