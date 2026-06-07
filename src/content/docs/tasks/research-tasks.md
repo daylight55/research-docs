@@ -29,3 +29,5 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] AWS Remote MCP build: Add AgentCore Gateway/Identity architecture, target patterns, inbound/outbound auth, OIDC/OAuth, and OBO token exchange notes.
 - [x] JSON-RPC payloads: Add concrete `initialize`, `tools/list`, `tools/call`, response, and error examples.
 - [x] Model-side tool generation: Summarize how MCP tool metadata is converted into model tool/function calling inputs, and distinguish MCP server design from model fine-tuning.
+- [x] Multi-agent configuration: Add project/user/org configuration guidance for Claude Code, VS Code/Copilot, Cursor, Codex, APM, and managed policy.
+- [x] MCP governance: Clarify Linux Foundation / Agentic AI Foundation stewardship, SEP/Working Group process, and the RFC boundary.
