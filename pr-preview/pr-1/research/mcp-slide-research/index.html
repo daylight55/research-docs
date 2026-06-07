@@ -1054,6 +1054,113 @@ Then run <code>/mcp</code> inside Claude Code and complete the browser login flo
 <li>Use organization scope when the server touches production systems, customer data, source control at broad scope, billing, cloud infrastructure, or privileged write operations.</li>
 <li>Use Remote MCP for shared SaaS/internal APIs. Use <code>stdio</code> only when the server must run locally or access local files directly.</li>
 </ul>
+<h3 id="quick-command-and-config-snippets"><a href="#quick-command-and-config-snippets">Quick command and config snippets</a></h3>
+<p>Use these as slide-level examples. They are intentionally short; real production configs should add version pins, scopes, policy, observability, and secret handling.</p>
+<p>Claude Code commands:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Remote MCP, project-shared</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Remote MCP, personal cross-project tool</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> sentry</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> user</span><span style="color:#9ECBFF"> https://mcp.sentry.dev/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Local stdio MCP for a project-local tool</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> stdio</span><span style="color:#9ECBFF"> api-tools</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#79B8FF"> --</span><span style="color:#9ECBFF"> python</span><span style="color:#9ECBFF"> tools/mcp_server.py</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># OAuth-backed Remote MCP; complete login inside Claude Code</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"><span style="color:#B392F0">claude</span></span>
+<span class="line"><span style="color:#B392F0">/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Inspect and remove</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> inventory</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> remove</span><span style="color:#9ECBFF"> inventory</span></span></code></pre>
+<p>Claude Code project <code>.mcp.json</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"${INVENTORY_MCP_URL:-https://mcp.example.com/mcp}"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "oauth"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "scopes"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory:read inventory:reserve"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "api-tools"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"stdio"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"python"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"tools/mcp_server.py"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>VS Code workspace <code>.vscode/mcp.json</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "inputs"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"promptString"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"token"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"password"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${input:token}"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "playwright"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@playwright/mcp"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "sandboxEnabled"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Cursor project <code>.cursor/mcp.json</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${env:INVENTORY_MCP_TOKEN}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Codex CLI project <code>.codex/config.toml</code> example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="toml"><code><span class="line"><span style="color:#E1E4E8">[</span><span style="color:#B392F0">mcp_servers</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">inventory</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">transport = </span><span style="color:#9ECBFF">"http"</span></span>
+<span class="line"><span style="color:#E1E4E8">url = </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">[</span><span style="color:#B392F0">mcp_servers</span><span style="color:#E1E4E8">.</span><span style="color:#B392F0">playwright</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">command = </span><span style="color:#9ECBFF">"npx"</span></span>
+<span class="line"><span style="color:#E1E4E8">args = [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@playwright/mcp"</span><span style="color:#E1E4E8">]</span></span></code></pre>
+<p>Microsoft APM <code>apm.yml</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">internal-agent-context</span></span>
+<span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  mcp</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.microsoft/playwright-mcp</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">inventory</span></span>
+<span class="line"><span style="color:#85E89D">      registry</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#85E89D">      transport</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">http</span></span>
+<span class="line"><span style="color:#85E89D">      url</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">https://mcp.example.com/mcp</span></span></code></pre>
+<p>APM commands:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">apm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> --mcp</span><span style="color:#9ECBFF"> io.github.microsoft/playwright-mcp</span></span>
+<span class="line"><span style="color:#B392F0">apm</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> --mcp</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#79B8FF"> --url</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"><span style="color:#B392F0">apm</span><span style="color:#9ECBFF"> install</span></span>
+<span class="line"><span style="color:#B392F0">apm</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> list</span></span></code></pre>
+<p>Claude Code managed policy snippets:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.internal.example.com/mcp"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "allowManagedMcpServersOnly"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "allowedMcpServers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"serverUrl"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.internal.example.com/*"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "deniedMcpServers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"serverCommand"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"unapproved-package"</span><span style="color:#E1E4E8">] }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <h3 id="claude-code-examples"><a href="#claude-code-examples">Claude Code examples</a></h3>
 <p>Project-shared <code>.mcp.json</code> should avoid raw secrets and should use stable server names:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>

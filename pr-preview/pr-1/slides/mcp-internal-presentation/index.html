@@ -521,6 +521,51 @@ _class: dense
 <!--
 _class: dense
 -->
+<h2 id="q-最小コマンド例は"><a href="#q-最小コマンド例は">Q. 最小コマンド例は？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Claude Code: project共有Remote MCP</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Claude Code: user横断Remote MCP</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> sentry</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --scope</span><span style="color:#9ECBFF"> user</span><span style="color:#9ECBFF"> https://mcp.sentry.dev/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Claude Code: local stdio MCP</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> stdio</span><span style="color:#9ECBFF"> api-tools</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#79B8FF"> --</span><span style="color:#9ECBFF"> python</span><span style="color:#9ECBFF"> tools/mcp_server.py</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 状態確認</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> list</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> inventory</span></span></code></pre>
+<p>OAuth付きRemote MCPは登録後に<code>/mcp</code>でbrowser loginする。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-最小設定ファイル例は"><a href="#q-最小設定ファイル例は">Q. 最小設定ファイル例は？</a></h2>
+<p>Claude Code / Cursor: <code>mcpServers</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>VS Code / Copilot: <code>servers</code></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>違いは小さいが、keyを間違えるとclientが読み込まない。</p>
+<hr>
+<!--
+_class: dense
+-->
 <h2 id="q-microsoft-apmは何に使える"><a href="#q-microsoft-apmは何に使える">Q. Microsoft APMは何に使える？</a></h2>
 <p>APM = Agent Package Manager。MCP clientではなく、複数Agent向けの依存管理。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">internal-agent-context</span></span>

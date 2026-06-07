@@ -451,6 +451,70 @@ _class: dense
 _class: dense
 -->
 
+## Q. 最小コマンド例は？
+
+```bash
+# Claude Code: project共有Remote MCP
+claude mcp add --transport http inventory \
+  --scope project https://mcp.example.com/mcp
+
+# Claude Code: user横断Remote MCP
+claude mcp add --transport http sentry \
+  --scope user https://mcp.sentry.dev/mcp
+
+# Claude Code: local stdio MCP
+claude mcp add --transport stdio api-tools \
+  --scope project -- python tools/mcp_server.py
+
+# 状態確認
+claude mcp list
+claude mcp get inventory
+```
+
+OAuth付きRemote MCPは登録後に`/mcp`でbrowser loginする。
+
+---
+
+<!--
+_class: dense
+-->
+
+## Q. 最小設定ファイル例は？
+
+Claude Code / Cursor: `mcpServers`
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp"
+    }
+  }
+}
+```
+
+VS Code / Copilot: `servers`
+
+```json
+{
+  "servers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp"
+    }
+  }
+}
+```
+
+違いは小さいが、keyを間違えるとclientが読み込まない。
+
+---
+
+<!--
+_class: dense
+-->
+
 ## Q. Microsoft APMは何に使える？
 
 APM = Agent Package Manager。MCP clientではなく、複数Agent向けの依存管理。
