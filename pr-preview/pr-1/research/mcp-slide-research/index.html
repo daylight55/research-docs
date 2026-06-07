@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP internal presentation research notes | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP internal presentation research notes</h1> <p>MCP概要、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p>  </header> <div class="markdown-body"> <h1 id="mcp-internal-presentation-research-notes"><a href="#mcp-internal-presentation-research-notes">MCP internal presentation research notes</a></h1>
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP internal presentation research notes | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP internal presentation research notes</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p>  </header> <div class="markdown-body"> <h1 id="mcp-internal-presentation-research-notes"><a href="#mcp-internal-presentation-research-notes">MCP internal presentation research notes</a></h1>
 <p>Date: 2026-06-07</p>
 <h2 id="research-stance"><a href="#research-stance">Research stance</a></h2>
 <p>This is a technical specification review plus ecosystem survey, not a formal academic literature review. Primary sources were prioritized:</p>
@@ -18,6 +18,11 @@
 <li>Chrome DevTools MCP: <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">https://github.com/ChromeDevTools/chrome-devtools-mcp</a></li>
 <li>AWS MCP Server GA / Agent Toolkit: <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/</a> and <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/</a></li>
 <li>AgentCore Gateway / Identity: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html</a>, <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html</a>, and <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html</a></li>
+<li>JSON-RPC 2.0 specification: <a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a></li>
+<li>MCP lifecycle/tools/transports/sampling specification pages: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle</a>, <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">https://modelcontextprotocol.io/specification/2025-11-25/server/tools</a>, <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">https://modelcontextprotocol.io/specification/2025-11-25/basic/transports</a>, and <a href="https://modelcontextprotocol.io/specification/2025-11-25/client/sampling">https://modelcontextprotocol.io/specification/2025-11-25/client/sampling</a></li>
+<li>Anthropic tool use docs: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview</a> and <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools">https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools</a></li>
+<li>OpenAI function-calling fine-tuning cookbook and RFT guide: <a href="https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling">https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling</a> and <a href="https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning">https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning</a></li>
+<li>Hugging Face Agents Course function-calling fine-tuning note: <a href="https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning">https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning</a></li>
 <li>GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.</li>
 </ul>
 <h2 id="expanded-beginner-friendly-notes-2026-06-07"><a href="#expanded-beginner-friendly-notes-2026-06-07">Expanded beginner-friendly notes, 2026-06-07</a></h2>
@@ -143,6 +148,305 @@
 <li>社内共通・Claude custom connector・SaaS連携: Streamable HTTP。</li>
 <li>旧SSE serverは残っているが、新規ならHTTPを優先する。</li>
 </ul>
+<h3 id="61-json-rpcで実際に何が送られるか"><a href="#61-json-rpcで実際に何が送られるか">6.1 JSON-RPCで実際に何が送られるか</a></h3>
+<p>MCPのmessageはJSON-RPC 2.0のrequest、response、notificationとして表現される。JSON-RPC 2.0自体はtransport-agnosticなRPC仕様で、requestには<code>jsonrpc: "2.0"</code>、<code>method</code>、必要に応じて<code>params</code>、response対応のための<code>id</code>が入る。<code>id</code>がないrequestはnotificationで、responseを返さない。MCPはこの汎用RPC envelopeの<code>method</code>名として<code>initialize</code>、<code>tools/list</code>、<code>tools/call</code>、<code>resources/read</code>などを定義している。</p>
+<p>MCPの実務理解では、次の4種類を押さえると十分。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>種類</th><th>例</th><th>何のため</th></tr></thead><tbody><tr><td>lifecycle</td><td><code>initialize</code>, <code>notifications/initialized</code></td><td>protocol version、capability、client/server情報を交換する</td></tr><tr><td>discovery</td><td><code>tools/list</code>, <code>resources/list</code>, <code>prompts/list</code></td><td>LLM/hostが使える能力を発見する</td></tr><tr><td>invocation</td><td><code>tools/call</code>, <code>resources/read</code></td><td>実際にtoolを呼ぶ、resourceを読む</td></tr><tr><td>control/error</td><td><code>notifications/cancelled</code>, JSON-RPC <code>error</code></td><td>timeout、cancel、protocol errorを扱う</td></tr></tbody></table>
+<h4 id="initialize"><a href="#initialize">initialize</a></h4>
+<p>接続直後にclientがserverへ送る。ここでprotocol version、client capability、client implementation情報を渡す。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "method"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"initialize"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "params"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "protocolVersion"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2025-11-25"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "capabilities"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "sampling"</span><span style="color:#E1E4E8">: {},</span></span>
+<span class="line"><span style="color:#79B8FF">      "elicitation"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"form"</span><span style="color:#E1E4E8">: {} }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "clientInfo"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"claude-code"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"1.0.0"</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>serverは対応version、server capability、server情報、任意のinstructionsを返す。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "result"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "protocolVersion"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2025-11-25"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "capabilities"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "tools"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"listChanged"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">      "resources"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"listChanged"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "serverInfo"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory-mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"0.1.0"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "instructions"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Use read tools before write tools."</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>その後、clientは<code>notifications/initialized</code>を送って通常運用へ入る。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "method"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"notifications/initialized"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h4 id="toolslist"><a href="#toolslist">tools/list</a></h4>
+<p>clientはserverが公開するtoolを取得する。ここで返る<code>name</code>、<code>description</code>、<code>inputSchema</code>、必要なら<code>outputSchema</code>が、host側でLLMに渡されるtool定義の材料になる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "method"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tools/list"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "params"</span><span style="color:#E1E4E8">: {}</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "result"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "tools"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#79B8FF">        "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory.search_items"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "title"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Search inventory items"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Search inventory items by keyword. Use this before reserving stock when the exact SKU is unknown. Returns at most 20 items with stable item IDs."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "inputSchema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "query"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">              "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">              "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Keyword, product name, or SKU fragment."</span></span>
+<span class="line"><span style="color:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#79B8FF">            "limit"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">              "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">              "minimum"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">              "maximum"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">              "default"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">10</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#79B8FF">          "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"query"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">          "additionalProperties"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#79B8FF">        "outputSchema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">            "items"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">              "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"array"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">              "items"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">                "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">                "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">                  "item_id"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">                  "name"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#79B8FF">                  "stock"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">                },</span></span>
+<span class="line"><span style="color:#79B8FF">                "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"item_id"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"name"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"stock"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">              }</span></span>
+<span class="line"><span style="color:#E1E4E8">            }</span></span>
+<span class="line"><span style="color:#E1E4E8">          },</span></span>
+<span class="line"><span style="color:#79B8FF">          "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"items"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h4 id="toolscall"><a href="#toolscall">tools/call</a></h4>
+<p>LLMが「このtoolを使うべき」と判断すると、host/clientはMCP serverへ<code>tools/call</code>を送る。LLM自身がHTTP APIを叩くのではない。LLMはtool名とargumentsを生成し、hostが承認、validation、transport、authを処理してserverへ送る。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "method"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tools/call"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "params"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory.search_items"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "arguments"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "query"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"notebook"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "limit"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>serverはtool resultを返す。自然文の<code>content</code>だけでなく、機械処理しやすい<code>structuredContent</code>を返せる。<code>outputSchema</code>を定義した場合、serverはそれに合うstructured resultを返す必要があり、clientは検証できる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "result"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "content"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Found 1 item: Notebook A (sku-001), stock 42."</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#79B8FF">    "structuredContent"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "items"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#79B8FF">          "item_id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"sku-001"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Notebook A"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">          "stock"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">42</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      ]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "isError"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h4 id="errors"><a href="#errors">errors</a></h4>
+<p>MCPでは「JSON-RPC protocol error」と「tool execution error」を分ける。protocol errorはmethod名不正、params不正、version不一致のようなRPC構造の問題。tool execution errorは、業務API側のvalidation、rate limit、権限不足など、tool実行上の問題で、<code>isError: true</code>のtool resultとして返せる。</p>
+<p>Protocol error:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">4</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "error"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "code"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">-32602</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "message"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Unknown tool: inventory.delete_everything"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Tool execution error:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">5</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "result"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "content"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">      {</span></span>
+<span class="line"><span style="color:#79B8FF">        "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">        "text"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Cannot reserve item: requested quantity exceeds available stock. Retry with quantity &#x3C;= 42."</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#79B8FF">    "isError"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>実装方針:</p>
+<ul>
+<li>protocol errorはclient/server実装やschema不一致の問題として扱う。</li>
+<li>tool execution errorはLLMが自己修正できるよう、原因、制約、retry guidanceを短く返す。</li>
+<li><code>structuredContent</code>と<code>outputSchema</code>を使うと、後続tool callやUI表示で壊れにくい。</li>
+<li><code>content</code>へ巨大なraw logを入れず、summary、stable ID、paginationを返す。</li>
+</ul>
+<h3 id="62-json-rpcはtransportでどう運ばれるか"><a href="#62-json-rpcはtransportでどう運ばれるか">6.2 JSON-RPCはtransportでどう運ばれるか</a></h3>
+<p>stdio:</p>
+<ul>
+<li>clientがserver processを起動する。</li>
+<li>stdin/stdoutにnewline-delimitedなJSON-RPC messageを流す。</li>
+<li>stdoutはprotocol専用。通常ログをstdoutへ出すとclientがJSON-RPCとして読んで壊れる。</li>
+<li>stderrはログ用途に使える。</li>
+</ul>
+<p>Streamable HTTP:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#F97583">POST</span><span style="color:#E1E4E8"> /mcp </span><span style="color:#F97583">HTTP</span><span style="color:#E1E4E8">/</span><span style="color:#79B8FF">1.1</span></span>
+<span class="line"><span style="color:#85E89D">Authorization</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> Bearer &#x3C;access_token></span></span>
+<span class="line"><span style="color:#85E89D">Accept</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> application/json, text/event-stream</span></span>
+<span class="line"><span style="color:#85E89D">Content-Type</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> application/json</span></span>
+<span class="line"><span style="color:#85E89D">MCP-Protocol-Version</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 2025-11-25</span></span>
+<span class="line"><span style="color:#85E89D">MCP-Session-Id</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> 1868a90c...</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "jsonrpc"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "method"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tools/call"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "params"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory.search_items"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "arguments"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"query"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"notebook"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>要点:</p>
+<ul>
+<li>clientからserverへのJSON-RPC messageはPOSTで送る。</li>
+<li>responseは<code>application/json</code>の単一JSON、または<code>text/event-stream</code>のSSE streamで返る。</li>
+<li>serverが<code>MCP-Session-Id</code>を返した場合、clientは後続requestで同じsession headerを付ける。</li>
+<li>HTTP利用時は交渉済みversionを<code>MCP-Protocol-Version</code> headerで送る。</li>
+<li>Remote/local HTTP serverはOrigin validation、localhost bind、authを設計する。</li>
+</ul>
+<h3 id="63-tool説明文はどのようにllmへ渡るか"><a href="#63-tool説明文はどのようにllmへ渡るか">6.3 tool説明文はどのようにLLMへ渡るか</a></h3>
+<p>MCP serverがLLMへ直接promptを送るわけではない。基本フローは次の通り。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>MCP server</span></span>
+<span class="line"><span>  -> tools/listでtool metadataを返す</span></span>
+<span class="line"><span>MCP host/client</span></span>
+<span class="line"><span>  -> tool name / description / inputSchema / outputSchema / annotationsを受け取る</span></span>
+<span class="line"><span>  -> 使用中のmodel provider APIに合うtool/function schemaへ変換する</span></span>
+<span class="line"><span>LLM</span></span>
+<span class="line"><span>  -> user prompt + system prompt + tool definitionsを見て、tool_use/tool_callを生成する</span></span>
+<span class="line"><span>MCP host/client</span></span>
+<span class="line"><span>  -> tool_useをMCP tools/callに変換してserverへ送る</span></span></code></pre>
+<p>公開情報から言えること:</p>
+<ul>
+<li>MCP tools specはtoolを「model-controlled」と説明しており、modelがcontextとuser promptに基づいてtoolを発見・呼び出せる設計である。ただしhuman-in-the-loopや承認UIが推奨される。</li>
+<li>Anthropic docsは、Claude APIに<code>tools</code>を渡すと、tool定義、tool設定、user system promptからtool use用のspecial system promptが構築されると説明している。つまりdescriptionとschemaは単なるドキュメントではなく、model input tokenとして扱われる。</li>
+<li>Anthropic docsは、Claudeがuser requestとtool descriptionに基づいてtoolを呼ぶか判断すると説明している。<code>tool_choice</code>でauto/any/specific/noneを制御でき、strict tool useでschema一致を強められる。</li>
+<li>OpenAI Cookbookは、<code>tools</code> parameterがfunction仕様をmodelへ渡し、modelが仕様に沿ったargumentsを生成できるようにするためのものだと説明している。APIやmodelは関数を実行せず、実行はapplication側の責任である。</li>
+<li>Gemini docsも、function callingではmodelが必要性を判断してstructured dataでfunctionとparametersを出力し、applicationが実行して結果を戻す、と説明している。</li>
+</ul>
+<p>したがってMCP server開発者が「チューニング」する対象は、まずLLM model本体ではなく、tool surfaceである。</p>
+<ol>
+<li>tool名: service/resource/actionがわかる名前にする。</li>
+<li>description: 何をするか、いつ使うか、いつ使わないか、返すもの、制約を書く。</li>
+<li>schema: required、enum、format、minimum/maximum、additionalPropertiesを使い曖昧さを減らす。</li>
+<li>output: structuredContent、stable IDs、summary、paginationで次の判断を助ける。</li>
+<li>error: retry可能な制約とmissing scopeを短く返す。</li>
+</ol>
+<h3 id="64-mcp接続にllm専用fine-tuningは必要か"><a href="#64-mcp接続にllm専用fine-tuningは必要か">6.4 MCP接続にLLM専用fine-tuningは必要か</a></h3>
+<p>結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP <code>tools/call</code>へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。</p>
+<p>ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。</p>
+<ul>
+<li>OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。</li>
+<li>OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。</li>
+<li>Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。</li>
+</ul>
+<p>この情報をMCP文脈へ翻訳すると、次のようになる。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>レイヤー</th><th>誰が担うか</th><th>MCP server開発者の設計対象</th></tr></thead><tbody><tr><td>MCP protocol</td><td>host/client/server SDK</td><td>JSON-RPC lifecycle、transport、auth、schema validation</td></tr><tr><td>tool metadata</td><td>MCP server</td><td>name、description、inputSchema、outputSchema、annotations</td></tr><tr><td>tool call generation</td><td>LLM + host/model API</td><td>provider固有のtool/function calling能力</td></tr><tr><td>model tuning</td><td>model providerまたはmodel owner</td><td>tool選択精度、schema遵守、multi-tool planning</td></tr></tbody></table>
+<p>社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。</p>
 <h3 id="7-authorization-なぜoauth-21とaudienceが重要か"><a href="#7-authorization-なぜoauth-21とaudienceが重要か">7. Authorization: なぜOAuth 2.1とaudienceが重要か</a></h3>
 <p>Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。</p>
 <p>初心者向けに言うと、Remote MCPの認証で避けたい事故は3つ。</p>

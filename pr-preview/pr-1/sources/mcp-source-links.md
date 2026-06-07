@@ -13,11 +13,23 @@ order: 30
 ## Protocol and Concepts
 
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2025-11-25)
+- [MCP lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)
 - [MCP transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
 - [MCP tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
+- [MCP sampling](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling)
+- [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification)
 - [Anthropic launch post](https://www.anthropic.com/news/model-context-protocol)
 - [MCP reference servers](https://github.com/modelcontextprotocol/servers)
 - [MCP registry](https://github.com/modelcontextprotocol/registry)
+
+## Tool Use and Model-Side Generation
+
+- [Anthropic tool use overview](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
+- [Anthropic define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
+- [OpenAI fine tuning for function calling](https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling)
+- [OpenAI reinforcement fine-tuning](https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning)
+- [Google Gemini function calling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tools/function-calling)
+- [Hugging Face function-calling fine-tuning](https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning)
 
 ## Building MCP Servers
 

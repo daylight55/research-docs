@@ -27,3 +27,5 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] CLI/MCP/browser comparison: Add token-use, flow stability, provider-perspective analysis, and restructure the Marp deck as developer-centered Q&A.
 - [x] Claude registration: Add Claude Code Remote MCP registration steps, OAuth variants, scopes, JSON config, and Claude.ai connector notes.
 - [x] AWS Remote MCP build: Add AgentCore Gateway/Identity architecture, target patterns, inbound/outbound auth, OIDC/OAuth, and OBO token exchange notes.
+- [x] JSON-RPC payloads: Add concrete `initialize`, `tools/list`, `tools/call`, response, and error examples.
+- [x] Model-side tool generation: Summarize how MCP tool metadata is converted into model tool/function calling inputs, and distinguish MCP server design from model fine-tuning.

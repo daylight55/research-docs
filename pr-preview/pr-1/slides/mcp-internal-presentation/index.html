@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP Q&amp;A、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP Q&amp;A、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP Q&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP Q&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
 _class: lead
 -->
 <h1 id="mcpを開発現場でどう使うべきか"><a href="#mcpを開発現場でどう使うべきか">MCPを開発現場でどう使うべきか</a></h1>
@@ -521,6 +521,80 @@ _class: dense
 <p>Streamable HTTPではsession、protocol version header、Origin validation、authが運用上の要点。</p>
 <hr>
 <!--
+_class: dense
+-->
+<h2 id="q-json-rpcでは実際に何が流れる"><a href="#q-json-rpcでは実際に何が流れる">Q. JSON-RPCでは実際に何が流れる？</a></h2>
+<p>MCP messageはJSON-RPC 2.0 envelopeで流れる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"initialize"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tools/list"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{}}</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tools/call"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8">}}</span></span></code></pre>
+<ul>
+<li><code>method</code>: <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>など</li>
+<li><code>params</code>: methodごとの入力</li>
+<li><code>id</code>: request/response対応。ない場合はnotification</li>
+<li><code>result</code> / <code>error</code>: 成功応答またはprotocol error</li>
+</ul>
+<p>LLMが直接APIを叩くのではなく、hostがtool callをMCP JSON-RPCへ変換する。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-toolslistでモデルに渡る情報は"><a href="#q-toolslistでモデルに渡る情報は">Q. tools/listでモデルに渡る情報は？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory.search_items"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Search inventory by keyword. Use before reserving stock when SKU is unknown."</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "inputSchema"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    "properties"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "query"</span><span style="color:#E1E4E8">: {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#79B8FF">      "limit"</span><span style="color:#E1E4E8">: {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"minimum"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"maximum"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"query"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<ul>
+<li><code>name</code>: modelが選ぶtool ID</li>
+<li><code>description</code>: いつ使うか、制約、返すもの</li>
+<li><code>inputSchema</code>: argumentsを生成する型情報</li>
+<li><code>outputSchema</code> / <code>structuredContent</code>: 返り値を後続処理しやすくする</li>
+</ul>
+<p>descriptionはドキュメントではなく、<strong>model input token</strong>。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-tool-callのテキストはどう生成される"><a href="#q-tool-callのテキストはどう生成される">Q. tool callのテキストはどう生成される？</a></h2>
+<p><strong>A. MCP serverではなく、hostがLLMへtool定義を渡し、LLMがtool_use/tool_callを生成する。</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>MCP server: tools/list -> tool metadata</span></span>
+<span class="line"><span>Host/client: providerのtools/function schemaへ変換</span></span>
+<span class="line"><span>LLM: user prompt + system prompt + tool definitionsからtool callを生成</span></span>
+<span class="line"><span>Host/client: tool callをMCP tools/callへ変換</span></span>
+<span class="line"><span>MCP server: backend APIを実行してresultを返す</span></span></code></pre>
+<p>公開情報では、Anthropicはtool定義からspecial system promptを構築すると説明している。
+OpenAI/Geminiもtool/function schemaをmodel inputとして渡し、実行はapplication側が担う。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="q-mcp用にllmをfine-tuningする必要がある"><a href="#q-mcp用にllmをfine-tuningする必要がある">Q. MCP用にLLMをfine-tuningする必要がある？</a></h2>
+<p><strong>A. 通常は不要。まずtool surfaceを設計する。</strong></p>
+<ul>
+<li>MCP接続に必要なのはmodel専用trainingではなく、host/client/serverのprotocol実装</li>
+<li>modelはtool/function calling能力で<code>name + arguments</code>を生成する</li>
+<li>開発者が最初に調整すべきもの:
+<ul>
+<li>tool名</li>
+<li>description</li>
+<li>input/output schema</li>
+<li>result size</li>
+<li>error message</li>
+</ul>
+</li>
+<li>公開情報ではfunction calling向けfine-tuning例はあるが、MCP専用fine-tuning要件ではない</li>
+</ul>
+<p>大量・類似・複雑なtoolで精度が足りない場合に、tool-use evalやfine-tuningを検討する。</p>
+<hr>
+<!--
 _class: compact
 -->
 <h2 id="q-webmcpはmcpの代わり"><a href="#q-webmcpはmcpの代わり">Q. WebMCPはMCPの代わり？</a></h2>
@@ -830,4 +904,17 @@ _class: dense
 <li>Playwright MCP: <a href="https://github.com/microsoft/playwright-mcp">https://github.com/microsoft/playwright-mcp</a></li>
 <li>Chrome DevTools MCP: <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">https://github.com/ChromeDevTools/chrome-devtools-mcp</a></li>
 <li>Serena: <a href="https://github.com/oraios/serena">https://github.com/oraios/serena</a></li>
+</ul>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="主な参照-3"><a href="#主な参照-3">主な参照 3</a></h2>
+<ul>
+<li>JSON-RPC 2.0 specification: <a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a></li>
+<li>MCP lifecycle: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle</a></li>
+<li>MCP sampling: <a href="https://modelcontextprotocol.io/specification/2025-11-25/client/sampling">https://modelcontextprotocol.io/specification/2025-11-25/client/sampling</a></li>
+<li>Anthropic tool use overview: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview</a></li>
+<li>Anthropic define tools: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools">https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools</a></li>
+<li>OpenAI function calling fine-tuning: <a href="https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling">https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling</a></li>
 </ul> </div> </article>  </main> </div> </div> </body></html>
