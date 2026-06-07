@@ -24,7 +24,7 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] Beginner expansion: Add a Japanese beginner-friendly deep-dive section explaining MCP's motivation, concepts, protocol stack, implementation design, and risks.
 - [x] Latest refresh: Re-check official MCP spec, Chrome WebMCP, Claude MCP, AWS MCP / Agent Toolkit, FastMCP OpenAPI, and GitHub star counts on 2026-06-07.
 - [x] Transport deep dive: Expand connection protocol notes with stdio, Streamable HTTP, legacy HTTP+SSE, WebSocket/custom transports, and connection flow diagrams.
-- [x] CLI/MCP/browser comparison: Add token-use, flow stability, provider-perspective analysis, and restructure the Marp deck as developer-centered Q&A.
+- [x] CLI/MCP/browser comparison: Add token-use, flow stability, and provider-perspective analysis.
 - [x] Claude registration: Add Claude Code Remote MCP registration steps, OAuth variants, scopes, JSON config, and Claude.ai connector notes.
 - [x] AWS Remote MCP build: Add AgentCore Gateway/Identity architecture, target patterns, inbound/outbound auth, OIDC/OAuth, and OBO token exchange notes.
 - [x] JSON-RPC payloads: Add concrete `initialize`, `tools/list`, `tools/call`, response, and error examples.
@@ -32,3 +32,4 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] Multi-agent configuration: Add project/user/org configuration guidance for Claude Code, VS Code/Copilot, Cursor, Codex, APM, and managed policy.
 - [x] MCP governance: Clarify Linux Foundation / Agentic AI Foundation stewardship, SEP/Working Group process, and the RFC boundary.
 - [x] Config snippets: Add short command and config excerpts for Claude Code, VS Code/Copilot, Cursor, Codex CLI, APM, and managed policy.
+- [x] Narrative structure: Convert the deck from all-Q&A to a normal explanatory story with targeted Q&A slides for likely developer questions.
