@@ -362,6 +362,63 @@ section.rank table {
   width: max-content;
 }
 
+section.graph {
+  font-size: 22px;
+}
+
+.token-bars {
+  display: grid;
+  gap: 14px;
+  margin: 10px 0 20px;
+}
+
+.bar-row {
+  align-items: center;
+  column-gap: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 330px) minmax(0, 1fr);
+}
+
+.bar-row > span {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 680;
+  line-height: 1.18;
+}
+
+.bar {
+  background: rgba(23, 32, 42, 0.08);
+  border: 1px solid rgba(23, 32, 42, 0.08);
+  border-radius: 8px;
+  height: 38px;
+  overflow: hidden;
+}
+
+.bar b {
+  align-items: center;
+  background: linear-gradient(90deg, #007f7a, #4aa39f);
+  color: #fff;
+  display: flex;
+  font-size: 18px;
+  font-weight: 760;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 74px;
+  padding-inline-end: 12px;
+}
+
+.bar.good b {
+  background: linear-gradient(90deg, #2e8f62, #67b985);
+}
+
+.bar.warn b {
+  background: linear-gradient(90deg, #d45b3f, #e48a5f);
+}
+
+.bar.danger b {
+  background: linear-gradient(90deg, #9c2f2f, #d45b3f);
+}
+
 img.diagram {
   display: block;
   margin: 14px auto 0;

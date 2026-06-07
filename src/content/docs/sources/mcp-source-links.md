@@ -55,12 +55,26 @@ order: 30
 
 ## Tool Use and Model-Side Generation
 
+- [OpenAI using tools](https://developers.openai.com/api/docs/guides/tools)
+- [OpenAI function calling](https://developers.openai.com/api/docs/guides/function-calling)
+- [OpenAI computer use](https://developers.openai.com/api/docs/guides/tools-computer-use)
+- [OpenAI Apps SDK quickstart](https://developers.openai.com/apps-sdk/quickstart)
+- [OpenAI Codex manual](https://developers.openai.com/codex/codex-manual.md)
 - [Anthropic tool use overview](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
 - [Anthropic define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
+- [Anthropic computer use tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool)
+- [Anthropic advanced tool use and token-efficient tool use](https://www.anthropic.com/engineering/advanced-tool-use)
 - [OpenAI fine tuning for function calling](https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling)
 - [OpenAI reinforcement fine-tuning](https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning)
 - [Google Gemini function calling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tools/function-calling)
 - [Hugging Face function-calling fine-tuning](https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning)
+
+## Broader Agent Action Surfaces
+
+- [Chrome WebMCP overview](https://developer.chrome.com/docs/ai/webmcp)
+- [Chrome WebMCP comparison](https://developer.chrome.com/docs/ai/webmcp/compare-mcp)
+- [Google Agent2Agent announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)
+- [Google Cloud donates A2A to Linux Foundation](https://developers.googleblog.com/en/google-cloud-donates-a2a-to-linux-foundation/)
 
 ## Building MCP Servers
 
