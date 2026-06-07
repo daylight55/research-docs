@@ -2722,6 +2722,8 @@ Based on current official materials, present roadmap as "direction of travel", n
 
 ## Recommended slide structure
 
+The deck should not be pure Q&A. Use a normal explanatory story for the core concepts, then insert Q&A slides where engineers are likely to object or need a decision rule.
+
 1. Title: MCP: AI agents and external systems need a protocol
 2. Why now: agents need live data, tools, workflows, and governance
 3. What MCP is: open protocol + JSON-RPC + capability negotiation
@@ -2757,6 +2759,7 @@ Applied design decisions in this deck:
 - Added `themes/mcp-modern.css` as a reusable custom Marp theme.
 - Kept the Markdown source as the primary artifact.
 - Added section-divider slides for Frontend, Cloud, and Developer MCPs.
+- Mixed narrative explanation slides with targeted Q&A slides instead of making every slide a question.
 - Added `compact`, `dense`, `split`, `cards`, and `rank` classes to control information density per slide.
 - Used a calm technical palette with teal, vermilion, and violet accents rather than a single-hue theme.
 - Verified with `marp-cli` HTML export and PNG export for visual inspection.

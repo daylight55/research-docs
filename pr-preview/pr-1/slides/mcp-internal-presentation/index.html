@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP Q&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP Q&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP解説、要所のQ&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP解説、要所のQ&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
 _class: lead
 -->
 <h1 id="mcpを開発現場でどう使うべきか"><a href="#mcpを開発現場でどう使うべきか">MCPを開発現場でどう使うべきか</a></h1>
@@ -8,8 +8,22 @@ _class: lead
 <!--
 _class: compact
 -->
-<h2 id="q-結局mcpは何を解決するのか"><a href="#q-結局mcpは何を解決するのか">Q. 結局MCPは何を解決するのか？</a></h2>
-<p><strong>A. AIエージェントが外部システムを安全に使うための標準インターフェースを作る。</strong></p>
+<h2 id="本日の流れ"><a href="#本日の流れ">本日の流れ</a></h2>
+<ol>
+<li>MCPが解く問題と、CLI / browser / APIとの違い</li>
+<li>既存APIをMCP serverとして公開する設計</li>
+<li>Remote MCPとしてClaudeや複数Agentへ接続する方法</li>
+<li>接続protocol、JSON-RPC、tool call生成の中身</li>
+<li>Frontend / AWS / 開発向けMCPの実用例</li>
+<li>社内導入、運用ルール、今後の重要ポイント</li>
+</ol>
+<p>基本説明を進めながら、開発者が引っかかりやすい箇所だけQ&#x26;Aで補足する。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="mcpが解く問題"><a href="#mcpが解く問題">MCPが解く問題</a></h2>
+<p>AIエージェントが外部システムを安全に使うための標準インターフェースを作る。</p>
 <ul>
 <li>外部システム: GitHub、AWS、Sentry、DB、社内API、ブラウザ、Docs</li>
 <li>できること: context取得、tool実行、workflowの再利用</li>
@@ -20,7 +34,7 @@ _class: compact
 <!--
 _class: compact
 -->
-<h2 id="q-cliブラウザ操作mcpは何が違う"><a href="#q-cliブラウザ操作mcpは何が違う">Q. CLI、ブラウザ操作、MCPは何が違う？</a></h2>
+<h2 id="cli--browser--mcpの違い"><a href="#cli--browser--mcpの違い">CLI / Browser / MCPの違い</a></h2>
 
 
 
@@ -82,7 +96,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-トークン数は何が違う"><a href="#q-トークン数は何が違う">Q. トークン数は何が違う？</a></h2>
+<h2 id="token効率で見る違い"><a href="#token効率で見る違い">Token効率で見る違い</a></h2>
 <p>厳密値はclient/model/result次第。ここでは同一タスクの代表的なcontext消費として見る。</p>
 
 
@@ -131,8 +145,8 @@ _class: dense
 <!--
 _class: compact
 -->
-<h2 id="q-なぜmcpだとフローが安定する"><a href="#q-なぜmcpだとフローが安定する">Q. なぜMCPだとフローが安定する？</a></h2>
-<p><strong>A. agentが低レベル操作を推測せず、宣言済みcapabilityを呼べるから。</strong></p>
+<h2 id="mcpがフローを安定させる理由"><a href="#mcpがフローを安定させる理由">MCPがフローを安定させる理由</a></h2>
+<p>agentが低レベル操作を推測せず、宣言済みcapabilityを呼べるから。</p>
 <ul>
 <li><code>tools/list</code>: 何ができるかを発見する</li>
 <li><code>inputSchema</code>: 必要な引数と型がわかる</li>
@@ -145,7 +159,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-同じci調査だとどう違う"><a href="#q-同じci調査だとどう違う">Q. 同じCI調査だとどう違う？</a></h2>
+<h2 id="ci調査で見る利用フロー"><a href="#ci調査で見る利用フロー">CI調査で見る利用フロー</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>CLI:</span></span>
 <span class="line"><span>  gh pr view --json statusCheckRollup</span></span>
 <span class="line"><span>  gh run list --branch &#x3C;branch></span></span>
@@ -178,7 +192,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-サービス提供者は何を出すべき"><a href="#q-サービス提供者は何を出すべき">Q. サービス提供者は何を出すべき？</a></h2>
+<h2 id="サービス提供者視点のmcp"><a href="#サービス提供者視点のmcp">サービス提供者視点のMCP</a></h2>
 
 
 
@@ -220,8 +234,8 @@ _class: dense
 <!--
 _class: compact
 -->
-<h2 id="q-既存apiはどうmcp化する"><a href="#q-既存apiはどうmcp化する">Q. 既存APIはどうMCP化する？</a></h2>
-<p><strong>A. API本体を書き換えず、adapter layerを追加する。</strong></p>
+<h2 id="既存apiをmcp化する基本設計"><a href="#既存apiをmcp化する基本設計">既存APIをMCP化する基本設計</a></h2>
+<p>API本体を書き換えず、adapter layerを追加する。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>app/</span></span>
 <span class="line"><span>  api/</span></span>
 <span class="line"><span>    main.py              # existing FastAPI app</span></span>
@@ -238,7 +252,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-fastapi--openapiなら実装は"><a href="#q-fastapi--openapiなら実装は">Q. FastAPI + OpenAPIなら実装は？</a></h2>
+<h2 id="fastapi--openapiの実装例"><a href="#fastapi--openapiの実装例">FastAPI + OpenAPIの実装例</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># app/mcp/server.py</span></span>
 <span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> httpx</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
@@ -324,7 +338,7 @@ _class: dense
 <!--
 _class: compact
 -->
-<h2 id="q-remote-mcpとしてclaudeにつなぐには"><a href="#q-remote-mcpとしてclaudeにつなぐには">Q. Remote MCPとしてClaudeにつなぐには？</a></h2>
+<h2 id="claudeへremote-mcpを接続する全体像"><a href="#claudeへremote-mcpを接続する全体像">ClaudeへRemote MCPを接続する全体像</a></h2>
 <p>Remote MCPはcloud/service側で動くMCP serverをClaude Codeなどから使う形。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
 <span class="line"></span>
@@ -339,7 +353,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-claude-codeへの登録手順は"><a href="#q-claude-codeへの登録手順は">Q. Claude Codeへの登録手順は？</a></h2>
+<h2 id="claude-codeへの登録手順"><a href="#claude-codeへの登録手順">Claude Codeへの登録手順</a></h2>
 
 
 
@@ -439,7 +453,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-複数agentでmcp設定はどう書く"><a href="#q-複数agentでmcp設定はどう書く">Q. 複数AgentでMCP設定はどう書く？</a></h2>
+<h2 id="複数agentで使う設定設計"><a href="#複数agentで使う設定設計">複数Agentで使う設定設計</a></h2>
 <p>設定を1つのJSONとして考えない。<strong>共有する能力</strong>と<strong>個人の認証</strong>を分ける。</p>
 
 
@@ -521,7 +535,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-最小コマンド例は"><a href="#q-最小コマンド例は">Q. 最小コマンド例は？</a></h2>
+<h2 id="最小コマンド例"><a href="#最小コマンド例">最小コマンド例</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Claude Code: project共有Remote MCP</span></span>
 <span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> \</span></span>
 <span class="line"><span style="color:#79B8FF">  --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
@@ -542,7 +556,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-最小設定ファイル例は"><a href="#q-最小設定ファイル例は">Q. 最小設定ファイル例は？</a></h2>
+<h2 id="最小設定ファイル例"><a href="#最小設定ファイル例">最小設定ファイル例</a></h2>
 <p>Claude Code / Cursor: <code>mcpServers</code></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
 <span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
@@ -566,7 +580,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-microsoft-apmは何に使える"><a href="#q-microsoft-apmは何に使える">Q. Microsoft APMは何に使える？</a></h2>
+<h2 id="microsoft-apmで複数agent設定をまとめる"><a href="#microsoft-apmで複数agent設定をまとめる">Microsoft APMで複数Agent設定をまとめる</a></h2>
 <p>APM = Agent Package Manager。MCP clientではなく、複数Agent向けの依存管理。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">internal-agent-context</span></span>
 <span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
@@ -582,7 +596,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-vs-code--copilotではどう設定する"><a href="#q-vs-code--copilotではどう設定する">Q. VS Code / Copilotではどう設定する？</a></h2>
+<h2 id="vs-code--copilotの設定例"><a href="#vs-code--copilotの設定例">VS Code / Copilotの設定例</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
 <span class="line"><span style="color:#79B8FF">  "inputs"</span><span style="color:#E1E4E8">: [</span></span>
 <span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"promptString"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"token"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"password"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> }</span></span>
@@ -605,7 +619,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-組織でmcpを管理するには"><a href="#q-組織でmcpを管理するには">Q. 組織でMCPを管理するには？</a></h2>
+<h2 id="組織管理の選択肢"><a href="#組織管理の選択肢">組織管理の選択肢</a></h2>
 
 
 
@@ -688,7 +702,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-stdioとstreamable-httpはどう選ぶ"><a href="#q-stdioとstreamable-httpはどう選ぶ">Q. stdioとStreamable HTTPはどう選ぶ？</a></h2>
+<h2 id="接続protocolの選び方"><a href="#接続protocolの選び方">接続protocolの選び方</a></h2>
 
 
 
@@ -725,7 +739,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-remote-mcpの接続フローは"><a href="#q-remote-mcpの接続フローは">Q. Remote MCPの接続フローは？</a></h2>
+<h2 id="remote-mcpの接続フロー"><a href="#remote-mcpの接続フロー">Remote MCPの接続フロー</a></h2>
 
 
 
@@ -772,7 +786,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-json-rpcでは実際に何が流れる"><a href="#q-json-rpcでは実際に何が流れる">Q. JSON-RPCでは実際に何が流れる？</a></h2>
+<h2 id="json-rpcで流れるmessage"><a href="#json-rpcで流れるmessage">JSON-RPCで流れるmessage</a></h2>
 <p>MCP messageはJSON-RPC 2.0 envelopeで流れる。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"initialize"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8">}}</span></span>
 <span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tools/list"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{}}</span></span>
@@ -788,7 +802,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-toolslistでモデルに渡る情報は"><a href="#q-toolslistでモデルに渡る情報は">Q. tools/listでモデルに渡る情報は？</a></h2>
+<h2 id="toolslistが作るmodel向け文脈"><a href="#toolslistが作るmodel向け文脈"><code>tools/list</code>が作るmodel向け文脈</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
 <span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory.search_items"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#79B8FF">  "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Search inventory by keyword. Use before reserving stock when SKU is unknown."</span><span style="color:#E1E4E8">,</span></span>
@@ -858,7 +872,7 @@ _class: compact
 <!--
 _class: compact
 -->
-<h2 id="q-playwright-mcpとchrome-devtools-mcpは何に効く"><a href="#q-playwright-mcpとchrome-devtools-mcpは何に効く">Q. Playwright MCPとChrome DevTools MCPは何に効く？</a></h2>
+<h2 id="frontend操作に効くmcp"><a href="#frontend操作に効くmcp">Frontend操作に効くMCP</a></h2>
 <ul>
 <li>Playwright MCP
 <ul>
@@ -879,7 +893,7 @@ _class: compact
 <!--
 _class: compact
 -->
-<h2 id="q-aws-mcpは何が違う"><a href="#q-aws-mcpは何が違う">Q. AWS MCPは何が違う？</a></h2>
+<h2 id="aws-mcp--agentcoreの位置づけ"><a href="#aws-mcp--agentcoreの位置づけ">AWS MCP / AgentCoreの位置づけ</a></h2>
 <p>AWS MCP ServerはGA済みのAWS公式MCP入口として、AWS API/knowledge/architecture guidanceをagentに接続する。</p>
 <ul>
 <li>AWSサービス操作やknowledge lookupをagent workflowへ入れやすい</li>
@@ -892,7 +906,7 @@ _class: compact
 <!--
 _class: compact
 -->
-<h2 id="q-awsでremote-mcpを構築するなら"><a href="#q-awsでremote-mcpを構築するなら">Q. AWSでRemote MCPを構築するなら？</a></h2>
+<h2 id="awsでremote-mcpを構築する構成"><a href="#awsでremote-mcpを構築する構成">AWSでRemote MCPを構築する構成</a></h2>
 <p><strong>A. AgentCore GatewayをRemote MCP入口にし、既存API/Lambda/MCP serverをtargetとして束ねる。</strong></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Claude / Codex / Agent</span></span>
 <span class="line"><span>  -> AgentCore Gateway (MCP endpoint)</span></span>
@@ -908,7 +922,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-gatewayとidentityは何を補う"><a href="#q-gatewayとidentityは何を補う">Q. GatewayとIdentityは何を補う？</a></h2>
+<h2 id="gatewayとidentityが補うもの"><a href="#gatewayとidentityが補うもの">GatewayとIdentityが補うもの</a></h2>
 
 
 
@@ -950,7 +964,7 @@ _class: dense
 <!--
 _class: dense
 -->
-<h2 id="q-agentcoreでの構築フローは"><a href="#q-agentcoreでの構築フローは">Q. AgentCoreでの構築フローは？</a></h2>
+<h2 id="agentcore-gatewayでの構築フロー"><a href="#agentcore-gatewayでの構築フロー">AgentCore Gatewayでの構築フロー</a></h2>
 
 
 
@@ -1002,7 +1016,7 @@ _class: dense
 <!--
 _class: dense rank
 -->
-<h2 id="q-開発向けmcpは何から見る"><a href="#q-開発向けmcpは何から見る">Q. 開発向けMCPは何から見る？</a></h2>
+<h2 id="開発向けmcpの優先候補"><a href="#開発向けmcpの優先候補">開発向けMCPの優先候補</a></h2>
 <p>GitHub starsの目安。人気は変動するため、導入判断はofficial性、権限、保守状況も見る。</p>
 
 
@@ -1073,7 +1087,7 @@ _class: compact
 <!--
 _class: compact
 -->
-<h2 id="q-mcp-server設計で守るルールは"><a href="#q-mcp-server設計で守るルールは">Q. MCP server設計で守るルールは？</a></h2>
+<h2 id="mcp-server設計の重要ルール"><a href="#mcp-server設計の重要ルール">MCP server設計の重要ルール</a></h2>
 <ul>
 <li>trusted serverだけ接続する</li>
 <li>read/writeを分け、writeは承認を要求する</li>
@@ -1089,7 +1103,7 @@ _class: compact
 <!--
 _class: dense
 -->
-<h2 id="q-token-awareなmcp設計とは"><a href="#q-token-awareなmcp設計とは">Q. token-awareなMCP設計とは？</a></h2>
+<h2 id="token-awareなmcp設計"><a href="#token-awareなmcp設計">Token-awareなMCP設計</a></h2>
 <p>悪い例:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>call_api(method, path, body) -> raw JSON / raw logを全部返す</span></span></code></pre>
 <p>良い例:</p>
@@ -1102,7 +1116,7 @@ _class: dense
 <!--
 _class: compact
 -->
-<h2 id="q-社内導入はどう進める"><a href="#q-社内導入はどう進める">Q. 社内導入はどう進める？</a></h2>
+<h2 id="社内導入の進め方"><a href="#社内導入の進め方">社内導入の進め方</a></h2>
 <ol>
 <li>まずread-only MCPを作る</li>
 <li>OpenAPIからcandidate toolを生成する</li>
@@ -1117,7 +1131,7 @@ _class: compact
 <!--
 _class: compact
 -->
-<h2 id="q-最終的に何を覚えるべき"><a href="#q-最終的に何を覚えるべき">Q. 最終的に何を覚えるべき？</a></h2>
+<h2 id="まとめ-mcpで覚えること"><a href="#まとめ-mcpで覚えること">まとめ: MCPで覚えること</a></h2>
 <p>MCPが使える場合にMCPを優先する理由:</p>
 <ul>
 <li>token効率: tool search、schema、bounded resultでcontextを減らせる</li>
