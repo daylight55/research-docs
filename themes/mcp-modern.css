@@ -148,9 +148,12 @@ table {
   border-radius: 8px;
   border-spacing: 0;
   box-shadow: 0 14px 34px rgba(23, 32, 42, 0.08);
+  display: table;
   font-size: 18px;
+  inline-size: max-content;
+  max-inline-size: 100%;
   overflow: hidden;
-  width: 100%;
+  width: max-content;
 }
 
 th {
@@ -268,8 +271,24 @@ section.cards li {
 
 section.rank table {
   font-size: 16px;
+  inline-size: max-content;
   table-layout: fixed;
-  width: auto;
+  width: max-content;
+}
+
+img.diagram {
+  display: block;
+  margin: 14px auto 0;
+  max-height: 430px;
+  max-width: 100%;
+}
+
+section.dense img.diagram {
+  max-height: 385px;
+}
+
+section.compact img.diagram {
+  max-height: 405px;
 }
 
 section.rank td:first-child,

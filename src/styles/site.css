@@ -297,9 +297,11 @@ h1 {
 .markdown-body table {
   border-collapse: collapse;
   display: block;
-  inline-size: 100%;
+  inline-size: max-content;
   margin: 1.2rem 0;
+  max-inline-size: 100%;
   overflow-x: auto;
+  width: max-content;
 }
 
 .markdown-body th,

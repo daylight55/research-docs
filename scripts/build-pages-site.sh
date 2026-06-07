@@ -20,6 +20,19 @@ npx marp \
   --html \
   --output "$out_dir/slides/mcp-internal-presentation/deck/index.html"
 
+copy_slide_diagrams() {
+  local dest="$1"
+  mkdir -p "$dest"
+  while IFS= read -r file; do
+    cp "$file" "$dest/$(basename "$file")"
+  done < <(find src/content/docs/slides/diagrams -maxdepth 1 -type f \( -name "*.svg" -o -name "*.mmd" \) | sort)
+}
+
+if [ -d src/content/docs/slides/diagrams ]; then
+  copy_slide_diagrams "$out_dir/slides/mcp-internal-presentation/diagrams"
+  copy_slide_diagrams "$out_dir/slides/mcp-internal-presentation/deck/diagrams"
+fi
+
 while IFS= read -r file; do
   rel="${file#src/content/docs/}"
   mkdir -p "$out_dir/$(dirname "$rel")"
