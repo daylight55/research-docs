@@ -494,6 +494,66 @@ AWS系は権限が強いので、read-onlyから始め、write系は承認を必
 ---
 
 <!--
+_class: compact
+-->
+
+## Q. AWSでRemote MCPを構築するなら？
+
+**A. AgentCore GatewayをRemote MCP入口にし、既存API/Lambda/MCP serverをtargetとして束ねる。**
+
+```text
+Claude / Codex / Agent
+  -> AgentCore Gateway (MCP endpoint)
+  -> targets: OpenAPI API / Lambda / MCP server / Smithy / API Gateway
+  -> backend: AWS services / SaaS / internal APIs
+```
+
+- Gatewayは単一MCP endpointとtool catalogを提供する
+- OpenAPIやLambdaをMCP-compatible toolsへ変換できる
+- 複数targetを統合したvirtual MCP serverとして見せられる
+- semantic tool searchで大きなtool catalogを扱いやすくする
+
+---
+
+<!--
+_class: dense
+-->
+
+## Q. GatewayとIdentityは何を補う？
+
+| 要素 | 役割 | MCPとの関係 |
+|---|---|---|
+| AgentCore Gateway | MCP endpoint、tool aggregation、target routing | `tools/list` / `tools/call`の入口 |
+| Gateway inbound auth | agent/clientがGatewayへ入る認証 | OAuth JWT、IAM SigV4、authenticate-onlyなど |
+| Gateway outbound auth | Gatewayがtargetへ出る認証 | IAM、OAuth、API key、token passthroughなど |
+| AgentCore Identity | OAuth provider、token vault、workload identity | 2LO/3LO/OBO tokenを管理 |
+| OBO token exchange | inbound user tokenをdownstream向けtokenへ交換 | user + agent identityを維持した委任 |
+
+GatewayはMCP transportだけでなく、認証・認可・credential管理の運用面を補う。
+
+---
+
+<!--
+_class: dense
+-->
+
+## Q. AgentCoreでの構築フローは？
+
+| step | 設計/作業 | 実装上の判断 |
+|---:|---|---|
+| 1 | toolを定義 | OpenAPI、Lambda schema、既存MCP server |
+| 2 | Gatewayを作成 | inbound auth: OAuth JWT / IAM / none for dev |
+| 3 | targetを追加 | OpenAPI、Lambda、MCP server、API Gateway、Smithy |
+| 4 | outbound authを設定 | IAM SigV4、OAuth 2LO/3LO/OBO、API key |
+| 5 | capability sync | `SynchronizeGatewayTargets`でtool catalog更新 |
+| 6 | client接続 | Claude CodeなどからGateway MCP URLを登録 |
+| 7 | 運用 | CloudTrail、CloudWatch、least privilege、policy |
+
+既存FastAPIならOpenAPI target、独自処理ならLambda target、既存MCPならMCP server targetが自然。
+
+---
+
+<!--
 _class: dense rank
 -->
 
@@ -616,7 +676,7 @@ MCPが使える場合にMCPを優先する理由:
 _class: dense
 -->
 
-## 主な参照
+## 主な参照 1
 
 - Model Context Protocol specification: https://modelcontextprotocol.io/specification/2025-11-25
 - MCP transports: https://modelcontextprotocol.io/specification/2025-11-25/basic/transports
@@ -624,7 +684,19 @@ _class: dense
 - Claude Code MCP docs: https://code.claude.com/docs/en/mcp
 - FastMCP OpenAPI docs: https://gofastmcp.com/servers/openapi
 - Chrome WebMCP comparison: https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja
+
+---
+
+<!--
+_class: dense
+-->
+
+## 主な参照 2
+
 - AWS MCP Server GA: https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/
+- AgentCore Gateway concepts: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html
+- AgentCore Gateway MCP targets: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html
+- AgentCore Identity OBO: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html
 - Playwright MCP: https://github.com/microsoft/playwright-mcp
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - Serena: https://github.com/oraios/serena

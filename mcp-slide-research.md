@@ -20,6 +20,7 @@ This is a technical specification review plus ecosystem survey, not a formal aca
 - Playwright MCP: https://github.com/microsoft/playwright-mcp
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - AWS MCP Server GA / Agent Toolkit: https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/ and https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/
+- AgentCore Gateway / Identity: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html, https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html, and https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html
 - GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.
 
 ## Expanded beginner-friendly notes, 2026-06-07
@@ -1483,6 +1484,253 @@ Management recommendations:
 - Monitor `AWS-MCP` CloudWatch metrics.
 - Review CloudTrail for agent-initiated changes.
 - Prefer Agent Toolkit for AWS for managed enterprise rollout; keep AWS Labs MCPs for service-specific local workflows and experimentation.
+
+## Building Remote MCP on AWS with AgentCore Gateway and Identity
+
+This section is about building a Remote MCP surface on AWS for internal or product APIs. It is different from using the AWS MCP Server. The AWS MCP Server gives agents access to AWS APIs and AWS documentation. AgentCore Gateway lets a team expose its own tools and APIs through a managed MCP-compatible gateway.
+
+### Mental model
+
+AgentCore Gateway is an agent-to-tool connectivity layer:
+
+```text
+Claude / Codex / app agent
+  -> AgentCore Gateway MCP endpoint
+  -> Gateway targets
+  -> existing APIs, Lambda functions, external MCP servers, AWS services, SaaS
+```
+
+The direction matters:
+
+- If "my agent needs to call my API", use AgentCore Gateway as a tool gateway.
+- If "my app needs to invoke my agent", invoke AgentCore Runtime directly, not Gateway.
+- If "my agent needs to call an existing MCP server", add that MCP server as a Gateway target.
+
+AWS documentation describes Gateway as a single access point where agents discover and interact with tools and services. In aggregation mode, Gateway acts as a virtual MCP server and combines capabilities from multiple MCP targets into one consolidated catalog.
+
+### What Gateway can expose as MCP tools
+
+Target options:
+
+| Target type | When to use | Notes |
+|---|---|---|
+| OpenAPI specification | Existing REST/FastAPI service | Gateway translates MCP calls to REST calls. Good for existing API servers. |
+| Lambda function | Custom tool logic | Good when the tool is small or when you want IAM execution role control. |
+| MCP server | Third-party or internal Remote MCP server | Gateway discovers tools/prompts/resources and exposes them through the unified catalog. |
+| API Gateway REST API | Existing API Gateway-backed service | Useful when the API is already fronted by AWS API Gateway. |
+| Smithy model | AWS/custom service model | Useful for strongly described service interfaces. |
+| Built-in integration provider templates | Standard SaaS/tool integrations | Use where AWS provides a managed template. |
+
+For existing FastAPI/OpenAPI APIs, this gives a managed alternative to writing and operating a custom FastMCP adapter. The trade-off is that Gateway becomes the central policy/auth/catalog layer, while the existing API remains the business-logic source of truth.
+
+### Gateway and MCP protocol behavior
+
+Gateway has two broad target categories:
+
+- MCP targets:
+  - Operate in aggregation mode.
+  - Gateway combines capabilities into a single virtual MCP server.
+  - Clients see one `tools/list` response.
+  - Supports capability synchronization, semantic tool search, and target-level 3-legged OAuth.
+- HTTP targets:
+  - Gateway proxies requests directly.
+  - No MCP aggregation/protocol translation.
+  - Used for HTTP services such as AgentCore Runtime agents.
+
+For MCP server targets, AWS docs call out:
+
+- Tools are required; prompts and resources are optional.
+- Supported MCP protocol versions include `2025-06-18`, `2025-03-26`, and `2025-11-25`.
+- DEFAULT listing mode discovers capabilities through `SynchronizeGatewayTargets` and caches/indexes the catalog.
+- DYNAMIC listing mode discovers capabilities at invocation time, but is not currently interoperable with semantic search or outbound 3-legged OAuth.
+- When tools, prompts, or resources change for DEFAULT targets, call `SynchronizeGatewayTargets`.
+- If the target MCP server is hosted on AgentCore Runtime, enabling MCP sessions or allowing `Mcp-Session-Id` request/response headers avoids repeated initialization and can reduce latency.
+
+### AgentCore Identity's role
+
+AgentCore Identity complements Gateway by handling identity and credential management for agents and tool access:
+
+- Workload identity:
+  - Gives each agent/workload a distinct identity.
+  - Lets Gateway and tools reason about "which agent is acting".
+- Token vault:
+  - Stores OAuth access/refresh tokens, API keys, and OAuth client secrets.
+  - Uses AWS KMS encryption and access controls.
+- OAuth flow orchestration:
+  - Supports OAuth 2.0 Client Credentials (2LO) and Authorization Code (3LO).
+  - Integrates with existing identity providers rather than forcing user migration.
+- OIDC/user context:
+  - Can validate inbound user tokens and pass user context to the agent/workload.
+  - If the access token lacks full user context, the agent can call the OIDC userinfo endpoint.
+- On-Behalf-Of token exchange:
+  - Exchanges an inbound user access token for a new downstream-scoped token.
+  - Preserves both agent identity and original user identity so downstream systems can enforce fine-grained authorization.
+
+### Inbound and outbound authorization
+
+A useful way to explain AgentCore Gateway is "two auth boundaries":
+
+1. Inbound authorization: who can call the Gateway MCP endpoint?
+2. Outbound authorization: how does Gateway call the target service?
+
+Inbound options described by AWS include:
+
+- OAuth JWT: validates tokens from Cognito, Auth0, or other OIDC-compatible providers.
+- IAM SigV4: AWS identity-based access.
+- Authenticate-only: validate token but delegate authorization to the downstream target.
+- No authorization: development/testing only.
+
+Outbound options vary by target type, but include:
+
+- IAM-based outbound authorization with Gateway service role.
+- Caller IAM credentials for use cases where the downstream target authorizes based on the original caller.
+- OAuth client credentials grant (2LO).
+- OAuth authorization code grant (3LO).
+- OAuth token exchange / On-Behalf-Of (OBO).
+- Token passthrough, only when inbound authorization is authenticate-only.
+- API key.
+- No authorization, not recommended.
+
+### OAuth/OIDC patterns to explain in the slide deck
+
+Pattern 1: Machine-to-machine API
+
+```text
+Agent -> Gateway -> target API
+Gateway outbound auth: OAuth client credentials or IAM service role
+Identity stores client secret / manages provider
+```
+
+Use when the agent acts as the application rather than a specific human user.
+
+Pattern 2: User-delegated SaaS or MCP server
+
+```text
+Agent user -> Gateway
+Gateway target -> OAuth authorization code flow
+Identity token vault stores user-scoped access/refresh token
+Gateway calls target on behalf of that user
+```
+
+Use when the tool must access GitHub, Slack, Google, or another user-scoped service.
+
+Pattern 3: On-Behalf-Of / zero-trust downstream
+
+```text
+Inbound OIDC user token
+  -> AgentCore Identity OBO token exchange
+  -> downstream-scoped access token
+  -> target API validates user + agent context
+```
+
+Use when the downstream service needs a token whose audience is that service, not the Gateway, while preserving the original user identity.
+
+Pattern 4: Token passthrough
+
+```text
+Inbound token validated by Gateway authenticate-only
+  -> same token forwarded to target
+  -> target validates and authorizes
+```
+
+Use carefully. It is simple, but shifts authorization responsibility to the target and is not the same as OBO token exchange.
+
+### OAuth-protected MCP server targets
+
+When Gateway connects to an OAuth-protected MCP server target, AWS documents two target creation approaches for Authorization Code flow:
+
+1. Implicit sync during target creation/update/synchronization:
+   - Admin completes Authorization Code flow.
+   - Gateway uses the resulting access token to list tools from the MCP server.
+   - Returned tool definitions are cached and indexed.
+2. Provide schema upfront during target creation/update:
+   - Admin provides tool schema directly.
+   - Gateway does not need to fetch tools dynamically at creation time.
+   - This avoids human intervention during create/update and lets teams expose a curated subset of tools.
+   - Static schema targets cannot be synchronized until the static schema is removed.
+
+At invocation time, a Gateway user invoking a protected tool may trigger Authorization Code flow for that specific MCP server. AgentCore Identity uses URL session binding to verify that the user who started the auth flow is the same user who completed consent. The session URI and authorization URL have a short validity window.
+
+### Recommended AWS build patterns
+
+Pattern A: Existing FastAPI/OpenAPI service
+
+```text
+FastAPI /openapi.json
+  -> AgentCore Gateway OpenAPI target
+  -> inbound OAuth JWT or IAM
+  -> outbound OAuth/API key/IAM depending on API auth
+  -> Claude/Codex registers Gateway MCP endpoint
+```
+
+Design guidance:
+
+- Keep OpenAPI operation IDs stable and agent-readable.
+- Use response schemas and pagination.
+- Exclude admin/debug/internal endpoints before publishing the target.
+- Prefer OAuth/OIDC for user-scoped operations.
+
+Pattern B: Custom internal tool with Lambda
+
+```text
+Lambda function
+  -> AgentCore Gateway Lambda target
+  -> IAM service role outbound auth
+  -> Gateway exposes Lambda as MCP-compatible tool
+```
+
+Design guidance:
+
+- Good for small, strongly scoped tools.
+- Use IAM execution role and CloudWatch/CloudTrail for operations.
+- Return compact structured results.
+
+Pattern C: Existing MCP server
+
+```text
+Remote MCP server
+  -> AgentCore Gateway MCP server target
+  -> capability sync / semantic search
+  -> Gateway virtual MCP server
+```
+
+Design guidance:
+
+- Use DEFAULT listing mode plus `SynchronizeGatewayTargets` for stable catalogs.
+- Use DYNAMIC mode only when live discovery is worth losing semantic search/3LO compatibility.
+- For MCP server targets, prefer OAuth or IAM where supported; avoid no-auth for production.
+- If a third-party MCP server only supports API-key style auth, confirm current Gateway support before choosing this path; otherwise wrap the call in OpenAPI/Lambda or handle it outside Gateway.
+
+Pattern D: Enterprise OIDC/OAuth delegation
+
+```text
+Enterprise IdP / OIDC user token
+  -> Gateway inbound OAuth JWT
+  -> AgentCore Identity workload token
+  -> OBO or 3LO downstream token
+  -> target API / SaaS / MCP server
+```
+
+Design guidance:
+
+- Use OBO when downstream service requires its own audience-specific token.
+- Use Authorization Code when explicit user consent is required.
+- Keep scope sets narrow and auditable.
+
+### Operational controls
+
+For production Remote MCP on AWS:
+
+- Require inbound auth on the Gateway endpoint.
+- Treat Gateway target definitions as production integration contracts.
+- Keep Gateway execution roles least-privileged.
+- Store API keys/OAuth credentials in AgentCore Identity/Secrets Manager, not code.
+- Use CloudTrail for API-level audit and CloudWatch for operational metrics.
+- Enable semantic tool search when Gateway has a large catalog.
+- Keep tool outputs bounded and paginated.
+- Re-synchronize Gateway targets when MCP server tools/prompts/resources change.
+- For write tools, combine user approval in the AI client with IAM/OAuth scope enforcement at Gateway/target.
+- Explicitly document who owns each auth boundary: client -> Gateway, Gateway -> target, target -> backend.
 
 ## Important MCP rules
 
