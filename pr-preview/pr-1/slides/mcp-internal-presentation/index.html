@@ -414,22 +414,32 @@ _class: compact ch03
 _class: dense ch03
 -->
 <p class="chapter-label">03 / MCP server構築</p>
-<h2 id="fastapi--openapiの実装例"><a href="#fastapi--openapiの実装例">FastAPI + OpenAPIの実装例</a></h2>
+<h2 id="fastapi--openapiの実装例-契約とclient"><a href="#fastapi--openapiの実装例-契約とclient">FastAPI + OpenAPIの実装例: 契約とclient</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># app/mcp/server.py</span></span>
 <span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> httpx</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.api.main </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> app </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> fastapi_app</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.api.main </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> app </span><span style="color:#F97583">as</span><span style="color:#E1E4E8"> fastapi_app  </span><span style="color:#6A737D"># OpenAPI契約だけ再利用</span></span>
 <span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.config </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> settings</span></span>
-<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.mcp.route_policy </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> route_map_fn</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#E1E4E8">openapi_spec </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fastapi_app.openapi()</span></span>
+<span class="line"><span style="color:#E1E4E8">openapi_spec </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> fastapi_app.openapi()  </span><span style="color:#6A737D"># paths/schemas/operation_idのsource of truth</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 既存APIをHTTPで呼び、auth/middleware/log/validationを保つ。</span></span>
 <span class="line"><span style="color:#E1E4E8">api_client </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> httpx.AsyncClient(</span></span>
 <span class="line"><span style="color:#FFAB70">    base_url</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"http://127.0.0.1:9000"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#FFAB70">    timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">30.0</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#FFAB70">    headers</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span><span style="color:#9ECBFF">"Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Bearer </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">settings.api_token</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">},</span></span>
-<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<p>handlerを直接importせず、既存APIの境界を保つ。</p>
+<hr>
+<!--
+_class: dense ch03
+-->
+<p class="chapter-label">03 / MCP server構築</p>
+<h2 id="fastmcpでtoolresourceとして公開する"><a href="#fastmcpでtoolresourceとして公開する">FastMCPでtool/resourceとして公開する</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> fastmcp </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> FastMCP</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> app.mcp.route_policy </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> route_map_fn  </span><span style="color:#6A737D"># 公開範囲のpolicy</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 前ページで作ったapi_client / openapi_specを渡す。</span></span>
+<span class="line"><span style="color:#6A737D"># policyを通ったendpointだけをMCP tool/resourceとして公開する。</span></span>
 <span class="line"><span style="color:#E1E4E8">mcp </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FastMCP.from_openapi(</span></span>
 <span class="line"><span style="color:#FFAB70">    openapi_spec</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">openapi_spec,</span></span>
 <span class="line"><span style="color:#FFAB70">    client</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">api_client,</span></span>
@@ -450,14 +460,21 @@ _class: dense ch03
 <span class="line"><span style="color:#79B8FF">WRITE_METHODS</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"POST"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PUT"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"PATCH"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"DELETE"</span><span style="color:#E1E4E8">}</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> route_map_fn</span><span style="color:#E1E4E8">(route: HTTPRoute, default_type: MCPType) -> MCPType </span><span style="color:#F97583">|</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">    # まずtag/pathで内部用途のendpointを除外する。</span></span>
 <span class="line"><span style="color:#F97583">    if</span><span style="color:#79B8FF"> set</span><span style="color:#E1E4E8">(route.tags </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> []).intersection(</span><span style="color:#79B8FF">BLOCKED_TAGS</span><span style="color:#E1E4E8">):</span></span>
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
 <span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.path.startswith((</span><span style="color:#9ECBFF">"/admin"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/debug"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"/internal"</span><span style="color:#E1E4E8">)):</span></span>
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">EXCLUDE</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # side effectのある操作はtoolにする。承認・監査の対象にしやすい。</span></span>
 <span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> WRITE_METHODS</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 参照専用のcatalogはresource templateとして文脈提供に使える。</span></span>
 <span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> route.method </span><span style="color:#F97583">==</span><span style="color:#9ECBFF"> "GET"</span><span style="color:#F97583"> and</span><span style="color:#9ECBFF"> "catalog"</span><span style="color:#F97583"> in</span><span style="color:#E1E4E8"> (route.tags </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> []):</span></span>
 <span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">RESOURCE_TEMPLATE</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # 本番ではallowlist化し、意図しない新規endpoint公開を防ぐ。</span></span>
 <span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> MCPType.</span><span style="color:#79B8FF">TOOL</span></span></code></pre>
 <hr>
 <!--
@@ -483,17 +500,21 @@ _class: dense ch03
 <h2 id="q-良いdescriptionの例は"><a href="#q-良いdescriptionの例は">Q. 良いdescriptionの例は？</a></h2>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#B392F0">@router.post</span><span style="color:#E1E4E8">(</span></span>
 <span class="line"><span style="color:#9ECBFF">    "/</span><span style="color:#79B8FF">{item_id}</span><span style="color:#9ECBFF">/reserve"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">    # operation_idはtool名の元になる。自動生成名に任せない。</span></span>
 <span class="line"><span style="color:#FFAB70">    operation_id</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"reserve_inventory_item"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#FFAB70">    summary</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"Reserve inventory for an item"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">    # 副作用と事前確認条件を先頭に置く。modelが誤用しにくくなる。</span></span>
 <span class="line"><span style="color:#FFAB70">    description</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">(</span></span>
 <span class="line"><span style="color:#9ECBFF">        "Reserve stock for a known inventory item. "</span></span>
 <span class="line"><span style="color:#9ECBFF">        "This changes inventory state. Call only after the user "</span></span>
 <span class="line"><span style="color:#9ECBFF">        "explicitly confirms item_id, quantity, and expiration time. "</span></span>
 <span class="line"><span style="color:#9ECBFF">        "Use search_inventory_items first if item_id is unknown."</span></span>
 <span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#6A737D">    # structured outputにして、後続tool callやUI表示で扱いやすくする。</span></span>
 <span class="line"><span style="color:#FFAB70">    response_model</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">ReserveResponse,</span></span>
 <span class="line"><span style="color:#E1E4E8">)</span></span>
 <span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> def</span><span style="color:#B392F0"> reserve_inventory_item</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#6A737D">    # IDが不明ならsearch toolで取得させ、ユーザー入力の曖昧さを減らす。</span></span>
 <span class="line"><span style="color:#E1E4E8">    item_id: </span><span style="color:#79B8FF">str</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#E1E4E8">    request: ReserveRequest,</span></span>
 <span class="line"><span style="color:#E1E4E8">) -> ReserveResponse:</span></span>
@@ -513,11 +534,14 @@ _class: compact ch04
 <p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="claudeへremote-mcpを接続する全体像"><a href="#claudeへremote-mcpを接続する全体像">ClaudeへRemote MCPを接続する全体像</a></h2>
 <p>Remote MCPはcloud/service側で動くMCP serverをClaude Codeなどから使う形。</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># OAuth/DCR対応serverならURLだけで登録できる。</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#6A737D"># bearer token運用ではheaderを明示する。</span></span>
 <span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span><span style="color:#79B8FF"> \</span></span>
 <span class="line"><span style="color:#79B8FF">  --header</span><span style="color:#9ECBFF"> "Authorization: Bearer </span><span style="color:#E1E4E8">$INVENTORY_MCP_TOKEN</span><span style="color:#9ECBFF">"</span></span>
 <span class="line"></span>
+<span class="line"><span style="color:#6A737D"># /mcpで認証状態、list/getで登録内容を確認する。</span></span>
 <span class="line"><span style="color:#B392F0">/mcp</span></span>
 <span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> list</span></span>
 <span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> get</span><span style="color:#9ECBFF"> inventory</span></span></code></pre>
@@ -738,16 +762,19 @@ _class: dense ch04
 <p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="最小設定ファイル例"><a href="#最小設定ファイル例">最小設定ファイル例</a></h2>
 <p>Claude Code / Cursor: <code>mcpServers</code></p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsonc"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#6A737D">  // Claude Code / CursorはmcpServersを読む。</span></span>
 <span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">      // team共有endpoint。tokenは別管理にする。</span></span>
 <span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span></span>
 <span class="line"><span style="color:#E1E4E8">    }</span></span>
 <span class="line"><span style="color:#E1E4E8">  }</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <p>VS Code / Copilot: <code>servers</code></p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsonc"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#6A737D">  // VS Code / Copilotはserversを読む。</span></span>
 <span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
@@ -766,8 +793,11 @@ _class: dense ch04
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">internal-agent-context</span></span>
 <span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
 <span class="line"><span style="color:#85E89D">  mcp</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#6A737D">    # registry packageは名前で管理できる。</span></span>
 <span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.github/github-mcp-server</span></span>
 <span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.microsoft/playwright-mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    # private Remote MCPはtransport/urlを明示する。</span></span>
 <span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">inventory</span></span>
 <span class="line"><span style="color:#85E89D">      registry</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
 <span class="line"><span style="color:#85E89D">      transport</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">http</span></span>
@@ -779,17 +809,20 @@ _class: dense ch04
 -->
 <p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="vs-code--copilotの設定例"><a href="#vs-code--copilotの設定例">VS Code / Copilotの設定例</a></h2>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsonc"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#6A737D">  // tokenは設定ファイルへ直書きせず、起動時promptで受ける。</span></span>
 <span class="line"><span style="color:#79B8FF">  "inputs"</span><span style="color:#E1E4E8">: [</span></span>
 <span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"promptString"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"token"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"password"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> }</span></span>
 <span class="line"><span style="color:#E1E4E8">  ],</span></span>
 <span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#6A737D">      // Remote MCP over HTTP。共有APIはこの形に寄せやすい。</span></span>
 <span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${input:token}"</span><span style="color:#E1E4E8"> }</span></span>
 <span class="line"><span style="color:#E1E4E8">    },</span></span>
 <span class="line"><span style="color:#79B8FF">    "playwright"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#6A737D">      // local stdio MCP。開発者端末のbrowser操作に向く。</span></span>
 <span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@playwright/mcp"</span><span style="color:#E1E4E8">],</span></span>
 <span class="line"><span style="color:#79B8FF">      "sandboxEnabled"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
@@ -1042,8 +1075,13 @@ _class: dense ch05
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="json-rpcで流れるmessage"><a href="#json-rpcで流れるmessage">JSON-RPCで流れるmessage</a></h2>
 <p>MCP messageはJSON-RPC 2.0 envelopeで流れる。</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"initialize"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8">}}</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsonc"><code><span class="line"><span style="color:#6A737D">// 1. protocol versionとclient capabilityを交渉する。</span></span>
+<span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"initialize"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8">}}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 2. serverが公開するtool名・description・schemaを取得する。</span></span>
 <span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tools/list"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{}}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 3. hostがLLMのtool callをMCPの実行requestへ変換する。</span></span>
 <span class="line"><span style="color:#E1E4E8">{</span><span style="color:#79B8FF">"jsonrpc"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"2.0"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">:</span><span style="color:#79B8FF">3</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"method"</span><span style="color:#E1E4E8">:</span><span style="color:#9ECBFF">"tools/call"</span><span style="color:#E1E4E8">,</span><span style="color:#79B8FF">"params"</span><span style="color:#E1E4E8">:{</span><span style="color:#FDAEB7;font-style:italic">...</span><span style="color:#E1E4E8">}}</span></span></code></pre>
 <ul>
 <li><code>method</code>: <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>など</li>
@@ -1058,13 +1096,16 @@ _class: dense ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="toolslistが作るmodel向け文脈"><a href="#toolslistが作るmodel向け文脈"><code>tools/list</code>が作るmodel向け文脈</a></h2>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="jsonc"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#6A737D">  // modelが選択する安定ID。operation_id由来にすると追跡しやすい。</span></span>
 <span class="line"><span style="color:#79B8FF">  "name"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory.search_items"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#6A737D">  // いつ使うかを短く書く。これはmodel input tokenとして消費される。</span></span>
 <span class="line"><span style="color:#79B8FF">  "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Search inventory by keyword. Use before reserving stock when SKU is unknown."</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#79B8FF">  "inputSchema"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">    "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
 <span class="line"><span style="color:#79B8FF">    "properties"</span><span style="color:#E1E4E8">: {</span></span>
 <span class="line"><span style="color:#79B8FF">      "query"</span><span style="color:#E1E4E8">: {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#6A737D">      // 結果数をschemaで制限し、token増大と曖昧な結果を抑える。</span></span>
 <span class="line"><span style="color:#79B8FF">      "limit"</span><span style="color:#E1E4E8">: {</span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"integer"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"minimum"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"maximum"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">20</span><span style="color:#E1E4E8">}</span></span>
 <span class="line"><span style="color:#E1E4E8">    },</span></span>
 <span class="line"><span style="color:#79B8FF">    "required"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"query"</span><span style="color:#E1E4E8">]</span></span>
@@ -1079,21 +1120,25 @@ _class: dense ch05
 <p>descriptionはドキュメントではなく、<strong>model input token</strong>。</p>
 <hr>
 <!--
-_class: compact ch05
+_class: dense ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="q-tool-callのテキストはどう生成される"><a href="#q-tool-callのテキストはどう生成される">Q. tool callのテキストはどう生成される？</a></h2>
 <p><strong>A. MCP serverではなく、hostがLLMへtool定義を渡し、LLMがtool_use/tool_callを生成する。</strong></p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>MCP server: tools/list -> tool metadata</span></span>
+<span class="line"><span>  # tool名、description、input/output schemaを返す</span></span>
 <span class="line"><span>Host/client: providerのtools/function schemaへ変換</span></span>
+<span class="line"><span>  # Anthropic/OpenAI/Geminiなどの形式へmapする</span></span>
 <span class="line"><span>LLM: user prompt + system prompt + tool definitionsからtool callを生成</span></span>
+<span class="line"><span>  # MCP serverではなくmodelがnameとargumentsを選ぶ</span></span>
 <span class="line"><span>Host/client: tool callをMCP tools/callへ変換</span></span>
+<span class="line"><span>  # 実行はhostが仲介し、serverへJSON-RPCで送る</span></span>
 <span class="line"><span>MCP server: backend APIを実行してresultを返す</span></span></code></pre>
 <p>公開情報では、Anthropicはtool定義からspecial system promptを構築すると説明している。
 OpenAI/Geminiもtool/function schemaをmodel inputとして渡し、実行はapplication側が担う。</p>
 <hr>
 <!--
-_class: compact ch05
+_class: dense ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="q-mcp用にllmをfine-tuningする必要がある"><a href="#q-mcp用にllmをfine-tuningする必要がある">Q. MCP用にLLMをfine-tuningする必要がある？</a></h2>
@@ -1512,7 +1557,7 @@ _class: dense ch08
 <p>争点はprotocol syntaxではなく、<strong>trust boundaryと運用責任</strong>。</p>
 <hr>
 <!--
-_class: compact ch08
+_class: dense ch08
 -->
 <p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="開発者以外への広がり"><a href="#開発者以外への広がり">開発者以外への広がり</a></h2>
