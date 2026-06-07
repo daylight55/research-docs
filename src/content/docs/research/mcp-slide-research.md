@@ -1010,6 +1010,150 @@ Decision guide:
 - Use organization scope when the server touches production systems, customer data, source control at broad scope, billing, cloud infrastructure, or privileged write operations.
 - Use Remote MCP for shared SaaS/internal APIs. Use `stdio` only when the server must run locally or access local files directly.
 
+### Quick command and config snippets
+
+Use these as slide-level examples. They are intentionally short; real production configs should add version pins, scopes, policy, observability, and secret handling.
+
+Claude Code commands:
+
+```bash
+# Remote MCP, project-shared
+claude mcp add --transport http inventory --scope project https://mcp.example.com/mcp
+
+# Remote MCP, personal cross-project tool
+claude mcp add --transport http sentry --scope user https://mcp.sentry.dev/mcp
+
+# Local stdio MCP for a project-local tool
+claude mcp add --transport stdio api-tools --scope project -- python tools/mcp_server.py
+
+# OAuth-backed Remote MCP; complete login inside Claude Code
+claude mcp add --transport http inventory https://mcp.example.com/mcp
+claude
+/mcp
+
+# Inspect and remove
+claude mcp list
+claude mcp get inventory
+claude mcp remove inventory
+```
+
+Claude Code project `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "${INVENTORY_MCP_URL:-https://mcp.example.com/mcp}",
+      "oauth": {
+        "scopes": "inventory:read inventory:reserve"
+      }
+    },
+    "api-tools": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["tools/mcp_server.py"]
+    }
+  }
+}
+```
+
+VS Code workspace `.vscode/mcp.json`:
+
+```json
+{
+  "inputs": [
+    { "type": "promptString", "id": "token", "password": true }
+  ],
+  "servers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "headers": { "Authorization": "Bearer ${input:token}" }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"],
+      "sandboxEnabled": true
+    }
+  }
+}
+```
+
+Cursor project `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "url": "https://mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:INVENTORY_MCP_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+Codex CLI project `.codex/config.toml` example:
+
+```toml
+[mcp_servers.inventory]
+transport = "http"
+url = "https://mcp.example.com/mcp"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp"]
+```
+
+Microsoft APM `apm.yml`:
+
+```yaml
+name: internal-agent-context
+dependencies:
+  mcp:
+    - io.github.microsoft/playwright-mcp
+    - name: inventory
+      registry: false
+      transport: http
+      url: https://mcp.example.com/mcp
+```
+
+APM commands:
+
+```bash
+apm install --mcp io.github.microsoft/playwright-mcp
+apm install --mcp inventory --transport http --url https://mcp.example.com/mcp
+apm install
+apm mcp list
+```
+
+Claude Code managed policy snippets:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com/mcp"
+    }
+  }
+}
+```
+
+```json
+{
+  "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [
+    { "serverUrl": "https://mcp.internal.example.com/*" }
+  ],
+  "deniedMcpServers": [
+    { "serverCommand": ["npx", "-y", "unapproved-package"] }
+  ]
+}
+```
+
 ### Claude Code examples
 
 Project-shared `.mcp.json` should avoid raw secrets and should use stable server names:

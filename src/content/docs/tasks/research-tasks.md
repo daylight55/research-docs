@@ -31,3 +31,4 @@ Objective: Produce a source-grounded internal presentation outline for Model Con
 - [x] Model-side tool generation: Summarize how MCP tool metadata is converted into model tool/function calling inputs, and distinguish MCP server design from model fine-tuning.
 - [x] Multi-agent configuration: Add project/user/org configuration guidance for Claude Code, VS Code/Copilot, Cursor, Codex, APM, and managed policy.
 - [x] MCP governance: Clarify Linux Foundation / Agentic AI Foundation stewardship, SEP/Working Group process, and the RFC boundary.
+- [x] Config snippets: Add short command and config excerpts for Claude Code, VS Code/Copilot, Cursor, Codex CLI, APM, and managed policy.
