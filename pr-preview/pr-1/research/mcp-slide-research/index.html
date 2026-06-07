@@ -982,6 +982,281 @@ Then run <code>/mcp</code> inside Claude Code and complete the browser login flo
 <li>If a connector does not appear in Claude Code, check <code>/status</code>; API-key, Bedrock, Vertex, or third-party auth modes can prevent Claude.ai connectors from loading.</li>
 <li>Treat every connector as a privileged integration. Review scopes, disable unnecessary tools, and be careful with “always allow” behavior for write-capable tools.</li>
 </ul>
+<h2 id="multi-agent-mcp-configuration-strategy"><a href="#multi-agent-mcp-configuration-strategy">Multi-agent MCP configuration strategy</a></h2>
+<p>When multiple agents or IDEs use the same MCP servers, the main design problem is not “where do I paste this JSON?”. It is “which settings are shared as product policy, and which settings stay personal?” The practical rule is:</p>
+<ul>
+<li>Project config defines the shared capability: server name, URL/command, transport, allowed environment names, tool allowlists, and version pins.</li>
+<li>User config defines personal access: OAuth login state, API tokens, local paths, optional personal servers, and per-user deny decisions.</li>
+<li>Organization config defines policy: fixed approved server set, allowlists/denylists, sandbox rules, audit/telemetry expectations, and whether users can add arbitrary servers.</li>
+<li>Remote MCP or a gateway should be preferred for team-wide services. Local <code>stdio</code> is useful for local files, Git, and one-developer tools, but it is harder to govern consistently across machines.</li>
+</ul>
+<p>The important detail is that MCP client configuration formats are not yet identical across tools. Claude Code and Cursor use <code>mcpServers</code>. VS Code uses <code>servers</code>. Codex CLI uses TOML. Microsoft APM exists partly to solve this by declaring dependencies once and writing runtime-specific config files.</p>
+<h3 id="projectuserorg-scope-by-client"><a href="#projectuserorg-scope-by-client">Project/user/org scope by client</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Client / runtime</th><th>Project scope</th><th>User scope</th><th>Organization / managed scope</th><th>Config key</th></tr></thead><tbody><tr><td>Claude Code</td><td><code>.mcp.json</code> at repo root; checked into VCS for team-shared servers</td><td><code>~/.claude.json</code>; available across projects for that user</td><td><code>managed-mcp.json</code>, <code>allowedMcpServers</code>, <code>deniedMcpServers</code>, managed settings</td><td><code>mcpServers</code></td></tr><tr><td>VS Code / GitHub Copilot</td><td><code>.vscode/mcp.json</code>; share with project</td><td>user profile <code>mcp.json</code>; can sync via Settings Sync</td><td><code>chat.mcp.access</code>, enterprise policies, sandbox, discovery controls</td><td><code>servers</code></td></tr><tr><td>Cursor</td><td><code>.cursor/mcp.json</code>; project-specific</td><td><code>~/.cursor/mcp.json</code>; global</td><td>extension API / enterprise automation can register dynamically</td><td><code>mcpServers</code></td></tr><tr><td>Codex CLI</td><td>project <code>.codex/config.toml</code> where supported</td><td><code>~/.codex/config.toml</code></td><td>distribute via repo policy or package manager</td><td><code>[mcp_servers.*]</code></td></tr><tr><td>Claude.ai custom connectors</td><td>not repo-file based</td><td>user connects/authenticates to connector</td><td>Team/Enterprise admin adds connector, users authenticate individually</td><td>connector settings</td></tr><tr><td>AWS AgentCore Gateway / Azure API Management</td><td>central remote endpoint registered by clients</td><td>user or agent authenticates to endpoint</td><td>gateway/API management policy, OAuth/OIDC, rate limit, audit</td><td>client-specific wrapper</td></tr></tbody></table>
+<p>Decision guide:</p>
+<ul>
+<li>Use project scope when the server is part of the repo workflow, such as Playwright MCP for frontend testing, an internal API MCP for this service, or a docs MCP tied to the project.</li>
+<li>Use user scope when the server is personal or crosses many projects, such as Sentry, personal GitHub, browser automation, or a local note/search server.</li>
+<li>Use organization scope when the server touches production systems, customer data, source control at broad scope, billing, cloud infrastructure, or privileged write operations.</li>
+<li>Use Remote MCP for shared SaaS/internal APIs. Use <code>stdio</code> only when the server must run locally or access local files directly.</li>
+</ul>
+<h3 id="claude-code-examples"><a href="#claude-code-examples">Claude Code examples</a></h3>
+<p>Project-shared <code>.mcp.json</code> should avoid raw secrets and should use stable server names:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"${INVENTORY_MCP_URL:-https://mcp.example.com/mcp}"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "oauth"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "scopes"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory:read inventory:reserve"</span></span>
+<span class="line"><span style="color:#E1E4E8">      },</span></span>
+<span class="line"><span style="color:#79B8FF">      "timeout"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">60000</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "playwright"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"stdio"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@playwright/mcp@0.0.41"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Use scope intentionally:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Team-shared repo definition</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> inventory</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> project</span><span style="color:#9ECBFF"> https://mcp.example.com/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Personal server available across projects</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> http</span><span style="color:#9ECBFF"> sentry</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> user</span><span style="color:#9ECBFF"> https://mcp.sentry.dev/mcp</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># Private experiment for only this project path</span></span>
+<span class="line"><span style="color:#B392F0">claude</span><span style="color:#9ECBFF"> mcp</span><span style="color:#9ECBFF"> add</span><span style="color:#79B8FF"> --transport</span><span style="color:#9ECBFF"> stdio</span><span style="color:#9ECBFF"> scratch</span><span style="color:#79B8FF"> --scope</span><span style="color:#9ECBFF"> local</span><span style="color:#79B8FF"> --</span><span style="color:#9ECBFF"> node</span><span style="color:#9ECBFF"> tools/mcp-dev.js</span></span></code></pre>
+<p>Claude Code precedence matters. When the same server name appears in multiple scopes, Claude Code connects once and uses the highest-precedence entry: local, project, user, plugin-provided, then Claude.ai connector. Entries are not field-merged. This means “same name, partial override” is a bad pattern; define the complete server entry at the intended scope.</p>
+<p>For managed organization control, Claude Code supports <code>managed-mcp.json</code> at system paths. It can force a fixed server set, disable MCP entirely, or combine fixed servers with allowlists/denylists. Do not store credentials in this file because system-level files are readable by users on the machine; use per-user OAuth, environment expansion, or a <code>headersHelper</code>.</p>
+<p>Managed Claude Code example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "github"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://api.githubcopilot.com/mcp/"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "company-internal"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.internal.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "oauth"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "scopes"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"tools:read tickets:write"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Policy example:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "allowManagedMcpServersOnly"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "allowedMcpServers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"serverUrl"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://api.githubcopilot.com/*"</span><span style="color:#E1E4E8"> },</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"serverUrl"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.internal.example.com/*"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "deniedMcpServers"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"serverCommand"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"unapproved-package"</span><span style="color:#E1E4E8">] }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Use URL or command allowlist entries for enforcement. A server-name-only allowlist is weak because users choose the label.</p>
+<h3 id="vs-code--github-copilot-configuration"><a href="#vs-code--github-copilot-configuration">VS Code / GitHub Copilot configuration</a></h3>
+<p>VS Code stores MCP configuration in <code>mcp.json</code>, but its schema uses a top-level <code>servers</code> object rather than <code>mcpServers</code>.</p>
+<p>Workspace example in <code>.vscode/mcp.json</code>:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "inputs"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"promptString"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"inventory-token"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Inventory MCP token"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "password"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${input:inventory-token}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "playwright"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"stdio"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@playwright/mcp"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "sandboxEnabled"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#79B8FF">  "sandbox"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "filesystem"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "allowWrite"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"${workspaceFolder}"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "denyRead"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"${userHome}/.ssh"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "network"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "allowedDomains"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"mcp.example.com"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Operational notes from VS Code docs:</p>
+<ul>
+<li><code>.vscode/mcp.json</code> is the right place for team-shared project servers.</li>
+<li><code>MCP: Open User Configuration</code> opens the user profile <code>mcp.json</code>; use it for personal global servers.</li>
+<li><code>MCP: Add Server</code> can write to Workspace or Global.</li>
+<li>Dev Containers can declare MCP servers through <code>customizations.vscode.mcp.servers</code>; this is useful when the server should run inside the container rather than on the host.</li>
+<li>VS Code can discover MCP config from other applications when <code>chat.mcp.discovery.enabled</code> is enabled.</li>
+<li>Sandbox is available on macOS/Linux for local stdio servers and can restrict file/network access; it is not available on Windows.</li>
+<li>Enable/disable state is stored separately from <code>mcp.json</code>, so a shared file can remain stable while each developer toggles tools locally.</li>
+</ul>
+<h3 id="cursor-configuration"><a href="#cursor-configuration">Cursor configuration</a></h3>
+<p>Cursor uses <code>.cursor/mcp.json</code> for project-specific tools and <code>~/.cursor/mcp.json</code> for global tools. Its JSON shape is closer to Claude Code:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "mcpServers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${env:INVENTORY_MCP_TOKEN}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "local-server"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"python"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"${workspaceFolder}/tools/mcp_server.py"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "env"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "API_KEY"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"${env:API_KEY}"</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Cursor supports <code>stdio</code>, SSE, and Streamable HTTP. Its CLI can reuse the configured MCP servers, and <code>cursor-agent mcp list</code> shows configured servers and whether the source is project or global. Cursor also exposes an extension API for programmatic registration without directly editing <code>mcp.json</code>, which is useful for enterprise setup automation.</p>
+<h3 id="microsoft-apm-as-a-multi-agent-config-layer"><a href="#microsoft-apm-as-a-multi-agent-config-layer">Microsoft APM as a multi-agent config layer</a></h3>
+<p>Microsoft’s Agent Package Manager (APM) is not an MCP client by itself. It is a dependency manager for agent context. The useful idea for this presentation is that <code>apm.yml</code> can become a single source of truth for skills, prompts, instructions, plugins, and MCP servers, then <code>apm install</code> writes runtime-specific files for GitHub Copilot, Claude Code, Cursor, Codex, Gemini, OpenCode, and Windsurf.</p>
+<p>Minimal <code>apm.yml</code> pattern:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">internal-agent-context</span></span>
+<span class="line"><span style="color:#85E89D">version</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">1.0.0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  mcp</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.github/github-mcp-server</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.microsoft/playwright-mcp</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">inventory</span></span>
+<span class="line"><span style="color:#85E89D">      registry</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#85E89D">      transport</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">http</span></span>
+<span class="line"><span style="color:#85E89D">      url</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">https://mcp.example.com/mcp</span></span>
+<span class="line"><span style="color:#85E89D">      headers</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        Authorization</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${INVENTORY_MCP_TOKEN}"</span></span></code></pre>
+<p>APM writes different target files because each harness has a different schema:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Harness</th><th>File</th><th>Shape</th></tr></thead><tbody><tr><td>VS Code / Copilot</td><td><code>.vscode/mcp.json</code></td><td>JSON <code>servers</code></td></tr><tr><td>Claude Code</td><td><code>.mcp.json</code> or <code>~/.claude.json</code></td><td>JSON <code>mcpServers</code></td></tr><tr><td>Cursor</td><td><code>.cursor/mcp.json</code></td><td>JSON <code>mcpServers</code></td></tr><tr><td>Codex CLI</td><td><code>.codex/config.toml</code> or <code>~/.codex/config.toml</code></td><td>TOML <code>[mcp_servers.*]</code></td></tr><tr><td>Gemini CLI</td><td><code>.gemini/settings.json</code> or <code>~/.gemini/settings.json</code></td><td>JSON <code>mcpServers</code></td></tr></tbody></table>
+<p>This is a good fit when a team wants many agents to see the same curated server set but does not want to maintain five config syntaxes by hand. The tradeoff is that APM becomes another supply-chain dependency, so lockfiles, policy files, and CI checks should be part of adoption.</p>
+<h3 id="azure-api-management--api-center-angle"><a href="#azure-api-management--api-center-angle">Azure API Management / API Center angle</a></h3>
+<p>Microsoft Azure API Management (APIM) is a different concept from APM. APIM can expose REST APIs managed in API Management as remote MCP servers, and can also front existing MCP-compatible servers. It is useful for service-provider governance:</p>
+<ul>
+<li>Existing REST operations can become MCP tools.</li>
+<li>APIM can centralize authentication, authorization, rate limits, quotas, IP filtering, caching, and monitoring.</li>
+<li>Azure API Center can register and discover MCP servers as a private enterprise registry.</li>
+<li>Current Microsoft docs note that APIM MCP support focuses on tools and does not support MCP resources or prompts.</li>
+</ul>
+<p>For an enterprise provider, this is the pattern:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>Agent/IDE -> Remote MCP endpoint in APIM -> policy/auth/rate limit/audit -> existing API or MCP backend</span></span></code></pre>
+<p>This is similar in spirit to AWS AgentCore Gateway: a governed remote endpoint is easier for many agents to consume than many local stdio processes.</p>
+<h3 id="maintenance-checklist-for-shared-mcp-settings"><a href="#maintenance-checklist-for-shared-mcp-settings">Maintenance checklist for shared MCP settings</a></h3>
+<ul>
+<li>Keep an internal registry: server name, owner, purpose, transport, auth model, data classification, write capability, production impact, and approved clients.</li>
+<li>Pin package versions for <code>stdio</code> servers. Avoid <code>npx -y package</code> without a version in project-shared config.</li>
+<li>For remote servers, prefer stable HTTPS URLs and OAuth. Avoid committing bearer tokens.</li>
+<li>Review <code>tools/list</code> output when upgrading a server. Tool names, descriptions, and schemas are part of the contract seen by the model.</li>
+<li>Keep server descriptions short and front-load safety-critical constraints.</li>
+<li>Separate config from enablement. Let developers disable noisy tools locally without changing shared files where the client supports it.</li>
+<li>Use sandbox or containers for local stdio servers that run arbitrary packages.</li>
+<li>Log tool calls with user, server, tool, arguments class, result status, and correlation ID. Do not log secrets or full sensitive payloads.</li>
+<li>Treat MCP server updates like dependency updates: check release notes, CVEs, tool-surface diffs, auth changes, and approval UX.</li>
+<li>For organization rollout, start with read-only tools and a narrow allowlist, then add write tools with explicit user confirmation and audit.</li>
+</ul>
 <h2 id="mcp-server-design-rules-for-engineers"><a href="#mcp-server-design-rules-for-engineers">MCP server design rules for engineers</a></h2>
 <p>These are the rules worth putting into the slide deck:</p>
 <ul>
@@ -1509,6 +1784,36 @@ Then run <code>/mcp</code> inside Claude Code and complete the browser login flo
 <li>Token passthrough is forbidden.</li>
 <li>Treat scopes as least-privilege and support incremental/step-up authorization where possible.</li>
 </ul>
+<h2 id="maintenance-and-specification-governance"><a href="#maintenance-and-specification-governance">Maintenance and specification governance</a></h2>
+<p>MCP is not maintained as an IETF RFC. The normative source is the Model Context Protocol specification and schema in the <code>modelcontextprotocol/modelcontextprotocol</code> GitHub organization and the published documentation at <code>modelcontextprotocol.io</code>.</p>
+<p>Current governance picture:</p>
+<ul>
+<li>MCP has been established as “Model Context Protocol, a Series of LF Projects, LLC”.</li>
+<li>Anthropic announced on 2025-12-09 that it was donating MCP to the Agentic AI Foundation (AAIF), a directed fund under the Linux Foundation, co-founded by Anthropic, Block, and OpenAI, with support from Google, Microsoft, AWS, Cloudflare, and Bloomberg.</li>
+<li>The governance document says governance changes approved by the project must also be approved by LF Projects, LLC.</li>
+<li>Technical governance is individual-maintainer based, not company-seat based.</li>
+<li>Lead Maintainers, Core Maintainers, and Maintainers together form the MCP Steering Group.</li>
+<li>Core Maintainers steer the MCP specification and overall project direction. Lead Maintainers have final decision authority.</li>
+<li>Proposed major specification changes use Specification Enhancement Proposals (SEPs).</li>
+<li>Working Groups produce concrete deliverables such as SEPs, reference implementations, SDK work, registry work, or tooling. Interest Groups collect problems, use cases, and recommendations.</li>
+</ul>
+<p>What is “RFC” and what is not:</p>
+<ul>
+<li>MCP itself is not an RFC. It is an open protocol specification maintained by the MCP project.</li>
+<li>MCP uses JSON-RPC 2.0 for message envelopes. JSON-RPC 2.0 is a standalone specification, not an IETF RFC.</li>
+<li>The MCP specification uses RFC 2119 / RFC 8174 terminology (<code>MUST</code>, <code>SHOULD</code>, <code>MAY</code>) to express requirement levels.</li>
+<li>MCP authorization builds on standard OAuth/OIDC and RFC documents, including RFC 9728 Protected Resource Metadata, RFC 8414 Authorization Server Metadata, RFC 8707 Resource Indicators, PKCE, and OIDC Discovery.</li>
+<li>Therefore the accurate phrasing is: “MCP is governed by the MCP project under LF Projects/AAIF, while parts of its auth/security design reference established RFC/OIDC standards.”</li>
+</ul>
+<p>Maintenance responsibilities for a team adopting MCP:</p>
+<ul>
+<li>Track the spec version your servers target. The current docs expose versioned specs such as <code>2025-06-18</code> and <code>2025-11-25</code>, plus <code>latest</code> and <code>draft</code>.</li>
+<li>Treat schema changes as protocol changes. The official repo states that the TypeScript schema is the source of truth and JSON Schema is generated for compatibility.</li>
+<li>Subscribe to spec changelogs and SEP activity for features that affect operations, especially authorization, transports, server identity, tool filtering, tasks, and registry metadata.</li>
+<li>Keep SDK versions aligned with the protocol revision you support. Do not assume every client has implemented the newest optional feature.</li>
+<li>Build compatibility tests around <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>, auth challenge handling, and cancellation/error behavior.</li>
+<li>Document which features your server supports: tools, resources, prompts, elicitation, sampling, roots, and transport/auth combinations.</li>
+</ul>
 <h2 id="history"><a href="#history">History</a></h2>
 <ul>
 <li>2024-11-25: Anthropic announced and open-sourced MCP, including the spec/SDKs, local MCP support in Claude Desktop, and a repository of prebuilt servers.</li>
@@ -1517,6 +1822,7 @@ Then run <code>/mcp</code> inside Claude Code and complete the browser login flo
 <li>The initial transport included HTTP+SSE.</li>
 <li>Later specs introduced Streamable HTTP, stronger auth, better security guidance, and richer capabilities.</li>
 <li>2025-11-25 latest spec changes include OIDC discovery support, Client ID Metadata Documents, incremental scope consent, icon metadata, URL elicitation, tool calling support in sampling, experimental tasks, SDK tiering, governance, and working/interest groups.</li>
+<li>2025-12-09: Anthropic announced the donation of MCP to the Linux Foundation’s Agentic AI Foundation while keeping the MCP governance model community-driven.</li>
 <li>The old third-party server list in <code>modelcontextprotocol/servers</code> has been retired in favor of the MCP Registry.</li>
 <li>The MCP Registry preview launched 2025-09-08; its v0.1 API entered a freeze on 2025-10-24 according to the registry repo.</li>
 </ul>
@@ -2364,6 +2670,8 @@ Then run <code>/mcp</code> inside Claude Code and complete the browser login flo
 <li>Runtime flow: initialize -> discover -> approve -> call -> return</li>
 <li>Transports: stdio vs Streamable HTTP</li>
 <li>Auth: OAuth 2.1, Protected Resource Metadata, Resource Indicators, PKCE</li>
+<li>Multi-agent configuration: project/user/org settings, client schema differences, APM</li>
+<li>Governance: LF/AAIF, Steering Group, SEPs, RFC boundary</li>
 <li>History: Anthropic launch to current spec/registry</li>
 <li>Use cases: engineering, enterprise knowledge, business operations, agent platforms</li>
 <li>Ecosystem: GitHub, Stripe, OpenAI connectors, registry, reference servers</li>

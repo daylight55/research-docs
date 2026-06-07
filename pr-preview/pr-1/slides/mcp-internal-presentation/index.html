@@ -439,6 +439,210 @@ _class: dense
 <!--
 _class: dense
 -->
+<h2 id="q-複数agentでmcp設定はどう書く"><a href="#q-複数agentでmcp設定はどう書く">Q. 複数AgentでMCP設定はどう書く？</a></h2>
+<p>設定を1つのJSONとして考えない。<strong>共有する能力</strong>と<strong>個人の認証</strong>を分ける。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>layer</th><th>置くもの</th><th>例</th></tr></thead><tbody><tr><td>project</td><td>teamで使うserver定義、URL、version、tool allowlist</td><td><code>.mcp.json</code>, <code>.vscode/mcp.json</code>, <code>.cursor/mcp.json</code></td></tr><tr><td>user</td><td>個人token、OAuth login、local path、個人tool</td><td><code>~/.claude.json</code>, user profile <code>mcp.json</code>, <code>~/.cursor/mcp.json</code></td></tr><tr><td>org</td><td>approved server、allow/deny、audit、sandbox</td><td><code>managed-mcp.json</code>, enterprise policy, Gateway/APIM</td></tr></tbody></table>
+<p>共有serviceはRemote MCP。local file/Git/browserなど手元依存は<code>stdio</code>。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-clientごとの設定形式は同じ"><a href="#q-clientごとの設定形式は同じ">Q. clientごとの設定形式は同じ？</a></h2>
+<p>同じではない。ここが複数Agent運用の落とし穴。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>client</th><th>project config</th><th>user config</th><th>key</th></tr></thead><tbody><tr><td>Claude Code</td><td><code>.mcp.json</code></td><td><code>~/.claude.json</code></td><td><code>mcpServers</code></td></tr><tr><td>VS Code / Copilot</td><td><code>.vscode/mcp.json</code></td><td>user profile <code>mcp.json</code></td><td><code>servers</code></td></tr><tr><td>Cursor</td><td><code>.cursor/mcp.json</code></td><td><code>~/.cursor/mcp.json</code></td><td><code>mcpServers</code></td></tr><tr><td>Codex CLI</td><td><code>.codex/config.toml</code></td><td><code>~/.codex/config.toml</code></td><td><code>[mcp_servers.*]</code></td></tr><tr><td>Claude.ai</td><td>connector settings</td><td>user OAuth</td><td>connector</td></tr></tbody></table>
+<p>同名serverの上書き・precedenceもclientごとに確認する。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-microsoft-apmは何に使える"><a href="#q-microsoft-apmは何に使える">Q. Microsoft APMは何に使える？</a></h2>
+<p>APM = Agent Package Manager。MCP clientではなく、複数Agent向けの依存管理。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">internal-agent-context</span></span>
+<span class="line"><span style="color:#85E89D">dependencies</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  mcp</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.github/github-mcp-server</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#9ECBFF">io.github.microsoft/playwright-mcp</span></span>
+<span class="line"><span style="color:#E1E4E8">    - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">inventory</span></span>
+<span class="line"><span style="color:#85E89D">      registry</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span></span>
+<span class="line"><span style="color:#85E89D">      transport</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">http</span></span>
+<span class="line"><span style="color:#85E89D">      url</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">https://mcp.example.com/mcp</span></span></code></pre>
+<p><code>apm install</code>がClaude Code、VS Code、Cursor、Codexなどのruntime別configを書き分ける。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-vs-code--copilotではどう設定する"><a href="#q-vs-code--copilotではどう設定する">Q. VS Code / Copilotではどう設定する？</a></h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "inputs"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    { </span><span style="color:#79B8FF">"type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"promptString"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"id"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"token"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">"password"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "servers"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">    "inventory"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "type"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"http"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "url"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://mcp.example.com/mcp"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "headers"</span><span style="color:#E1E4E8">: { </span><span style="color:#79B8FF">"Authorization"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bearer ${input:token}"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#79B8FF">    "playwright"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">      "command"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"npx"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "args"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"-y"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"@playwright/mcp"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "sandboxEnabled"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>VS Codeは<code>mcpServers</code>ではなく<code>servers</code>。workspace/user/profile/devcontainerを使い分ける。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-組織でmcpを管理するには"><a href="#q-組織でmcpを管理するには">Q. 組織でMCPを管理するには？</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方法</th><th>向く場面</th><th>注意</th></tr></thead><tbody><tr><td>Claude Code <code>managed-mcp.json</code></td><td>固定server set / MCP無効化</td><td>secretを入れない</td></tr><tr><td>allowlist / denylist</td><td>approved catalog</td><td>nameだけでなくURL/commandで制御</td></tr><tr><td>VS Code policy / sandbox</td><td>Copilot利用の統制</td><td>Windowsではsandbox不可</td></tr><tr><td>AWS AgentCore Gateway</td><td>AWS/社内toolのOAuth/OIDC連携</td><td>Gateway policy/auditが中心</td></tr><tr><td>Azure API Management</td><td>REST APIをRemote MCP化</td><td>tools中心。resources/promptsは制約あり</td></tr></tbody></table>
+<p>個別端末の設定ではなく、Remote endpointとpolicyを中心に設計する。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="q-mcp仕様は誰が管理している"><a href="#q-mcp仕様は誰が管理している">Q. MCP仕様は誰が管理している？</a></h2>
+<p>MCP自体はIETF RFCではない。公式仕様とschemaがsource of truth。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>位置づけ</th></tr></thead><tbody><tr><td>MCP spec</td><td><code>modelcontextprotocol.io</code>とGitHubの公式spec/schema</td></tr><tr><td>Governance</td><td>LF Projects / Agentic AI Foundation配下、MCP Steering Group</td></tr><tr><td>仕様変更</td><td>SEP、Working Group、Maintainer review</td></tr><tr><td>Message envelope</td><td>JSON-RPC 2.0</td></tr><tr><td>Auth/OIDC</td><td>RFC 9728、RFC 8414、RFC 8707、PKCE、OIDC Discovery</td></tr><tr><td>要件表現</td><td>RFC 2119 / RFC 8174の<code>MUST</code>/<code>SHOULD</code></td></tr></tbody></table>
+<p>言い方: <strong>MCPはLF/AAIF配下のopen protocol。RFC群は主にauth/securityで参照される。</strong></p>
+<hr>
+<!--
+_class: dense
+-->
 <h2 id="q-stdioとstreamable-httpはどう選ぶ"><a href="#q-stdioとstreamable-httpはどう選ぶ">Q. stdioとStreamable HTTPはどう選ぶ？</a></h2>
 
 
@@ -917,4 +1121,18 @@ _class: dense
 <li>Anthropic tool use overview: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview</a></li>
 <li>Anthropic define tools: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools">https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools</a></li>
 <li>OpenAI function calling fine-tuning: <a href="https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling">https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling</a></li>
+</ul>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="主な参照-4"><a href="#主な参照-4">主な参照 4</a></h2>
+<ul>
+<li>MCP governance: <a href="https://modelcontextprotocol.io/community/governance">https://modelcontextprotocol.io/community/governance</a></li>
+<li>Anthropic MCP donation / AAIF: <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation</a></li>
+<li>Claude Code managed MCP: <a href="https://code.claude.com/docs/en/managed-mcp">https://code.claude.com/docs/en/managed-mcp</a></li>
+<li>VS Code MCP servers: <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">https://code.visualstudio.com/docs/agent-customization/mcp-servers</a></li>
+<li>VS Code MCP config reference: <a href="https://code.visualstudio.com/docs/agents/reference/mcp-configuration">https://code.visualstudio.com/docs/agents/reference/mcp-configuration</a></li>
+<li>Cursor MCP: <a href="https://docs.cursor.com/context/model-context-protocol">https://docs.cursor.com/context/model-context-protocol</a></li>
+<li>Microsoft APM: <a href="https://microsoft.github.io/apm/">https://microsoft.github.io/apm/</a></li>
 </ul> </div> </article>  </main> </div> </div> </body></html>

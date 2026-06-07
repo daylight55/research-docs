@@ -13,6 +13,10 @@ order: 30
 ## Protocol and Concepts
 
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2025-11-25)
+- [MCP governance and stewardship](https://modelcontextprotocol.io/community/governance)
+- [MCP Working and Interest Groups](https://modelcontextprotocol.io/community/working-interest-groups)
+- [MCP official GitHub repository](https://github.com/modelcontextprotocol/modelcontextprotocol)
+- [Anthropic donation of MCP to Agentic AI Foundation](https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation)
 - [MCP lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)
 - [MCP transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
 - [MCP tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
@@ -42,7 +46,18 @@ order: 30
 ## Claude and Remote MCP
 
 - [Claude Code MCP docs](https://code.claude.com/docs/en/mcp)
+- [Claude Code managed MCP configuration](https://code.claude.com/docs/en/managed-mcp)
 - [Claude custom connectors with Remote MCP](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
+
+## Multi-Agent MCP Configuration
+
+- [VS Code MCP servers](https://code.visualstudio.com/docs/agent-customization/mcp-servers)
+- [VS Code MCP configuration reference](https://code.visualstudio.com/docs/agents/reference/mcp-configuration)
+- [Cursor MCP docs](https://docs.cursor.com/context/model-context-protocol)
+- [Cursor CLI MCP docs](https://docs.cursor.com/id/cli/mcp)
+- [Microsoft Agent Package Manager](https://microsoft.github.io/apm/)
+- [APM MCP server install docs](https://microsoft.github.io/apm/consumer/install-mcp-servers/)
+- [Azure API Management MCP server overview](https://learn.microsoft.com/en-us/azure/api-management/mcp-server-overview)
 
 ## Frontend and Browser MCP
 
