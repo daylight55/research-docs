@@ -5,7 +5,7 @@ paginate: true
 size: 16:9
 title: MCPを開発現場でどう使うべきか
 navTitle: MCP internal presentation
-description: 社内発表向けMCP Q&A、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
+description: 社内発表向けMCP Q&A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
 kind: slides
 order: 10
 footer: "MCP internal presentation"
@@ -446,6 +446,102 @@ Streamable HTTPではsession、protocol version header、Origin validation、aut
 ---
 
 <!--
+_class: dense
+-->
+
+## Q. JSON-RPCでは実際に何が流れる？
+
+MCP messageはJSON-RPC 2.0 envelopeで流れる。
+
+```json
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{...}}
+{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{...}}
+```
+
+- `method`: `initialize`, `tools/list`, `tools/call`など
+- `params`: methodごとの入力
+- `id`: request/response対応。ない場合はnotification
+- `result` / `error`: 成功応答またはprotocol error
+
+LLMが直接APIを叩くのではなく、hostがtool callをMCP JSON-RPCへ変換する。
+
+---
+
+<!--
+_class: dense
+-->
+
+## Q. tools/listでモデルに渡る情報は？
+
+```json
+{
+  "name": "inventory.search_items",
+  "description": "Search inventory by keyword. Use before reserving stock when SKU is unknown.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "query": {"type": "string"},
+      "limit": {"type": "integer", "minimum": 1, "maximum": 20}
+    },
+    "required": ["query"]
+  }
+}
+```
+
+- `name`: modelが選ぶtool ID
+- `description`: いつ使うか、制約、返すもの
+- `inputSchema`: argumentsを生成する型情報
+- `outputSchema` / `structuredContent`: 返り値を後続処理しやすくする
+
+descriptionはドキュメントではなく、**model input token**。
+
+---
+
+<!--
+_class: compact
+-->
+
+## Q. tool callのテキストはどう生成される？
+
+**A. MCP serverではなく、hostがLLMへtool定義を渡し、LLMがtool_use/tool_callを生成する。**
+
+```text
+MCP server: tools/list -> tool metadata
+Host/client: providerのtools/function schemaへ変換
+LLM: user prompt + system prompt + tool definitionsからtool callを生成
+Host/client: tool callをMCP tools/callへ変換
+MCP server: backend APIを実行してresultを返す
+```
+
+公開情報では、Anthropicはtool定義からspecial system promptを構築すると説明している。
+OpenAI/Geminiもtool/function schemaをmodel inputとして渡し、実行はapplication側が担う。
+
+---
+
+<!--
+_class: compact
+-->
+
+## Q. MCP用にLLMをfine-tuningする必要がある？
+
+**A. 通常は不要。まずtool surfaceを設計する。**
+
+- MCP接続に必要なのはmodel専用trainingではなく、host/client/serverのprotocol実装
+- modelはtool/function calling能力で`name + arguments`を生成する
+- 開発者が最初に調整すべきもの:
+  - tool名
+  - description
+  - input/output schema
+  - result size
+  - error message
+- 公開情報ではfunction calling向けfine-tuning例はあるが、MCP専用fine-tuning要件ではない
+
+大量・類似・複雑なtoolで精度が足りない場合に、tool-use evalやfine-tuningを検討する。
+
+---
+
+<!--
 _class: compact
 -->
 
@@ -703,3 +799,18 @@ _class: dense
 - Playwright MCP: https://github.com/microsoft/playwright-mcp
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - Serena: https://github.com/oraios/serena
+
+---
+
+<!--
+_class: dense
+-->
+
+## 主な参照 3
+
+- JSON-RPC 2.0 specification: https://www.jsonrpc.org/specification
+- MCP lifecycle: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle
+- MCP sampling: https://modelcontextprotocol.io/specification/2025-11-25/client/sampling
+- Anthropic tool use overview: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
+- Anthropic define tools: https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+- OpenAI function calling fine-tuning: https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling

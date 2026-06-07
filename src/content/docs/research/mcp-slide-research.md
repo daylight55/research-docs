@@ -1,7 +1,7 @@
 ---
 title: MCP internal presentation research notes
 navTitle: Research notes
-description: MCP概要、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。
+description: MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。
 kind: research
 order: 20
 ---
@@ -29,6 +29,11 @@ This is a technical specification review plus ecosystem survey, not a formal aca
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - AWS MCP Server GA / Agent Toolkit: https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/ and https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/
 - AgentCore Gateway / Identity: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html, https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html, and https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html
+- JSON-RPC 2.0 specification: https://www.jsonrpc.org/specification
+- MCP lifecycle/tools/transports/sampling specification pages: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle, https://modelcontextprotocol.io/specification/2025-11-25/server/tools, https://modelcontextprotocol.io/specification/2025-11-25/basic/transports, and https://modelcontextprotocol.io/specification/2025-11-25/client/sampling
+- Anthropic tool use docs: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview and https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+- OpenAI function-calling fine-tuning cookbook and RFT guide: https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling and https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning
+- Hugging Face Agents Course function-calling fine-tuning note: https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning
 - GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.
 
 ## Expanded beginner-friendly notes, 2026-06-07
@@ -129,6 +134,317 @@ Streamable HTTP:
 - 個人開発・ローカルツール: stdio。
 - 社内共通・Claude custom connector・SaaS連携: Streamable HTTP。
 - 旧SSE serverは残っているが、新規ならHTTPを優先する。
+
+### 6.1 JSON-RPCで実際に何が送られるか
+
+MCPのmessageはJSON-RPC 2.0のrequest、response、notificationとして表現される。JSON-RPC 2.0自体はtransport-agnosticなRPC仕様で、requestには`jsonrpc: "2.0"`、`method`、必要に応じて`params`、response対応のための`id`が入る。`id`がないrequestはnotificationで、responseを返さない。MCPはこの汎用RPC envelopeの`method`名として`initialize`、`tools/list`、`tools/call`、`resources/read`などを定義している。
+
+MCPの実務理解では、次の4種類を押さえると十分。
+
+| 種類 | 例 | 何のため |
+|---|---|---|
+| lifecycle | `initialize`, `notifications/initialized` | protocol version、capability、client/server情報を交換する |
+| discovery | `tools/list`, `resources/list`, `prompts/list` | LLM/hostが使える能力を発見する |
+| invocation | `tools/call`, `resources/read` | 実際にtoolを呼ぶ、resourceを読む |
+| control/error | `notifications/cancelled`, JSON-RPC `error` | timeout、cancel、protocol errorを扱う |
+
+#### initialize
+
+接続直後にclientがserverへ送る。ここでprotocol version、client capability、client implementation情報を渡す。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "sampling": {},
+      "elicitation": { "form": {} }
+    },
+    "clientInfo": {
+      "name": "claude-code",
+      "version": "1.0.0"
+    }
+  }
+}
+```
+
+serverは対応version、server capability、server情報、任意のinstructionsを返す。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "tools": { "listChanged": true },
+      "resources": { "listChanged": true }
+    },
+    "serverInfo": {
+      "name": "inventory-mcp",
+      "version": "0.1.0"
+    },
+    "instructions": "Use read tools before write tools."
+  }
+}
+```
+
+その後、clientは`notifications/initialized`を送って通常運用へ入る。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/initialized"
+}
+```
+
+#### tools/list
+
+clientはserverが公開するtoolを取得する。ここで返る`name`、`description`、`inputSchema`、必要なら`outputSchema`が、host側でLLMに渡されるtool定義の材料になる。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "tools": [
+      {
+        "name": "inventory.search_items",
+        "title": "Search inventory items",
+        "description": "Search inventory items by keyword. Use this before reserving stock when the exact SKU is unknown. Returns at most 20 items with stable item IDs.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Keyword, product name, or SKU fragment."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 10
+            }
+          },
+          "required": ["query"],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item_id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "stock": { "type": "integer" }
+                },
+                "required": ["item_id", "name", "stock"]
+              }
+            }
+          },
+          "required": ["items"]
+        }
+      }
+    ]
+  }
+}
+```
+
+#### tools/call
+
+LLMが「このtoolを使うべき」と判断すると、host/clientはMCP serverへ`tools/call`を送る。LLM自身がHTTP APIを叩くのではない。LLMはtool名とargumentsを生成し、hostが承認、validation、transport、authを処理してserverへ送る。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "inventory.search_items",
+    "arguments": {
+      "query": "notebook",
+      "limit": 5
+    }
+  }
+}
+```
+
+serverはtool resultを返す。自然文の`content`だけでなく、機械処理しやすい`structuredContent`を返せる。`outputSchema`を定義した場合、serverはそれに合うstructured resultを返す必要があり、clientは検証できる。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Found 1 item: Notebook A (sku-001), stock 42."
+      }
+    ],
+    "structuredContent": {
+      "items": [
+        {
+          "item_id": "sku-001",
+          "name": "Notebook A",
+          "stock": 42
+        }
+      ]
+    },
+    "isError": false
+  }
+}
+```
+
+#### errors
+
+MCPでは「JSON-RPC protocol error」と「tool execution error」を分ける。protocol errorはmethod名不正、params不正、version不一致のようなRPC構造の問題。tool execution errorは、業務API側のvalidation、rate limit、権限不足など、tool実行上の問題で、`isError: true`のtool resultとして返せる。
+
+Protocol error:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "error": {
+    "code": -32602,
+    "message": "Unknown tool: inventory.delete_everything"
+  }
+}
+```
+
+Tool execution error:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Cannot reserve item: requested quantity exceeds available stock. Retry with quantity <= 42."
+      }
+    ],
+    "isError": true
+  }
+}
+```
+
+実装方針:
+
+- protocol errorはclient/server実装やschema不一致の問題として扱う。
+- tool execution errorはLLMが自己修正できるよう、原因、制約、retry guidanceを短く返す。
+- `structuredContent`と`outputSchema`を使うと、後続tool callやUI表示で壊れにくい。
+- `content`へ巨大なraw logを入れず、summary、stable ID、paginationを返す。
+
+### 6.2 JSON-RPCはtransportでどう運ばれるか
+
+stdio:
+
+- clientがserver processを起動する。
+- stdin/stdoutにnewline-delimitedなJSON-RPC messageを流す。
+- stdoutはprotocol専用。通常ログをstdoutへ出すとclientがJSON-RPCとして読んで壊れる。
+- stderrはログ用途に使える。
+
+Streamable HTTP:
+
+```http
+POST /mcp HTTP/1.1
+Authorization: Bearer <access_token>
+Accept: application/json, text/event-stream
+Content-Type: application/json
+MCP-Protocol-Version: 2025-11-25
+MCP-Session-Id: 1868a90c...
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "inventory.search_items",
+    "arguments": { "query": "notebook" }
+  }
+}
+```
+
+要点:
+
+- clientからserverへのJSON-RPC messageはPOSTで送る。
+- responseは`application/json`の単一JSON、または`text/event-stream`のSSE streamで返る。
+- serverが`MCP-Session-Id`を返した場合、clientは後続requestで同じsession headerを付ける。
+- HTTP利用時は交渉済みversionを`MCP-Protocol-Version` headerで送る。
+- Remote/local HTTP serverはOrigin validation、localhost bind、authを設計する。
+
+### 6.3 tool説明文はどのようにLLMへ渡るか
+
+MCP serverがLLMへ直接promptを送るわけではない。基本フローは次の通り。
+
+```text
+MCP server
+  -> tools/listでtool metadataを返す
+MCP host/client
+  -> tool name / description / inputSchema / outputSchema / annotationsを受け取る
+  -> 使用中のmodel provider APIに合うtool/function schemaへ変換する
+LLM
+  -> user prompt + system prompt + tool definitionsを見て、tool_use/tool_callを生成する
+MCP host/client
+  -> tool_useをMCP tools/callに変換してserverへ送る
+```
+
+公開情報から言えること:
+
+- MCP tools specはtoolを「model-controlled」と説明しており、modelがcontextとuser promptに基づいてtoolを発見・呼び出せる設計である。ただしhuman-in-the-loopや承認UIが推奨される。
+- Anthropic docsは、Claude APIに`tools`を渡すと、tool定義、tool設定、user system promptからtool use用のspecial system promptが構築されると説明している。つまりdescriptionとschemaは単なるドキュメントではなく、model input tokenとして扱われる。
+- Anthropic docsは、Claudeがuser requestとtool descriptionに基づいてtoolを呼ぶか判断すると説明している。`tool_choice`でauto/any/specific/noneを制御でき、strict tool useでschema一致を強められる。
+- OpenAI Cookbookは、`tools` parameterがfunction仕様をmodelへ渡し、modelが仕様に沿ったargumentsを生成できるようにするためのものだと説明している。APIやmodelは関数を実行せず、実行はapplication側の責任である。
+- Gemini docsも、function callingではmodelが必要性を判断してstructured dataでfunctionとparametersを出力し、applicationが実行して結果を戻す、と説明している。
+
+したがってMCP server開発者が「チューニング」する対象は、まずLLM model本体ではなく、tool surfaceである。
+
+1. tool名: service/resource/actionがわかる名前にする。
+2. description: 何をするか、いつ使うか、いつ使わないか、返すもの、制約を書く。
+3. schema: required、enum、format、minimum/maximum、additionalPropertiesを使い曖昧さを減らす。
+4. output: structuredContent、stable IDs、summary、paginationで次の判断を助ける。
+5. error: retry可能な制約とmissing scopeを短く返す。
+
+### 6.4 MCP接続にLLM専用fine-tuningは必要か
+
+結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP `tools/call`へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。
+
+ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。
+
+- OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。
+- OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。
+- Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。
+
+この情報をMCP文脈へ翻訳すると、次のようになる。
+
+| レイヤー | 誰が担うか | MCP server開発者の設計対象 |
+|---|---|---|
+| MCP protocol | host/client/server SDK | JSON-RPC lifecycle、transport、auth、schema validation |
+| tool metadata | MCP server | name、description、inputSchema、outputSchema、annotations |
+| tool call generation | LLM + host/model API | provider固有のtool/function calling能力 |
+| model tuning | model providerまたはmodel owner | tool選択精度、schema遵守、multi-tool planning |
+
+社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。
 
 ### 7. Authorization: なぜOAuth 2.1とaudienceが重要か
 
