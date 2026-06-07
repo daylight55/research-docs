@@ -72,8 +72,48 @@ _class: dense ch00
 
 
 
-<table><thead><tr><th>選択肢</th><th>LLMが得る情報</th><th>アクションの形</th><th>強い場面</th></tr></thead><tbody><tr><td>Function calling</td><td>tool名、description、schema</td><td>app側関数呼び出し</td><td>自前アプリ内の軽量tool</td></tr><tr><td>Built-in tools</td><td>provider定義tool</td><td>search / file / computerなど</td><td>すぐ使える標準能力</td></tr><tr><td>Connectors / Remote MCP</td><td>SaaS/APIのtool catalog</td><td>authenticated tool call</td><td>組織data、業務SaaS</td></tr><tr><td>Codex plugins/apps</td><td>skills、apps、MCP、browser/computer</td><td>repo操作、外部app操作</td><td>開発・調査・レビュー</td></tr><tr><td>WebMCP</td><td>HTML/JSで宣言されたpage capability</td><td>browser内agent action</td><td>frontend上の構造化操作</td></tr><tr><td>A2A</td><td>他agentのcapability/task</td><td>agent間message/task</td><td>複数agent協調</td></tr></tbody></table>
+
+
+
+
+
+
+<table><thead><tr><th>選択肢</th><th>LLMが得る情報</th><th>アクションの形</th><th>強い場面</th></tr></thead><tbody><tr><td>Function calling</td><td>tool名、description、schema</td><td>app側関数呼び出し</td><td>自前アプリ内の軽量tool</td></tr><tr><td>Built-in tools</td><td>provider定義tool</td><td>search / file / computerなど</td><td>すぐ使える標準能力</td></tr><tr><td>Connectors / Remote MCP</td><td>SaaS/APIのtool catalog</td><td>authenticated tool call</td><td>組織data、業務SaaS</td></tr><tr><td>Agent Skills</td><td>手順、判断基準、参照資料</td><td>workflow orchestration</td><td>反復支援の型</td></tr><tr><td>Codex plugins/apps</td><td>skills、apps、MCP、browser/computer</td><td>repo操作、外部app操作</td><td>開発・調査・レビュー</td></tr><tr><td>WebMCP</td><td>HTML/JSで宣言されたpage capability</td><td>browser内agent action</td><td>frontend上の構造化操作</td></tr><tr><td>A2A</td><td>他agentのcapability/task</td><td>agent間message/task</td><td>複数agent協調</td></tr></tbody></table>
 <p>この地図の中で、MCPは<strong>外部systemをagent向けに宣言する標準接続面</strong>。</p>
+<hr>
+<!--
+_class: compact ch00
+-->
+<p class="chapter-label">00 / 全体像</p>
+<h2 id="agent-skills--mcpで支援範囲が広がる"><a href="#agent-skills--mcpで支援範囲が広がる">Agent Skills + MCPで支援範囲が広がる</a></h2>
+<p>Skillは「どう進めるか」、MCPは「何を読める/実行できるか」を持つ。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>レイヤー</th><th>役割</th><th>開発現場での例</th></tr></thead><tbody><tr><td>Agent Skill</td><td>手順、判断基準、検証、出力形式</td><td>PR review、incident triage、release手順</td></tr><tr><td>MCP server</td><td>live data/action、認証、schema、承認</td><td>GitHub、Sentry、Slack、AWS、社内API</td></tr><tr><td>Plugin/App</td><td>Skill + App + MCPを配布単位にする</td><td>team workflow package</td></tr></tbody></table>
+<p>結果としてAI Agentは、助言だけでなく<strong>調査 -> 実行 -> 検証 -> 報告</strong>まで支援できる。</p>
 <hr>
 <!--
 _class: compact ch00
@@ -82,8 +122,8 @@ _class: compact ch00
 <h2 id="このスライドで着目すること"><a href="#このスライドで着目すること">このスライドで着目すること</a></h2>
 <p>広い選択肢の中で、この発表はMCPを<strong>既存APIをagent-nativeにする設計手段</strong>として扱う。</p>
 <ul>
-<li>主眼: MCP serverの構築、description/schema、auth、Remote運用</li>
-<li>比較対象: CLI、browser、function calling、WebMCP、Codex Appの外部操作</li>
+<li>主眼: MCP serverの構築、description/schema、auth、Remote運用、Skill連携</li>
+<li>比較対象: CLI、browser、function calling、Agent Skills、WebMCP、Codex Appの外部操作</li>
 <li>判断軸: token使用量、再現性、承認、監査、provider control</li>
 <li>実装例: FastAPI / OpenAPIをMCP serverへ変換する設計</li>
 </ul>

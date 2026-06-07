@@ -78,7 +78,7 @@
 
 
 
-<table><thead><tr><th>選択肢</th><th>一次情報で確認した内容</th><th>スライド上の扱い</th></tr></thead><tbody><tr><td>OpenAI tools / function calling</td><td>OpenAIのtools guideはbuilt-in tools、function calling、tool search、remote MCP serversでmodel capabilityを拡張できると説明している。function callingはcustom codeを呼び、追加data/capabilityにアクセスさせる仕組み。</td><td>MCPをtool callingの代替ではなく、tool discovery/execution/authを含む接続面として説明する。</td></tr><tr><td>OpenAI Apps SDK</td><td>Apps SDK quickstartは、ChatGPT appにはMCP serverでcapability/toolsを公開し、任意でChatGPT内iframeにweb component UIを表示すると説明している。</td><td>MCP Apps / UI-bearing surfaceの流れと、MCPがアプリ体験にも広がる文脈で扱う。</td></tr><tr><td>OpenAI / Anthropic computer use</td><td>OpenAI computer useはmodelがscreenshotでUIを観察し、click/type/scrollなどのactionsを返し、code側が実行して次のscreenshotを返すloop。Anthropicもscreenshot、mouse、keyboard、desktop automationを説明している。</td><td>browser/computer useは「UIを見て操作する」選択肢として、MCPのstructured tool callと比較する。</td></tr><tr><td>Codex App</td><td>Codex manualではCodex Appがparallel threads、worktrees、automations、Git操作、terminal、in-app browser、browser use、computer use、skills、plugins、MCP supportを持つと説明されている。Pluginsはskills、apps、MCP serversをbundleできる。</td><td>Codex AppはMCPだけでなく、terminal/browser/computer/pluginsを組み合わせるagent execution environmentとして紹介する。</td></tr><tr><td>MCP公式</td><td>MCP公式introは、MCPをAI applicationとexternal systemsを接続するopen-source standardとし、data sources、tools、workflowsにアクセスする仕組みと説明している。</td><td>MCPの中心定義として扱う。</td></tr><tr><td>Chrome WebMCP</td><td>Chromeの比較ページは、MCPはbackend向け、WebMCPはfrontend向けで、JavaScriptやHTML annotationsによりbrowser内agentがweb UIを理解・操作するための標準案と説明している。</td><td>Frontend上のcapability宣言として、MCPとは別の広がりとして扱う。</td></tr><tr><td>Google Agent2Agent</td><td>GoogleのA2A発表は、agent同士が情報交換しactionをcoordinationするopen protocolと説明し、MCPを補完するものと位置づける。</td><td>MCPはagent-to-tool、A2Aはagent-to-agentの補完関係として短く紹介する。</td></tr><tr><td>Anthropic advanced tool use</td><td>Anthropicは、MCP tool definitionsは重要なcontextだが、多数serverを接続するとtokensが増えると説明。5 server / 58 toolsでrequest前に約55K tokens、Jira追加でさらに約17K、100K超overheadになり得る例を示す。Tool searchは約77K -> 約8.7K、programmatic tool callingは43,588 -> 27,297 tokensの削減例を示す。</td><td>token比較グラフの公開値として使う。ただし「MCPなら常に少ない」ではなく「tool surfaceの設計がtoken効率を決める」と説明する。</td></tr></tbody></table>
+<table><thead><tr><th>選択肢</th><th>一次情報で確認した内容</th><th>スライド上の扱い</th></tr></thead><tbody><tr><td>OpenAI tools / function calling</td><td>OpenAIのtools guideはbuilt-in tools、function calling、tool search、remote MCP serversでmodel capabilityを拡張できると説明している。function callingはcustom codeを呼び、追加data/capabilityにアクセスさせる仕組み。</td><td>MCPをtool callingの代替ではなく、tool discovery/execution/authを含む接続面として説明する。</td></tr><tr><td>OpenAI Apps SDK</td><td>Apps SDK quickstartは、ChatGPT appにはMCP serverでcapability/toolsを公開し、任意でChatGPT内iframeにweb component UIを表示すると説明している。</td><td>MCP Apps / UI-bearing surfaceの流れと、MCPがアプリ体験にも広がる文脈で扱う。</td></tr><tr><td>OpenAI / Anthropic computer use</td><td>OpenAI computer useはmodelがscreenshotでUIを観察し、click/type/scrollなどのactionsを返し、code側が実行して次のscreenshotを返すloop。Anthropicもscreenshot、mouse、keyboard、desktop automationを説明している。</td><td>browser/computer useは「UIを見て操作する」選択肢として、MCPのstructured tool callと比較する。</td></tr><tr><td>Codex App / Agent Skills</td><td>Codex manualではCodex Appがparallel threads、worktrees、automations、Git操作、terminal、in-app browser、browser use、computer use、skills、plugins、MCP supportを持つと説明されている。Agent Skillsは再利用可能なworkflowを持ち、progressive disclosureで必要時に読み込まれる。Pluginsはskills、apps、MCP serversをbundleできる。</td><td>Codex AppはMCPだけでなく、terminal/browser/computer/pluginsを組み合わせるagent execution environmentとして紹介する。さらにSkillは手順、MCPは外部操作という分担を冒頭で示す。</td></tr><tr><td>MCP公式</td><td>MCP公式introは、MCPをAI applicationとexternal systemsを接続するopen-source standardとし、data sources、tools、workflowsにアクセスする仕組みと説明している。</td><td>MCPの中心定義として扱う。</td></tr><tr><td>Chrome WebMCP</td><td>Chromeの比較ページは、MCPはbackend向け、WebMCPはfrontend向けで、JavaScriptやHTML annotationsによりbrowser内agentがweb UIを理解・操作するための標準案と説明している。</td><td>Frontend上のcapability宣言として、MCPとは別の広がりとして扱う。</td></tr><tr><td>Google Agent2Agent</td><td>GoogleのA2A発表は、agent同士が情報交換しactionをcoordinationするopen protocolと説明し、MCPを補完するものと位置づける。</td><td>MCPはagent-to-tool、A2Aはagent-to-agentの補完関係として短く紹介する。</td></tr><tr><td>Anthropic advanced tool use</td><td>Anthropicは、MCP tool definitionsは重要なcontextだが、多数serverを接続するとtokensが増えると説明。5 server / 58 toolsでrequest前に約55K tokens、Jira追加でさらに約17K、100K超overheadになり得る例を示す。Tool searchは約77K -> 約8.7K、programmatic tool callingは43,588 -> 27,297 tokensの削減例を示す。</td><td>token比較グラフの公開値として使う。ただし「MCPなら常に少ない」ではなく「tool surfaceの設計がtoken効率を決める」と説明する。</td></tr></tbody></table>
 <h3 id="なぜ冒頭で広い地図を出すか"><a href="#なぜ冒頭で広い地図を出すか">なぜ冒頭で広い地図を出すか</a></h3>
 <p>MCPだけを突然説明すると、「function callingやCLIと何が違うのか」「Codex Appやbrowser操作とどう使い分けるのか」が見えにくい。実務上は、agentが外部世界へ出る経路を次のように整理すると理解しやすい。</p>
 <ol>
@@ -90,6 +90,42 @@
 <li><strong>Agent-to-agent</strong>: A2Aのようにagent間でtaskやmessageをやり取りする。</li>
 </ol>
 <p>このスライドは、その中でも <strong>「既存APIや業務systemをagent-nativeな接続面として公開するにはどう設計するか」</strong> に焦点を置く。そのため、MCP server構築、Remote MCP、description/schema、auth、token効率、provider controlを中心に扱う。</p>
+<h3 id="agent-skills--mcp-手順と操作面を分離する"><a href="#agent-skills--mcp-手順と操作面を分離する">Agent Skills + MCP: 手順と操作面を分離する</a></h3>
+<p>Agent SkillsとMCPを組み合わせると、AI Agentが支援できる範囲を「助言」から「調査、実行、検証、報告」へ広げやすい。重要なのは、SkillとMCPを同じものとして扱わず、次のように責務を分けること。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>レイヤー</th><th>何を持つか</th><th>なぜ効くか</th></tr></thead><tbody><tr><td>Agent Skill</td><td>workflow、判断基準、検証手順、出力形式、参考資料、必要ならhelper script</td><td>agentが毎回ゼロから手順を推測せず、チームの実務手順に沿って動ける。</td></tr><tr><td>MCP server</td><td>外部systemのtool/resource/prompt、schema、auth、scope、structured result、承認境界</td><td>agentがUIやCLIを推測せず、宣言済みcapabilityとして外部systemを扱える。</td></tr><tr><td>Plugin/App</td><td>skill、app integration、MCP server config、assetを配布する単位</td><td>個人の暗黙知ではなく、team workflow packageとして再利用できる。</td></tr></tbody></table>
+<p>Codex manualでは、SkillsはCLI、IDE extension、Codex appで利用でき、必要時に<code>SKILL.md</code>を読むprogressive disclosureでcontextを抑えると説明されている。また、MCPは外部tools/shared systemsへの接続面であり、実務上はSkillと組み合わせると有効だと説明されている。Pluginsはskills、apps、MCP serversをbundleできるため、チーム内で「PR review skill + GitHub/Sentry MCP」「incident triage skill + CloudWatch/Sentry/Slack MCP」のような支援パッケージを配布できる。</p>
+<p>設計上の示唆:</p>
+<ul>
+<li>Skill descriptionには「いつ起動すべきか」「対象外は何か」「使うMCPや確認手順」を短く前方に書く。descriptionが長すぎると初期context上で短縮される可能性がある。</li>
+<li>MCP側のtool descriptionには、agentが選択を誤らないように、入力条件、権限境界、副作用、返却粒度、失敗時の扱いを書く。</li>
+<li>複数Agentで使う場合は、Skillをworkflowのsource of truthにし、MCP設定はproject/user/orgの管理単位で分ける。社内標準の支援手順はrepo-scoped skillやplugin、個人作業の好みはuser skillに置く。</li>
+<li>MCPが使える外部操作はMCPを前提にし、browser/computer useはUI確認やMCP未対応の例外経路として位置づける。</li>
+</ul>
 <h3 id="token比較の扱い"><a href="#token比較の扱い">Token比較の扱い</a></h3>
 <p>Token使用量はmodel、client、tool定義、result size、retrieval strategy、screenshot解像度、ログ量、承認UI、会話履歴で大きく変わる。したがってスライドのCLI/Browser/MCP token rangeは、厳密なベンチマークではなく「同じ作業をagentにさせるときにcontextへ入りやすい情報量」の概念比較である。</p>
 <p>ただし、次の定性的傾向は複数の一次情報と実務経験に整合する。</p>
