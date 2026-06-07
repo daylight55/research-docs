@@ -80,13 +80,7 @@ _class: compact
 
 ## Host / Client / Serverとは？
 
-```text
-User
-  -> Host: Claude, Cursor, VS Code, Codex
-      -> MCP Client: server discovery, JSON-RPC, auth/session
-          -> MCP Server: tools/resources/prompts
-              -> Backend: GitHub, AWS, DB, internal API
-```
+<img class="diagram" src="diagrams/mcp-architecture.svg" alt="MCP Host Client Server architecture" />
 
 - Host: user、model、tool承認、接続設定をまとめる
 - Client: MCP protocolを話す通信部品
@@ -326,6 +320,18 @@ app/
 ```
 
 OpenAPIを契約として使い、MCPでは公開面を絞る。
+
+---
+
+<!--
+_class: compact
+-->
+
+## 既存APIをMCP化する流れ
+
+<img class="diagram" src="diagrams/mcp-api-adapter-flow.svg" alt="Existing API to MCP adapter flow" />
+
+既存APIをsource of truthにし、MCP serverは公開範囲、description、schema、出力制限を担うadapterにする。
 
 ---
 
@@ -743,6 +749,16 @@ _class: dense
 
 ## Remote MCPの接続フロー
 
+<img class="diagram" src="diagrams/mcp-remote-auth-flow.svg" alt="Remote MCP OAuth connection flow" />
+
+---
+
+<!--
+_class: dense
+-->
+
+## Remote MCPの実装時チェック
+
 | step | client / server interaction | 実装上の要点 |
 |---:|---|---|
 | 1 | client -> server: `initialize` | protocol version、capability negotiation |
@@ -1025,6 +1041,16 @@ _class: dense
 -->
 
 ## 論争の歴史
+
+<img class="diagram" src="diagrams/mcp-trust-roadmap.svg" alt="MCP trust and roadmap flow" />
+
+---
+
+<!--
+_class: dense
+-->
+
+## 論争の歴史から見る現在地
 
 | 時期 | 論点 | 意味 |
 |---|---|---|

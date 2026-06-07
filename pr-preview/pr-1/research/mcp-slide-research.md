@@ -61,6 +61,8 @@ OpenAPIはHTTP APIの契約を記述する仕様。MCPはAI clientに対してRe
 
 API Gatewayは人間/アプリケーション向けAPIの入口。MCP serverはAI agent向けの入口。両者は役割が異なる。実運用では、既存API Gatewayの後ろにあるAPIをMCP adapterから呼び出す構成がわかりやすい。
 
+![MCP Host Client Server architecture](../slides/diagrams/mcp-architecture.svg)
+
 | 仕組み | 主な役割 | MCPとの関係 |
 |---|---|---|
 | Function Calling | モデルが関数呼び出しを表現する | MCP tool呼び出しの内側で使われることがある |
@@ -450,6 +452,8 @@ MCP host/client
 
 Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。
 
+![Remote MCP OAuth connection flow](../slides/diagrams/mcp-remote-auth-flow.svg)
+
 初心者向けに言うと、Remote MCPの認証で避けたい事故は3つ。
 
 1. 他のサービス向けtokenをMCP serverが受け入れてしまう。
@@ -461,6 +465,8 @@ MCP specはtoken passthroughを禁じ、Resource Indicatorsでtokenの対象reso
 ### 8. 既存APIをMCP化するときの設計原則
 
 既存APIをMCP対応させる最短路は、API本体を書き換えることではない。APIはそのまま残し、MCP adapterを追加する。
+
+![Existing API to MCP adapter flow](../slides/diagrams/mcp-api-adapter-flow.svg)
 
 推奨構成:
 
@@ -2707,6 +2713,8 @@ MCP is no longer just a developer tool protocol. The credible current picture is
 - **High confidence**: Non-developer use cases are expanding into CRM, finance, sales, service, enterprise knowledge, calendar/email/docs, analytics, and industry data. Examples include Salesforce hosted MCP servers exposing org data/flows/Apex/actions to AI clients, Claude finance connectors for FactSet/MSCI/LSEG/S&P Global, OpenAI connectors for Gmail/Calendar/Drive/Teams/Outlook/SharePoint/Dropbox, and NetSuite MCP/AI Connector workflows for finance, inventory, analytics, and role-based business access.
 
 ### Timeline and controversy history
+
+![MCP trust and roadmap flow](../slides/diagrams/mcp-trust-roadmap.svg)
 
 | Period | What happened | Why it matters |
 |---|---|---|

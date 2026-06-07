@@ -1,0 +1,18 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, Arial, sans-serif", "primaryColor": "#f8fafc", "primaryTextColor": "#17202a", "primaryBorderColor": "#7aa2c7", "lineColor": "#6b7a8c", "secondaryColor": "#eaf4ef", "tertiaryColor": "#f6efe2"}}}%%
+flowchart LR
+  U["User<br/>intent / approval"] --> H["Host<br/>Claude / Cursor / VS Code / Codex"]
+  H --> C["MCP Client<br/>discovery / session / JSON-RPC"]
+  C --> S["MCP Server<br/>tools / resources / prompts"]
+  S --> B["Backend<br/>SaaS / DB / internal API"]
+
+  S -. "name + description + schema" .-> C
+  C -. "tool definitions" .-> H
+  H -. "tool call approval" .-> U
+  B -. "domain result" .-> S
+
+  classDef host fill:#eef6ff,stroke:#356b9a,stroke-width:2px;
+  classDef server fill:#eff7f1,stroke:#467a56,stroke-width:2px;
+  classDef backend fill:#fff7e6,stroke:#a26a22,stroke-width:2px;
+  class H,C host;
+  class S server;
+  class B backend;

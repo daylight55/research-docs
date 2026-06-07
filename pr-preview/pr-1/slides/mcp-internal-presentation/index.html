@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP解説、要所のQ&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.CFu95flq.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP解説、要所のQ&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="社内発表向けMCP解説、要所のQ&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査"><title>MCPを開発現場でどう使うべきか | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-1/_astro/DocsLayout.DhRh0Uzn.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-1/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-1/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">slides</p> <h1>MCPを開発現場でどう使うべきか</h1> <p>社内発表向けMCP解説、要所のQ&amp;A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査</p> <div class="action-row"> <a class="primary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation/deck/">プレゼンHTMLを見る</a> <a class="secondary-action" href="/research-docs/pr-preview/pr-1/slides/mcp-internal-presentation.md">Markdownをダウンロード</a> </div> </header> <div class="markdown-body"> <!--
 _class: lead
 -->
 <h1 id="mcpを開発現場でどう使うべきか"><a href="#mcpを開発現場でどう使うべきか">MCPを開発現場でどう使うべきか</a></h1>
@@ -73,11 +73,7 @@ _class: compact
 _class: compact
 -->
 <h2 id="host--client--serverとは"><a href="#host--client--serverとは">Host / Client / Serverとは？</a></h2>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>User</span></span>
-<span class="line"><span>  -> Host: Claude, Cursor, VS Code, Codex</span></span>
-<span class="line"><span>      -> MCP Client: server discovery, JSON-RPC, auth/session</span></span>
-<span class="line"><span>          -> MCP Server: tools/resources/prompts</span></span>
-<span class="line"><span>              -> Backend: GitHub, AWS, DB, internal API</span></span></code></pre>
+<img class="diagram" src="diagrams/mcp-architecture.svg" alt="MCP Host Client Server architecture">
 <ul>
 <li>Host: user、model、tool承認、接続設定をまとめる</li>
 <li>Client: MCP protocolを話す通信部品</li>
@@ -366,6 +362,13 @@ _class: compact
 <span class="line"><span>    route_policy.py      # expose / exclude policy</span></span>
 <span class="line"><span>    descriptions.py      # model-facing descriptions</span></span></code></pre>
 <p>OpenAPIを契約として使い、MCPでは公開面を絞る。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="既存apiをmcp化する流れ"><a href="#既存apiをmcp化する流れ">既存APIをMCP化する流れ</a></h2>
+<img class="diagram" src="diagrams/mcp-api-adapter-flow.svg" alt="Existing API to MCP adapter flow">
+<p>既存APIをsource of truthにし、MCP serverは公開範囲、description、schema、出力制限を担うadapterにする。</p>
 <hr>
 <!--
 _class: dense
@@ -858,6 +861,12 @@ _class: dense
 _class: dense
 -->
 <h2 id="remote-mcpの接続フロー"><a href="#remote-mcpの接続フロー">Remote MCPの接続フロー</a></h2>
+<img class="diagram" src="diagrams/mcp-remote-auth-flow.svg" alt="Remote MCP OAuth connection flow">
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="remote-mcpの実装時チェック"><a href="#remote-mcpの実装時チェック">Remote MCPの実装時チェック</a></h2>
 
 
 
@@ -1242,6 +1251,12 @@ _class: dense
 _class: dense
 -->
 <h2 id="論争の歴史"><a href="#論争の歴史">論争の歴史</a></h2>
+<img class="diagram" src="diagrams/mcp-trust-roadmap.svg" alt="MCP trust and roadmap flow">
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="論争の歴史から見る現在地"><a href="#論争の歴史から見る現在地">論争の歴史から見る現在地</a></h2>
 
 
 
