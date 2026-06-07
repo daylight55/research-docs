@@ -1203,6 +1203,266 @@ _class: compact
 <p>MCPの価値は外部APIだけではない。local code understandingにも効く。</p>
 <hr>
 <!--
+_class: dense
+-->
+<h2 id="mcpの現在地"><a href="#mcpの現在地">MCPの現在地</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>観点</th><th>現在地</th></tr></thead><tbody><tr><td>起点</td><td>2024-11にAnthropicがopen standardとして公開</td></tr><tr><td>標準化</td><td>AAIF / Linux Foundation配下のmulti-vendor open protocolへ移行</td></tr><tr><td>採用</td><td>Claude、OpenAI、Microsoft、Google、Salesforce、AWSなどが対応を拡大</td></tr><tr><td>主戦場</td><td>local developer toolからRemote MCP / enterprise connectorへ</td></tr><tr><td>未成熟</td><td>auth実装、server trust、registry vetting、audit、large tool catalog</td></tr></tbody></table>
+<p>いまのMCPは「便利な開発者plugin」から、<strong>agentic systemの接続インフラ</strong>へ移りつつある。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="論争の歴史"><a href="#論争の歴史">論争の歴史</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>時期</th><th>論点</th><th>意味</th></tr></thead><tbody><tr><td>2024-11</td><td>custom connector地獄を解くopen protocol</td><td>MCPの価値が明確になった</td></tr><tr><td>2025前半</td><td>stdio/local MCPが急増</td><td>local権限とsupply chainが争点化</td></tr><tr><td>2025-04</td><td>tool poisoning / line jumping</td><td>tool descriptionも攻撃面だと認識された</td></tr><tr><td>2025後半</td><td>Remote MCP / OAuth / registry</td><td>production運用の問題へ移った</td></tr><tr><td>2025-12</td><td>AAIF/LFへ寄贈</td><td>vendor-neutralityの論点に回答</td></tr><tr><td>2026</td><td>NSA/OWASP/研究者がsecurity guidance</td><td>導入前提だが、統制必須という現在地</td></tr></tbody></table>
+<p>結論: <strong>MCPは失敗したprotocolではなく、急成長でtrust設計が追いついていないprotocol。</strong></p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="認証方法の現在地"><a href="#認証方法の現在地">認証方法の現在地</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方法</th><th>向く用途</th><th>注意</th></tr></thead><tbody><tr><td>stdio + env credentials</td><td>local developer tool</td><td>local process権限を持つ</td></tr><tr><td>Bearer token</td><td>controlled internal server</td><td>audience/scope検証が必要</td></tr><tr><td>OAuth 2.1 + PKCE</td><td>user delegated Remote MCP</td><td>browser login、consent、token rotation</td></tr><tr><td>Dynamic Client Registration</td><td>unknown client接続</td><td>server側policyが必要</td></tr><tr><td>Protected Resource Metadata</td><td>auth server discovery</td><td><code>WWW-Authenticate</code> / metadata整備</td></tr><tr><td>Resource Indicators</td><td>token audience binding</td><td>token replayを防ぐ</td></tr><tr><td>OBO / token exchange</td><td>Gateway経由のdownstream API</td><td>token passthroughを避ける</td></tr></tbody></table>
+<p>重要: MCP serverは受け取ったtokenを下流APIへそのまま渡さない。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="今後の争点"><a href="#今後の争点">今後の争点</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>争点</th><th>問い</th></tr></thead><tbody><tr><td>server trust</td><td>そのserver/toolは本当に信頼できるか</td></tr><tr><td>tool metadata</td><td>descriptionに隠れた指示をどう検知するか</td></tr><tr><td>auth boundary</td><td>user / host / client / server / backendの誰に権限があるか</td></tr><tr><td>registry</td><td>public MCP serverを誰が審査するか</td></tr><tr><td>stdio</td><td>local MCPを「任意コード実行」として扱えているか</td></tr><tr><td>large catalog</td><td>数千toolからどう選ばせるか</td></tr><tr><td>UI / Apps</td><td>tool結果がinteractive UIになると何をsandboxするか</td></tr><tr><td>audit</td><td>agentが何を見て何を実行したか追えるか</td></tr></tbody></table>
+<p>争点はprotocol syntaxではなく、<strong>trust boundaryと運用責任</strong>。</p>
+<hr>
+<!--
+_class: compact
+-->
+<h2 id="開発者以外への広がり"><a href="#開発者以外への広がり">開発者以外への広がり</a></h2>
+<ul>
+<li>Sales / CRM
+<ul>
+<li>AI assistantからaccount history、opportunity、case activityを取得</li>
+</ul>
+</li>
+<li>Finance
+<ul>
+<li>FactSet、MSCI、LSEG、S&#x26;P Global、NetSuiteなどの業務dataへ接続</li>
+</ul>
+</li>
+<li>Customer support
+<ul>
+<li>ticket、order、CRM、knowledge baseを横断して回答/更新</li>
+</ul>
+</li>
+<li>Enterprise knowledge
+<ul>
+<li>Gmail、Calendar、Drive、SharePoint、Teams、Dropbox、社内docs</li>
+</ul>
+</li>
+<li>Operations / Analytics
+<ul>
+<li>dashboard生成、AR trend分析、inventory logging、incident summary</li>
+</ul>
+</li>
+</ul>
+<p>MCPは「開発者が便利に使うもの」から、<strong>業務AIの接続面</strong>へ広がっている。</p>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="公式ロードマップの読み方"><a href="#公式ロードマップの読み方">公式ロードマップの読み方</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>優先領域</th><th>何が変わるか</th></tr></thead><tbody><tr><td>Transport scalability</td><td>Streamable HTTP、session、resumption、server card</td></tr><tr><td>Agent communication</td><td>tasks、retry、expiry、long-running operation</td></tr><tr><td>Governance maturation</td><td>WG/IG、SEP、contributor ladder、delegation</td></tr><tr><td>Enterprise readiness</td><td>audit、observability、SSO、gateway/proxy、config portability</td></tr><tr><td>Security/Auth</td><td>least privilege、OAuth mix-up対策、credential管理、vuln disclosure</td></tr><tr><td>Extensions</td><td>MCP Apps、auth extensions、skills-like composed capability</td></tr><tr><td>Validation</td><td>conformance tests、SDK tiers、reference implementations</td></tr></tbody></table>
+<p>ロードマップは約束ではなく、<strong>どの論点にmaintainer capacityを寄せるか</strong>を示す。</p>
+<hr>
+<!--
 _class: compact
 -->
 <h2 id="mcp-server設計の重要ルール"><a href="#mcp-server設計の重要ルール">MCP server設計の重要ルール</a></h2>
@@ -1306,10 +1566,25 @@ _class: dense
 <h2 id="主な参照-4"><a href="#主な参照-4">主な参照 4</a></h2>
 <ul>
 <li>MCP governance: <a href="https://modelcontextprotocol.io/community/governance">https://modelcontextprotocol.io/community/governance</a></li>
+<li>MCP roadmap: <a href="https://modelcontextprotocol.io/development/roadmap">https://modelcontextprotocol.io/development/roadmap</a></li>
+<li>MCP authorization: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization</a></li>
 <li>Anthropic MCP donation / AAIF: <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation</a></li>
 <li>Claude Code managed MCP: <a href="https://code.claude.com/docs/en/managed-mcp">https://code.claude.com/docs/en/managed-mcp</a></li>
 <li>VS Code MCP servers: <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">https://code.visualstudio.com/docs/agent-customization/mcp-servers</a></li>
 <li>VS Code MCP config reference: <a href="https://code.visualstudio.com/docs/agents/reference/mcp-configuration">https://code.visualstudio.com/docs/agents/reference/mcp-configuration</a></li>
 <li>Cursor MCP: <a href="https://docs.cursor.com/context/model-context-protocol">https://docs.cursor.com/context/model-context-protocol</a></li>
 <li>Microsoft APM: <a href="https://microsoft.github.io/apm/">https://microsoft.github.io/apm/</a></li>
+</ul>
+<hr>
+<!--
+_class: dense
+-->
+<h2 id="主な参照-5"><a href="#主な参照-5">主な参照 5</a></h2>
+<ul>
+<li>NSA MCP security guidance: <a href="https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf">https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf</a></li>
+<li>Trail of Bits line jumping: <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/</a></li>
+<li>Semgrep MCP security guide: <a href="https://semgrep.dev/blog/2025/a-security-engineers-guide-to-mcp">https://semgrep.dev/blog/2025/a-security-engineers-guide-to-mcp</a></li>
+<li>OpenAI MCP connectors: <a href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp">https://developers.openai.com/api/docs/guides/tools-connectors-mcp</a></li>
+<li>Microsoft Copilot Studio MCP GA: <a href="https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/model-context-protocol-mcp-is-now-generally-available-in-microsoft-copilot-studio/">https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/model-context-protocol-mcp-is-now-generally-available-in-microsoft-copilot-studio/</a></li>
+<li>Salesforce Hosted MCP Servers GA: <a href="https://developer.salesforce.com/blogs/2026/04/salesforce-hosted-mcp-servers-are-now-generally-available">https://developer.salesforce.com/blogs/2026/04/salesforce-hosted-mcp-servers-are-now-generally-available</a></li>
 </ul> </div> </article>  </main> </div> </div> </body></html>
