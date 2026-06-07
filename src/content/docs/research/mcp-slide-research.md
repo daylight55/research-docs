@@ -2694,6 +2694,120 @@ Operational:
 
 ## Future important points
 
+## Current state, roadmap, controversy, and non-developer expansion, 2026-06-08
+
+### Executive synthesis
+
+MCP is no longer just a developer tool protocol. The credible current picture is:
+
+- **High confidence**: MCP has moved from Anthropic-originated experiment to multi-vendor infrastructure. Anthropic launched MCP on 2024-11-25 as an open standard for connecting AI assistants to data systems and tools. On 2025-12-09 Anthropic donated MCP to the Agentic AI Foundation under the Linux Foundation, with backing from Anthropic, Block, OpenAI, Google, Microsoft, AWS, Cloudflare, and Bloomberg. Official roadmap and governance pages now describe WGs, IGs, SEPs, maintainers, and enterprise-readiness work.
+- **High confidence**: Current production pressure is not "how to send JSON-RPC" but **trust, authorization, discovery, observability, and enterprise administration**. The official roadmap lists transport/session work, agent communication, governance maturation, enterprise readiness, triggers, streamed/reference results, security/authorization, extension ecosystem, conformance tests, SDK tiers, and reference implementations.
+- **High confidence**: Authentication has converged around HTTP-based OAuth/OIDC patterns, but implementation maturity remains uneven. The latest authorization spec says authorization is optional overall, HTTP transports should follow the spec, stdio should retrieve credentials from the environment, and HTTP authorization is based on OAuth 2.1, RFC 8414 authorization server metadata, RFC 7591 dynamic client registration, RFC 9728 protected resource metadata, RFC 8707 resource indicators, PKCE, audience validation, and no token passthrough.
+- **Medium to high confidence**: The biggest controversy is security semantics, not syntax. Public security research and guidance focus on tool poisoning/line jumping, prompt injection through tool descriptions/resources/results, malicious or compromised MCP servers, overly broad scopes, token passthrough, confused deputy, registry/marketplace trust, local stdio command execution, and weak user approval UX.
+- **High confidence**: Non-developer use cases are expanding into CRM, finance, sales, service, enterprise knowledge, calendar/email/docs, analytics, and industry data. Examples include Salesforce hosted MCP servers exposing org data/flows/Apex/actions to AI clients, Claude finance connectors for FactSet/MSCI/LSEG/S&P Global, OpenAI connectors for Gmail/Calendar/Drive/Teams/Outlook/SharePoint/Dropbox, and NetSuite MCP/AI Connector workflows for finance, inventory, analytics, and role-based business access.
+
+### Timeline and controversy history
+
+| Period | What happened | Why it matters |
+|---|---|---|
+| 2024-11 | Anthropic announced MCP as an open standard for connecting AI assistants to content repositories, business tools, and development environments. | Framed MCP as the answer to fragmented, custom AI integrations. |
+| Early 2025 | Local stdio servers and developer tools drove adoption. | MCP proved useful quickly, but inherited local process privileges and tool-description trust issues. |
+| 2025-04 | Invariant Labs and Trail of Bits popularized tool poisoning / line jumping concerns. | The dispute shifted from "MCP is convenient" to "tool metadata is model input and can be adversarial before any tool call." |
+| 2025-03 to 2025-06 | Remote MCP and Streamable HTTP matured; OAuth-based authorization became central. | Production deployments needed internet-reachable servers, sessions, auth, and enterprise policy. |
+| 2025-11 | One-year spec release added/clarified major capabilities such as tasks, authorization improvements, extensions, and enterprise/security features. | MCP moved from local connector protocol toward production agent infrastructure. |
+| 2025-12 | Anthropic donated MCP to AAIF under the Linux Foundation. | Addressed vendor-neutrality concerns and formalized a multi-company governance direction. |
+| 2026 | NSA and other security groups published MCP security guidance; enterprise vendors expanded MCP support. | Current state is "adopt, but govern aggressively." |
+
+The debate has two legitimate sides:
+
+- Pro-MCP argument: A common protocol is better than every AI product inventing its own connector, screen scraping, plugin format, or tool schema. Provider-owned MCP servers can enforce scope, audit, consent, output caps, and domain-specific workflows.
+- Skeptical argument: MCP can collapse trust boundaries if hosts blindly inject tool descriptions into model context, users connect untrusted servers, local stdio commands run with broad privileges, or remote servers implement OAuth incorrectly. The protocol cannot by itself prove tool intent or sanitize downstream content.
+
+The balanced position for this deck:
+
+> MCP is becoming the standard integration layer for agentic systems, but production use is security engineering, not just connector installation.
+
+### Authentication and authorization methods
+
+| Method | Where it fits | Main risk / design point |
+|---|---|---|
+| stdio + environment credentials | local developer tools, local filesystem/git/browser servers | inherits local user privileges; secrets must not leak to stdout/logs |
+| HTTP Bearer token | simple remote/internal server | acceptable for controlled systems, but weak if no audience/scope validation |
+| OAuth 2.1 authorization code + PKCE | user-delegated Remote MCP | best general pattern for user consent and public clients |
+| Dynamic Client Registration | unknown MCP clients connecting to new auth servers | reduces manual registration friction but needs policy and validation |
+| Protected Resource Metadata / Authorization Server Metadata | client discovers auth server for protected MCP resource | prevents hardcoded auth assumptions |
+| Resource Indicators / audience binding | token is minted for a specific MCP server | critical to prevent token replay across services |
+| Step-up authorization / incremental scopes | request stronger scope only when needed | aligns least privilege with actual tool call |
+| Token exchange / OBO | gateway or agent invokes downstream APIs as user/agent | avoids forbidden token passthrough and preserves delegation chain |
+| Workload identity / DPoP / mTLS-like sender constraints | server-to-server and enterprise environments | roadmap/extension area for stronger proof-of-possession and machine identity |
+
+Implementation rule:
+
+- The MCP server should validate inbound tokens for itself.
+- The MCP server should obtain separate downstream credentials for backend APIs.
+- The MCP server should not forward the MCP client's token as-is to a downstream API.
+- Hosts should show approvals for sensitive calls and log what data is sent to remote servers.
+
+### Main future disputes
+
+| Dispute | Question | Likely direction |
+|---|---|---|
+| Trust and attestation | How does a host know a server/tool is the one it claims to be? | registry metadata, server cards, signatures, enterprise allowlists, conformance tests |
+| Tool metadata as prompt | Are descriptions executable influence over the model? | tool-description review, pinning, diff alerts, tool annotations, policy scanners |
+| Auth boundary | Is the user, client, host, server, or downstream API the principal? | resource indicators, OBO token exchange, workload identity, enterprise SSO |
+| Local stdio power | Should local MCP be treated like running arbitrary code? | explicit command display, sandboxing, trusted project config, org policy |
+| Marketplace/registry safety | Who vets public MCP servers? | official provider servers, trust tiers, vulnerability disclosure, private registries |
+| Large tool catalogs | How does a model select from thousands of tools? | tool search, programmatic tool calling, deferred loading, semantic routing |
+| UI-bearing MCP | Should MCP return interactive UI, not just text/data? | MCP Apps/extensions, sandboxed iframes, auditable postMessage JSON-RPC |
+| Event-driven agents | How do servers push changes or long-running results safely? | triggers, tasks, streamed/reference results, resumption protocols |
+
+### Non-developer use-case expansion
+
+MCP's early adoption was developer-heavy because GitHub, filesystem, browser, database, and cloud operations are easy to demonstrate. The current enterprise expansion is broader:
+
+| Domain | MCP value | Examples from public sources |
+|---|---|---|
+| Sales / CRM | pull account history, opportunities, case activity, stakeholders inside an AI assistant | Salesforce hosted MCP servers |
+| Finance | trusted market data, index data, DCF/morning notes, accounting workflows | Claude finance connectors for FactSet/MSCI/LSEG/S&P Global; NetSuite AI Connector |
+| Customer support | connect agents to tickets, CRM, order status, external systems | Salesforce Agentforce and Zendesk-style agent interoperability |
+| Enterprise knowledge | query Drive, SharePoint, Teams, Outlook, Dropbox, docs, internal knowledge | OpenAI connectors and Claude connectors |
+| Operations / analytics | discover trends, generate dashboards, query data warehouse, summarize incidents | NetSuite analytics workflow, internal ops MCP servers |
+| Life sciences / healthcare | connect research platforms and regulated data contexts | Claude connector directory categories such as life sciences/healthcare |
+| Retail / inventory | multimodal intake, inventory logging, sales order creation | NetSuite inventory and MCP Apps examples |
+| Low-code agents | business users attach external tools without building custom integrations | Copilot Studio MCP GA, Agentforce MCP client/server support |
+
+The pattern is not "everyone becomes a developer." It is "business users stay inside an assistant, while providers expose governed workflows through MCP."
+
+### Roadmap interpretation
+
+Official roadmap language is intentionally non-committal: items are priorities, not promises. Still, the direction is clear:
+
+1. **Transport scalability**: simplify HTTP/session/resumption and avoid proliferating official transports.
+2. **Agent communication**: tasks, retry, expiry, long-running operations, call-now/fetch-later semantics.
+3. **Governance maturation**: contributor ladder, WG delegation, public charters, SEP process.
+4. **Enterprise readiness**: audit trails, observability, SSO-integrated auth, gateway/proxy behavior, config portability.
+5. **On the horizon**: triggers, event-driven updates, streamed/reference results, security/authorization extensions, MCP Apps, skills-like composed capabilities, registry extension support.
+6. **Validation**: conformance tests, SDK tiers, reference implementations.
+
+For internal adoption, read the roadmap as an operating checklist:
+
+- Prefer official/provider-hosted Remote MCP where possible.
+- Treat local stdio as trusted code execution.
+- Require OAuth/OIDC, audience validation, scope minimization, and no token passthrough for remote servers.
+- Keep an approved server catalog.
+- Monitor tool changes and tool-call audit logs.
+- Separate read-only, write, and destructive tools.
+- Budget for security review; do not treat MCP as "just an API wrapper."
+
+### Source credibility notes
+
+- Official MCP docs/spec/roadmap/governance: primary source for normative requirements and roadmap intent.
+- Anthropic launch/donation posts: primary source for history, origin, and governance transition, but naturally pro-MCP.
+- Microsoft/Google/Salesforce/OpenAI/Claude/Cloudflare docs/blogs: strong evidence of ecosystem adoption; product-specific and promotional, so use for "what vendors are doing," not neutral risk assessment.
+- NSA, OWASP, Trail of Bits, Semgrep, Invariant/Snyk, academic/security papers: stronger evidence for threat categories; some claims are attack-lab or measurement-specific and should not be generalized without context.
+
+## Future important points
+
 Likely strategic points:
 
 - Remote MCP will matter more than local-only MCP as organizations standardize agent access to SaaS/internal tools.

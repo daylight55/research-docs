@@ -13,18 +13,45 @@ order: 30
 ## Protocol and Concepts
 
 - [Model Context Protocol specification](https://modelcontextprotocol.io/specification/2025-11-25)
+- [MCP roadmap](https://modelcontextprotocol.io/development/roadmap)
 - [MCP governance and stewardship](https://modelcontextprotocol.io/community/governance)
 - [MCP Working and Interest Groups](https://modelcontextprotocol.io/community/working-interest-groups)
 - [MCP official GitHub repository](https://github.com/modelcontextprotocol/modelcontextprotocol)
 - [Anthropic donation of MCP to Agentic AI Foundation](https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation)
+- [One Year of MCP: November 2025 Spec Release](https://blog.modelcontextprotocol.io/posts/2025-11-25-first-mcp-anniversary/)
 - [MCP lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)
 - [MCP transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
+- [MCP authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
+- [MCP security best practices](https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices)
 - [MCP tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
 - [MCP sampling](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling)
+- [MCP Apps SEP-1865](https://modelcontextprotocol.io/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp)
 - [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification)
 - [Anthropic launch post](https://www.anthropic.com/news/model-context-protocol)
 - [MCP reference servers](https://github.com/modelcontextprotocol/servers)
 - [MCP registry](https://github.com/modelcontextprotocol/registry)
+
+## Security, Trust, and Controversy
+
+- [NSA MCP security design considerations press release](https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/)
+- [NSA MCP security design considerations PDF](https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf)
+- [Trail of Bits: Jumping the line](https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/)
+- [Semgrep: A Security Engineer's Guide to MCP](https://semgrep.dev/blog/2025/a-security-engineers-guide-to-mcp)
+- [OWASP MCP Top 10: Tool Poisoning](https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning)
+- [Vulnerable MCP Project: Tool Poisoning Attacks](https://vulnerablemcp.info/vuln/tool-poisoning-attacks.html)
+- [CSA research note: MCP security crisis](https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/05/CSA_research_note_MCP_security_crisis_20260504-csa-styled.pdf)
+
+## Enterprise and Non-Developer Use Cases
+
+- [OpenAI MCP and connectors](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
+- [Microsoft Copilot Studio MCP GA](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/model-context-protocol-mcp-is-now-generally-available-in-microsoft-copilot-studio/)
+- [Google Cloud MCP support for Google services](https://cloud.google.com/blog/products/ai-machine-learning/announcing-official-mcp-support-for-google-services/)
+- [Salesforce MCP support across Salesforce](https://developer.salesforce.com/blogs/2025/06/introducing-mcp-support-across-salesforce)
+- [Salesforce Hosted MCP Servers GA](https://developer.salesforce.com/blogs/2026/04/salesforce-hosted-mcp-servers-are-now-generally-available)
+- [Claude finance plugins and MCP connectors](https://claude.com/blog/cowork-plugins-finance)
+- [Claude connector directory](https://claude.com/connectors)
+- [NetSuite MCP Apps and AI Connector Service coverage](https://www.itpro.com/software/netsuite-announces-new-mcp-apps-for-ai-connector-service-allowing-users-to-access-financial-data-directly-within-claude)
+- [Cloudflare Remote MCP servers](https://blog.cloudflare.com/remote-model-context-protocol-servers-mcp/)
 
 ## Tool Use and Model-Side Generation
 
