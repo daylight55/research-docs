@@ -1,0 +1,82 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - mcp-internal-presentation.marp.md
+      - mcp-slide-research.md
+      - research-tasks.md
+      - themes/**
+      - scripts/build-pages-site.sh
+      - .github/workflows/pages.yml
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+    paths:
+      - mcp-internal-presentation.marp.md
+      - mcp-slide-research.md
+      - research-tasks.md
+      - themes/**
+      - scripts/build-pages-site.sh
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  deployments: write
+  pull-requests: write
+
+concurrency:
+  group: pages-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build Marp site
+        if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        run: scripts/build-pages-site.sh site
+
+      - name: Upload site artifact
+        if: github.event_name != 'pull_request' || github.event.action != 'closed'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-presentation-site
+          path: site
+
+      - name: Deploy main site
+        if: github.event_name != 'pull_request'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: site
+          clean-exclude: pr-preview
+          force: false
+          commit-message: Deploy GitHub Pages site for ${{ github.sha }}
+
+      - name: Deploy pull request preview
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: site
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+          wait-for-pages-deployment: false
+          comment: true
+          qr-code: false
