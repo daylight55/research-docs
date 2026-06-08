@@ -1,0 +1,29 @@
+---
+type Heading = {
+  depth: number;
+  slug: string;
+  subheadings: Heading[];
+  text: string;
+};
+
+type Props = {
+  heading: Heading;
+};
+
+const { heading } = Astro.props;
+---
+
+<li class="toc-item">
+  <a class="toc-link" href={`#${heading.slug}`} data-toc-link={heading.slug}>
+    {heading.text}
+  </a>
+  {
+    heading.subheadings.length > 0 && (
+      <ul class="toc-list toc-list-nested">
+        {heading.subheadings.map((subheading) => (
+          <Astro.self heading={subheading} />
+        ))}
+      </ul>
+    )
+  }
+</li>
