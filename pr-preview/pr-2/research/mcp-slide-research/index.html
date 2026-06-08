@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP internal presentation research notes | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-2/_astro/DocsLayout.DhRh0Uzn.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-2/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-2/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-2/sources/mcp-source-links/">Sources</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Documents</div> <section class="nav-section" aria-label="Slides"> <h2>Slides</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-2/slides/mcp-internal-presentation/"> MCP internal presentation </a> </li> </ul> </section><section class="nav-section" aria-label="Research"> <h2>Research</h2> <ul> <li> <a class="active" href="/research-docs/pr-preview/pr-2/research/mcp-slide-research/"> Research notes </a> </li> </ul> </section><section class="nav-section" aria-label="Sources"> <h2>Sources</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-2/sources/mcp-source-links/"> Source links </a> </li> </ul> </section><section class="nav-section" aria-label="Tasks"> <h2>Tasks</h2> <ul> <li> <a href="/research-docs/pr-preview/pr-2/tasks/research-tasks/"> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP internal presentation research notes</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p>  </header> <div class="markdown-body"> <h1 id="mcp-internal-presentation-research-notes"><a href="#mcp-internal-presentation-research-notes">MCP internal presentation research notes</a></h1>
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP internal presentation research notes | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-2/_astro/DocsLayout.YRn7fbu7.css"></head> <body> <div class="site-shell"> <header class="topbar"> <a class="brand" href="/research-docs/pr-preview/pr-2/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>MCP internal presentation</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-2/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-2/sources/mcp-source-links/">Sources</a> <a href="/research-docs/pr-preview/pr-2/llms.txt">llms.txt</a> </nav> </header> <div class="content-grid"> <aside class="sidebar" aria-label="Document navigation"> <div class="sidebar-title">Research themes</div> <section class="nav-section" aria-label="MCP internal presentation"> <h2><a href="/research-docs/pr-preview/pr-2/themes/mcp-internal-presentation/">MCP internal presentation</a></h2> <ul> <li> <a href="/research-docs/pr-preview/pr-2/slides/mcp-internal-presentation/"> <span>Slide</span> MCP internal presentation </a> </li><li> <a class="active" href="/research-docs/pr-preview/pr-2/research/mcp-slide-research/"> <span>Research note</span> Research notes </a> </li><li> <a href="/research-docs/pr-preview/pr-2/sources/mcp-source-links/"> <span>Source links</span> Source links </a> </li><li> <a href="/research-docs/pr-preview/pr-2/tasks/research-tasks/"> <span>Research task</span> Research task checklist </a> </li> </ul> </section> </aside> <main class="main-panel">  <article class="document"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP internal presentation research notes</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p> <div class="action-row">  <a class="secondary-action" href="/research-docs/pr-preview/pr-2/research/mcp-slide-research.md">Raw Markdown</a> </div> </header> <div class="markdown-body"> <h1 id="mcp-internal-presentation-research-notes"><a href="#mcp-internal-presentation-research-notes">MCP internal presentation research notes</a></h1>
 <p>Date: 2026-06-07</p>
 <h2 id="research-stance"><a href="#research-stance">Research stance</a></h2>
 <p>This is a technical specification review plus ecosystem survey, not a formal academic literature review. Primary sources were prioritized:</p>
@@ -22,6 +22,8 @@
 <li>MCP lifecycle/tools/transports/sampling specification pages: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle</a>, <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">https://modelcontextprotocol.io/specification/2025-11-25/server/tools</a>, <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">https://modelcontextprotocol.io/specification/2025-11-25/basic/transports</a>, and <a href="https://modelcontextprotocol.io/specification/2025-11-25/client/sampling">https://modelcontextprotocol.io/specification/2025-11-25/client/sampling</a></li>
 <li>Anthropic tool use docs: <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview</a> and <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools">https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools</a></li>
 <li>OpenAI function-calling fine-tuning cookbook and RFT guide: <a href="https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling">https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling</a> and <a href="https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning">https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning</a></li>
+<li>OpenAI function calling, structured outputs, and MCP connectors: <a href="https://developers.openai.com/api/docs/guides/function-calling">https://developers.openai.com/api/docs/guides/function-calling</a>, <a href="https://developers.openai.com/api/docs/guides/structured-outputs">https://developers.openai.com/api/docs/guides/structured-outputs</a>, <a href="https://openai.com/index/introducing-structured-outputs-in-the-api/">https://openai.com/index/introducing-structured-outputs-in-the-api/</a>, <a href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp">https://developers.openai.com/api/docs/guides/tools-connectors-mcp</a></li>
+<li>MCP authorization and changelog: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization</a> and <a href="https://modelcontextprotocol.io/specification/2025-11-25/changelog">https://modelcontextprotocol.io/specification/2025-11-25/changelog</a></li>
 <li>Hugging Face Agents Course function-calling fine-tuning note: <a href="https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning">https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning</a></li>
 <li>GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.</li>
 </ul>
@@ -521,8 +523,12 @@
 <p>結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP <code>tools/call</code>へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。</p>
 <p>ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。</p>
 <ul>
+<li>OpenAI function calling guideは、function定義がmodelの入力tokenとしてsystem messageに注入され、modelが訓練された形式で解釈すると説明している。つまり「MCP serverがmodelを直接操作する」のではなく、hostがtool定義をprovider APIに渡す。</li>
+<li>OpenAI Structured Outputsの公開記事は、schema adherenceを高めるために、model trainingで複雑なschema理解を改善し、さらにJSON Schemaから有効なnext tokenだけを許可するconstrained decodingを組み合わせたと説明している。これは「modelが賢い」だけでなく、runtime側でも形式違反を抑える設計である。</li>
 <li>OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。</li>
 <li>OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。</li>
+<li>Anthropic define tools docsは、tool定義、tool設定、user system promptからspecial system promptを構築すると説明している。また、descriptionがtool use性能に最も強く効く要素だと説明し、複雑なtoolではinput examplesの追加を推奨している。</li>
+<li>Anthropic advanced tool use記事は、大量toolをそのままcontextに入れるとtoken overheadが大きくなるため、tool search、programmatic tool calling、tool use examplesで精度とtoken効率を改善できると説明している。</li>
 <li>Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。</li>
 </ul>
 <p>この情報をMCP文脈へ翻訳すると、次のようになる。</p>
@@ -558,6 +564,93 @@
 
 <table><thead><tr><th>レイヤー</th><th>誰が担うか</th><th>MCP server開発者の設計対象</th></tr></thead><tbody><tr><td>MCP protocol</td><td>host/client/server SDK</td><td>JSON-RPC lifecycle、transport、auth、schema validation</td></tr><tr><td>tool metadata</td><td>MCP server</td><td>name、description、inputSchema、outputSchema、annotations</td></tr><tr><td>tool call generation</td><td>LLM + host/model API</td><td>provider固有のtool/function calling能力</td></tr><tr><td>model tuning</td><td>model providerまたはmodel owner</td><td>tool選択精度、schema遵守、multi-tool planning</td></tr></tbody></table>
 <p>社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。</p>
+<h3 id="65-なぜllmはmcp-tool-callを出せるのか"><a href="#65-なぜllmはmcp-tool-callを出せるのか">6.5 なぜLLMはMCP tool callを出せるのか</a></h3>
+<p>MCPを初めて見ると、「なぜLLMが<code>tools/call</code>のJSON-RPCを正しく書けるのか」と見えがちである。しかし実際には、LLMがMCP protocolを直接喋っているとは限らない。多くのhostでは、LLMはprovider固有のtool call形式で<code>name</code>と<code>arguments</code>を出し、host/clientがそれをMCP <code>tools/call</code>へ変換する。</p>
+<p><img alt="MCP tool call generation flow" loading="lazy" decoding="async" width="1280" height="520" src="/research-docs/pr-preview/pr-2/_astro/mcp-tool-call-generation-flow.B7lX7wM3_1njeV0.svg" srcset=""></p>
+<p>Mermaid source: <a href="../slides/diagrams/mcp-tool-call-generation-flow.mmd"><code>mcp-tool-call-generation-flow.mmd</code></a></p>
+<p>この仕組みは4つの層に分けると理解しやすい。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>層</th><th>役割</th><th>開発者が設計するもの</th></tr></thead><tbody><tr><td>Protocol layer</td><td>MCPの<code>initialize</code>、<code>tools/list</code>、<code>tools/call</code>、transport、auth</td><td>server SDK、JSON-RPC lifecycle、HTTP/stdio、auth</td></tr><tr><td>Host adapter layer</td><td>MCP tool metadataをOpenAI/Anthropic/Geminiなどのtool schemaへ変換する</td><td>client互換性、tool allowlist、approval、retry</td></tr><tr><td>Model behavior layer</td><td>user requestとtool定義を読み、使うtoolとargumentsを生成する</td><td>name、description、inputSchema、examples、result設計</td></tr><tr><td>Runtime enforcement layer</td><td>schema違反や危険操作を抑える</td><td>strict schema、validation、human approval、policy</td></tr></tbody></table>
+<p>公開情報から見えるprovider側の工夫:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工夫</th><th>何をしているか</th><th>MCP設計への示唆</th></tr></thead><tbody><tr><td>Tool定義のcontext注入</td><td>OpenAIはfunction定義がmodel入力tokenに入り、Anthropicはtool定義からspecial system promptを構築すると説明している。</td><td>tool descriptionはdocsではなくmodel向けUIとして書く。</td></tr><tr><td>Tool-use training / post-training</td><td>modelがtool call形式、schema、複数step、拒否を学ぶ。Open modelではfunction calling dataでfine-tuningする例がある。</td><td>自社MCP server側はprovider modelの学習を前提にしすぎず、既存のtool calling能力で扱いやすいsurfaceにする。</td></tr><tr><td>Structured Outputs / strict tools</td><td>schema遵守を高める。OpenAIはschema理解のtrainingとconstrained decodingの組み合わせを説明している。</td><td><code>inputSchema</code>と<code>outputSchema</code>を曖昧にしない。<code>enum</code>、範囲、<code>additionalProperties: false</code>を使う。</td></tr><tr><td>Tool search / deferred loading</td><td>全toolを常時contextに入れず、必要なtoolだけを探して読み込む。</td><td>大量toolを1 serverに詰め込む場合、catalog分割、semantic routing、tool searchを検討する。</td></tr><tr><td>Programmatic tool calling</td><td>modelがcodeでtool orchestrationを書き、途中結果をmodel contextへ戻しすぎない。</td><td>大量データ処理はtool内部またはsandboxed runtimeで集約し、LLMには要約とstable IDを返す。</td></tr><tr><td>Tool-use examples</td><td>JSON Schemaだけでは使い方の慣習が伝わらないため、examplesで複雑な引数関係を示す。</td><td>複雑な社内APIではdescriptionだけでなく例、失敗条件、使い分けを書く。</td></tr></tbody></table>
+<p>したがって「fine-tuningが必要か」という問いへの実務的な答えは、次の順になる。</p>
+<ol>
+<li>MCP serverを正しく実装する。</li>
+<li>tool名、description、schema、output、errorを設計する。</li>
+<li>tool数が増えすぎる場合は、server分割、tool search、deferred loading、gateway routingを使う。</li>
+<li>evalで誤選択、引数ミス、不要なwrite操作、巨大出力を測る。</li>
+<li>それでも改善しない場合だけ、function/tool calling向けfine-tuningやRFTを検討する。</li>
+</ol>
+<p>社内発表では「MCPのために社内LLMをfine-tuneする」ではなく、「MCPによってLLMに渡されるtool surfaceが明示化されるため、評価・改善・権限制御がしやすくなる」と説明するのが正確である。</p>
 <h3 id="7-authorization-なぜoauth-21とaudienceが重要か"><a href="#7-authorization-なぜoauth-21とaudienceが重要か">7. Authorization: なぜOAuth 2.1とaudienceが重要か</a></h3>
 <p>Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。</p>
 <p><img alt="Remote MCP OAuth connection flow" loading="lazy" decoding="async" width="1430" height="849" src="/research-docs/pr-preview/pr-2/_astro/mcp-remote-auth-flow.CRQBA-es_Z1WA7C5.svg" srcset=""></p>
@@ -568,6 +661,127 @@
 <li>どのserver向けに発行されたtokenかを検証しない。</li>
 </ol>
 <p>MCP specはtoken passthroughを禁じ、Resource Indicatorsでtokenの対象resourceを明示する方向を強めている。productionのRemote MCPでは、単にBearer tokenを受け取るだけでは足りない。誰のtokenか、どのserver向けか、どのscopeか、いつ失効するか、どの操作に使えるかを検証する。</p>
+<h4 id="71-auth前提用語"><a href="#71-auth前提用語">7.1 Auth前提用語</a></h4>
+<p>OAuth関連の用語は多く見えるが、Remote MCPで必要なのは「tokenを安全に得る」「tokenの宛先を間違えない」「必要な権限だけを渡す」の3点である。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>用語</th><th>初学者向けの意味</th><th>Remote MCPでの意味</th></tr></thead><tbody><tr><td>Authentication</td><td>誰かを確認すること。例: login。</td><td>userまたはagent/clientが誰かを確認する。</td></tr><tr><td>Authorization</td><td>何を許可するかを決めること。</td><td>toolやresourceをどのscopeで使えるかを決める。</td></tr><tr><td>OAuth 2.1</td><td>passwordを相手に渡さず、認可serverからtokenを得る枠組み。</td><td>HTTP Remote MCPの認可flowの基礎。</td></tr><tr><td>Authorization Server</td><td>login、consent、token発行を担当するserver。</td><td>Cognito/Auth0/Okta/社内IdPなど。</td></tr><tr><td>Resource Server</td><td>tokenを受け取り、保護されたresourceを提供するserver。</td><td>Protected MCP server。</td></tr><tr><td>OAuth Client</td><td>userに代わってtokenを取得し、resource serverへrequestするapp。</td><td>MCP client/host。</td></tr><tr><td>Access Token</td><td>APIを呼ぶための短命な鍵。</td><td>MCP requestの<code>Authorization: Bearer</code>で送る。</td></tr><tr><td>Refresh Token</td><td>access tokenを再発行するための長めの鍵。</td><td>host側のsecure storageで扱う。serverへ雑に渡さない。</td></tr><tr><td>Scope</td><td>tokenで許可される操作範囲。</td><td><code>files:read</code>、<code>tickets:write</code>のようにtool権限を絞る。</td></tr><tr><td>Audience / Resource</td><td>tokenの宛先。</td><td>tokenが特定MCP server向けに発行されたことを検証する。</td></tr><tr><td>PKCE</td><td>authorization codeを盗まれてもtoken交換されにくくする仕組み。</td><td>public clientであるMCP clientのauthorization code flowを守る。</td></tr><tr><td>OIDC Discovery</td><td>issuer URLからauthorization/token/JWKS endpointなどを自動発見する仕組み。</td><td>clientがIdP設定を手書きせず発見する。</td></tr></tbody></table>
+<h4 id="72-mcp-authorizationで特殊に見える概念"><a href="#72-mcp-authorizationで特殊に見える概念">7.2 MCP authorizationで特殊に見える概念</a></h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>概念</th><th>なぜ必要か</th><th>実装上のポイント</th></tr></thead><tbody><tr><td>Protected Resource Metadata</td><td>clientが「このMCP serverを守るauthorization serverはどこか」を発見する。</td><td>MCP serverは<code>.well-known/oauth-protected-resource</code>または<code>WWW-Authenticate</code>でmetadataを示す。</td></tr><tr><td>Authorization Server Metadata / OIDC Discovery</td><td>clientがauthorization endpoint、token endpoint、PKCE対応などを知る。</td><td>auth serverはRFC 8414 metadataまたはOIDC Discoveryを提供する。</td></tr><tr><td>Resource Indicators</td><td>token request時に対象resourceを明示し、audience-bound tokenを得る。</td><td>clientはauth/token requestに<code>resource</code>を含め、serverはtoken audienceを検証する。</td></tr><tr><td>Client ID Metadata Document</td><td>URL形式のclient_idでclient metadataを公開し、事前登録なしの接続をしやすくする。</td><td>2025-11-25 specで推奨方向になった。SSRF対策が必要。</td></tr><tr><td>Dynamic Client Registration</td><td>unknown clientがauthorization serverにclient登録する。</td><td>互換/fallbackとして扱い、誰でも登録できる状態にしない。</td></tr><tr><td>Step-up authorization</td><td>scope不足時に必要scopeだけ追加同意してretryする。</td><td>403 + <code>WWW-Authenticate</code> + <code>insufficient_scope</code>を読み、再認可する。</td></tr><tr><td>Token passthrough禁止</td><td>inbound tokenをdownstream APIに流用すると権限境界が壊れる。</td><td>GatewayやserverはOBO/token exchangeなどで別tokenを取得する。</td></tr></tbody></table>
+<p>2025-11-25のMCP changelogでは、OIDC discovery support、Client ID Metadata Documents、incremental scope consentが認証まわりの重要変更として入っている。これはRemote MCPが「ローカル開発便利ツール」から「enterpriseで接続・同意・委任を管理するprotocol」へ進んでいることを示す。</p>
 <h3 id="8-既存apiをmcp化するときの設計原則"><a href="#8-既存apiをmcp化するときの設計原則">8. 既存APIをMCP化するときの設計原則</a></h3>
 <p>既存APIをMCP対応させる最短路は、API本体を書き換えることではない。APIはそのまま残し、MCP adapterを追加する。</p>
 <p><img alt="Existing API to MCP adapter flow" loading="lazy" decoding="async" width="1804" height="336" src="/research-docs/pr-preview/pr-2/_astro/mcp-api-adapter-flow.CspnJBJg_Z1LoIW6.svg" srcset=""></p>

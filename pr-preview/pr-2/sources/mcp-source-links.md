@@ -3,6 +3,7 @@ title: MCP source links
 navTitle: Source links
 description: MCP社内発表資料で参照した一次情報、公式ドキュメント、主要リポジトリ、AWS AgentCore関連情報のリンク集。
 kind: sources
+themeId: mcp-internal-presentation
 order: 30
 ---
 
@@ -19,6 +20,7 @@ order: 30
 - [MCP official GitHub repository](https://github.com/modelcontextprotocol/modelcontextprotocol)
 - [Anthropic donation of MCP to Agentic AI Foundation](https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation)
 - [One Year of MCP: November 2025 Spec Release](https://blog.modelcontextprotocol.io/posts/2025-11-25-first-mcp-anniversary/)
+- [MCP 2025-11-25 changelog](https://modelcontextprotocol.io/specification/2025-11-25/changelog)
 - [MCP lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)
 - [MCP transports](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
 - [MCP authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
@@ -30,6 +32,16 @@ order: 30
 - [Anthropic launch post](https://www.anthropic.com/news/model-context-protocol)
 - [MCP reference servers](https://github.com/modelcontextprotocol/servers)
 - [MCP registry](https://github.com/modelcontextprotocol/registry)
+
+## OAuth, OIDC, and Authorization Standards
+
+- [OAuth 2.1 draft](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13)
+- [RFC 8414: OAuth 2.0 Authorization Server Metadata](https://datatracker.ietf.org/doc/html/rfc8414)
+- [RFC 7591: OAuth 2.0 Dynamic Client Registration Protocol](https://datatracker.ietf.org/doc/html/rfc7591)
+- [RFC 8707: Resource Indicators for OAuth 2.0](https://www.rfc-editor.org/rfc/rfc8707.html)
+- [RFC 9728: OAuth 2.0 Protected Resource Metadata](https://datatracker.ietf.org/doc/html/rfc9728)
+- [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html)
+- [RFC 7636: Proof Key for Code Exchange by OAuth Public Clients](https://datatracker.ietf.org/doc/html/rfc7636)
 
 ## Security, Trust, and Controversy
 
@@ -57,6 +69,8 @@ order: 30
 
 - [OpenAI using tools](https://developers.openai.com/api/docs/guides/tools)
 - [OpenAI function calling](https://developers.openai.com/api/docs/guides/function-calling)
+- [OpenAI structured outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs)
+- [OpenAI Structured Outputs announcement](https://openai.com/index/introducing-structured-outputs-in-the-api/)
 - [OpenAI computer use](https://developers.openai.com/api/docs/guides/tools-computer-use)
 - [OpenAI Apps SDK quickstart](https://developers.openai.com/apps-sdk/quickstart)
 - [OpenAI Codex manual](https://developers.openai.com/codex/codex-manual.md)
@@ -135,3 +149,12 @@ order: 30
 - [Marp CLI](https://github.com/marp-team/marp-cli)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 - [PR Preview Action](https://github.com/rossjrw/pr-preview-action)
+
+## Slide Logo Assets
+
+- [The SVG: Model Context Protocol icon](https://thesvg.com/icon/model-context-protocol)
+- [Simple Icons: Anthropic](https://simpleicons.org/?q=anthropic)
+- [Simple Icons: GitHub](https://simpleicons.org/?q=github)
+- [Simple Icons: Cursor](https://simpleicons.org/?q=cursor)
+- [Simple Icons: FastAPI](https://simpleicons.org/?q=fastapi)
+- [Simple Icons: OpenAPI Initiative](https://simpleicons.org/?q=openapi)
