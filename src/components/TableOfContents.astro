@@ -1,0 +1,112 @@
+---
+import TableOfContentsHeading from "./TableOfContentsHeading.astro";
+
+type MarkdownHeading = {
+  depth: number;
+  slug: string;
+  text: string;
+};
+
+type TableOfContent = MarkdownHeading & {
+  subheadings: TableOfContent[];
+};
+
+type Props = {
+  headings: MarkdownHeading[];
+};
+
+const { headings } = Astro.props;
+const toc = buildToc(headings.filter((heading) => heading.depth >= 1 && heading.depth <= 3));
+
+function buildToc(headings: MarkdownHeading[]) {
+  const toc: TableOfContent[] = [];
+  const parents = new Map<number, TableOfContent>();
+
+  for (const item of headings) {
+    const heading: TableOfContent = { ...item, subheadings: [] };
+    parents.set(heading.depth, heading);
+
+    if (heading.depth <= 2) {
+      toc.push(heading);
+      continue;
+    }
+
+    const parent = parents.get(heading.depth - 1);
+    if (parent) {
+      parent.subheadings.push(heading);
+    } else {
+      toc.push(heading);
+    }
+  }
+
+  return toc;
+}
+---
+
+<nav class="document-toc" aria-label="現在読んでいる箇所">
+  <p class="toc-title">Index</p>
+  <ul class="toc-list">
+    {toc.map((heading) => <TableOfContentsHeading heading={heading} />)}
+  </ul>
+</nav>
+
+<script>
+  const tocLinks = Array.from(document.querySelectorAll("[data-toc-link]"));
+  const linkedHeadings = tocLinks
+    .map((link) => {
+      if (!(link instanceof HTMLAnchorElement)) return null;
+      const slug = decodeURIComponent(link.hash.slice(1));
+      const heading = document.getElementById(slug);
+      return heading ? { heading, link } : null;
+    })
+    .filter((item) => item !== null);
+
+  function setActiveTocLink(slug) {
+    for (const link of tocLinks) {
+      const isActive = link.getAttribute("data-toc-link") === slug;
+      link.classList.toggle("active", isActive);
+      if (isActive) {
+        link.setAttribute("aria-current", "location");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    }
+  }
+
+  if (linkedHeadings.length > 0) {
+    setActiveTocLink(linkedHeadings[0].link.getAttribute("data-toc-link"));
+  }
+
+  if ("IntersectionObserver" in window) {
+    const visibleHeadings = new Map();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            visibleHeadings.set(entry.target.id, entry.boundingClientRect.top);
+          } else {
+            visibleHeadings.delete(entry.target.id);
+          }
+        }
+
+        const active = Array.from(visibleHeadings.entries()).sort((a, b) => a[1] - b[1])[0];
+        if (active) setActiveTocLink(active[0]);
+      },
+      {
+        rootMargin: "-112px 0px -65% 0px",
+        threshold: [0, 1],
+      },
+    );
+
+    for (const item of linkedHeadings) {
+      observer.observe(item.heading);
+    }
+  }
+
+  for (const link of tocLinks) {
+    link.addEventListener("click", () => {
+      const slug = link.getAttribute("data-toc-link");
+      if (slug) setActiveTocLink(slug);
+    });
+  }
+</script>
