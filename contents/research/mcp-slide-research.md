@@ -2924,6 +2924,49 @@ MCP's early adoption was developer-heavy because GitHub, filesystem, browser, da
 
 The pattern is not "everyone becomes a developer." It is "business users stay inside an assistant, while providers expose governed workflows through MCP."
 
+### Integrated theme for the revised deck
+
+The revised deck should frame MCP as a governed external-action layer, not as a standalone developer convenience. The strongest synthesis is:
+
+1. **MCP declares the action surface**: tools, resources, prompts, transport, auth, approval, and bounded results.
+2. **Agent Skills declare the operating procedure**: when to call which MCP server, how to interpret results, which checks to run, and what output format to produce.
+3. **The combination turns the second half of recurring work into a reusable process**: once discovery, action, verification, and reporting steps are encoded in a skill, the agent can repeat the workflow with fewer ad hoc decisions.
+4. **Production use must include consumption limits**: remote MCPs are not infinite free context sources. Figma MCP is the clearest concrete example because its official developer docs expose plan/seat-based daily, monthly, and per-minute limits.
+
+Slide implication: keep the early "Skill = how to proceed / MCP = what to access or execute" frame, but make it operational. A useful example is PR repair or design-to-code work:
+
+- Skill: defines the workflow: inspect source, retrieve focused context, patch, test, verify, report.
+- MCP: supplies the live operations: GitHub review comments, Figma frame context, Sentry issue data, Slack thread context, browser state, or codebase symbols.
+- Guardrails: define approval points, `allowed_tools`, rate limits, cache/reuse rules, and fallback paths when a connector is unavailable or quota-limited.
+
+This framing also avoids two overclaims:
+
+- "MCP replaces the browser/CLI": false. Browser operation remains best for visual state and UI debugging; CLI remains best for local deterministic commands.
+- "Connecting an MCP server creates a workflow": incomplete. MCP creates tool availability; the skill/workflow layer makes repeated work reliable.
+
+### Figma MCP as the concrete quota example
+
+Figma's current public documentation states that remote Figma MCP is available across seats/plans, while desktop MCP requires a Dev or Full seat on paid plans. Its developer documentation also states that access depends on plan and seat type, and that per-minute limits apply in addition to daily or monthly tool-call limits.
+
+The slide should use Figma as an example of a broader design principle:
+
+- quota affects the agent workflow, not just billing;
+- broad frame selection can waste calls and context;
+- skills should tell the agent to narrow the node/frame first;
+- repeated design context should be memoized or converted into local artifacts;
+- rate-limit fallback should be explicit: screenshot/export/local HTML/browser verification before another MCP call.
+
+Use the figures only as "official docs at time of writing" because Figma reserves the right to change rate limits:
+
+| Seat / plan example | Limit pattern in Figma docs | Slide meaning |
+|---|---|---|
+| View or Collab | up to 6/month | treat as occasional inspection only |
+| Dev or Full on Starter | up to 200/day and 10/min | workable if the workflow is focused |
+| Dev or Full on Professional | up to 200/day and 15/min | suitable for team design-to-code loops |
+| Dev or Full on Organization | up to 600/day and 20/min | higher-volume workflow, still finite |
+
+Source note: the public docs table is compact and may omit some Enterprise row details in crawled text; cite the official rate-limit page rather than reproducing an exhaustive pricing table.
+
 ### Roadmap interpretation
 
 Official roadmap language is intentionally non-committal: items are priorities, not promises. Still, the direction is clear:
@@ -2998,10 +3041,12 @@ The deck should not be pure Q&A. Use a normal explanatory story for the core con
 12. Use cases: engineering, enterprise knowledge, business operations, agent platforms
 13. Ecosystem: GitHub, Stripe, OpenAI connectors, registry, reference servers
 14. Developer MCPs we use: GitHub, Figma, Drive, Slack, Notion, Sentry, Firecrawl, Context7, OpenAI Docs
-15. Security rules: approval, least privilege, no token passthrough, trusted servers
-16. What changes for us: build once, connect many clients; but operate like production integrations
-17. Future points: registry, remote MCP, auth maturity, MCP Apps, durable tasks
-18. Summary: MCP is the integration layer for governed agentic work
+15. Skill + MCP: encode tool order, verification, and reporting so recurring work becomes a reusable workflow
+16. Quota-aware usage: Figma MCP as an example of plan/seat/rate-limit constraints
+17. Security rules: approval, least privilege, no token passthrough, trusted servers
+18. What changes for us: build once, connect many clients; but operate like production integrations
+19. Future points: registry, remote MCP, auth maturity, MCP Apps, durable tasks
+20. Summary: MCP is the integration layer for governed agentic work
 
 ## Marp slide production method
 

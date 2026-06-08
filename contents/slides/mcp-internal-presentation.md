@@ -17,9 +17,9 @@ _class: lead
 
 # MCPを開発現場でどう使うべきか
 
-CLI、ブラウザ操作、API、MCPを比較しながら、既存APIをMCP server化する実装設計まで整理する。
+外部操作を安全に標準化し、Agent Skillsと組み合わせて反復業務を定型化する。
 
-2026-06-07
+2026-06-08
 
 ---
 
@@ -54,6 +54,25 @@ MCPは単独の流行ではなく、**LLMが外部世界を扱う設計面が増
   </div>
 </div>
 </div>
+
+---
+
+<!--
+_class: compact ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## 今日の結論
+
+MCPは「便利な拡張」ではなく、AI Agentに外部systemを使わせるための運用設計。
+
+- 外部操作: UI推測ではなく、tool/resource/schemaで宣言する
+- 安全性: auth、scope、approval、audit、trusted serverを前提にする
+- 定型化: Agent SkillにMCPの使い方を入れると後半の作業が型になる
+- 制限: Figma MCPのように、plan/seatごとの呼び出し予算も設計対象になる
+
+この4点を軸に、既存API・開発tool・業務SaaSをagent-nativeな接続面として見直す。
 
 ---
 
@@ -105,13 +124,37 @@ _class: compact ch00
 
 <p class="chapter-label">00 / 全体像</p>
 
+## SkillにMCP利用手順を入れると後半が定型化する
+
+MCP serverを接続するだけでは、agentは「使えるtool」を知るだけ。  
+Skillに順序・判断基準・検証条件を書くと、後半の作業が再利用可能な型になる。
+
+```text
+Skill: PR修正手順
+  1. GitHub MCPでreview commentを読む
+  2. Serenaで関連symbolだけ調べる
+  3. patchを当てる
+  4. testを実行する
+  5. GitHub MCPで結果を報告する
+```
+
+ポイントは、MCPを「個別tool」ではなく**workflowの部品**として扱うこと。
+
+---
+
+<!--
+_class: compact ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
 ## このスライドで着目すること
 
 広い選択肢の中で、この発表はMCPを**既存APIをagent-nativeにする設計手段**として扱う。
 
 - 主眼: MCP serverの構築、description/schema、auth、Remote運用、Skill連携
-- 比較対象: CLI、browser、function calling、Agent Skills、WebMCP、Codex Appの外部操作
-- 判断軸: token使用量、再現性、承認、監査、provider control
+- 比較対象: CLI、browser、function calling、Agent Skills、WebMCP、A2A、Codex App
+- 判断軸: token使用量、再現性、承認、監査、呼び出し制限、provider control
 - 実装例: FastAPI / OpenAPIをMCP serverへ変換する設計
 
 結論を先に言うと、反復的なservice/data/action境界は、UI操作やCLI推測より**MCP化した方が運用しやすい**。
@@ -132,8 +175,8 @@ _class: compact ch00
 4. Remote MCPと複数Agent設定: Claude接続、project/user/org管理
 5. Protocol / Auth / JSON-RPC: 接続フローとtool callの中身
 6. AWSケーススタディ: AgentCore Gateway / IdentityでRemote MCPを運用する
-7. 開発ワークフロー: WebMCP、Playwright、Chrome DevTools、Serena
-8. ガバナンスと導入: 争点、ロードマップ、社内ルール
+7. 開発ワークフロー: WebMCP、Figma、Playwright、Chrome DevTools、Serena
+8. ガバナンスと導入: 争点、ロードマップ、社内ルール、呼び出し予算
 
 基本概念から順番に積み上げ、疑問が出やすい箇所だけQ&Aで補足する。
 
@@ -1480,7 +1523,7 @@ _class: section ch07
 
 # 開発ワークフローで使うMCP
 
-Frontend操作、ブラウザMCP、Serenaを位置づける
+Figma、Frontend操作、ブラウザMCP、Serenaを位置づける
 
 ---
 
@@ -1523,6 +1566,66 @@ _class: compact ch07
 ---
 
 <!--
+_class: compact ch07
+-->
+
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+
+## Figma MCPは何に効く？
+
+Figma MCPは、agentにdesign contextを渡し、必要に応じてcanvasへ書き戻すための接続面。
+
+- design context: selected frame、variables、components、layout情報を読む
+- code generation: 既存design systemに沿って実装の精度を上げる
+- write to canvas: remote server経由でnative Figma contentを作成/更新する
+- code to canvas: localhostやstagingのUIをeditable layerとして戻す
+
+Figmaの例は、MCPが「データ取得」だけでなく**設計成果物を往復させる操作面**になり得ることを示す。
+
+---
+
+<!--
+_class: dense ch07
+-->
+
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+
+## Figma MCPの制限: 呼び出し回数も設計対象
+
+Figma MCPはplan/seatで利用条件とrate limitが変わる。呼び出し予算を無視すると、作業途中で止まる。
+
+| seat / plan | 公式docs上の上限例 | 意味 |
+|---|---:|---|
+| View / Collab | 6回/月 | 読み取り調査を多用できない |
+| Dev / Full on Starter | 200回/日、10回/分 | 小さく切れば実務利用可能 |
+| Dev / Full on Professional | 200回/日、15回/分 | team開発向け |
+| Dev / Full on Organization | 600回/日、20回/分 | 大きめのdesign workflow向け |
+
+制限は変更され得る。MCP導入時は**権限・plan・quota・rate limit**を確認する。
+
+---
+
+<!--
+_class: compact ch07
+-->
+
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+
+## 制限があるMCPをどう使うか
+
+Figma MCPのようなquota付きMCPは、agent任せに連続探索させない。
+
+1. 先に対象frame/nodeを人間が絞る
+2. Skillに「大きいframeを避ける」「必要なtoolだけ呼ぶ」を書く
+3. 1回の取得結果をmemo化し、同じcontextを何度も読まない
+4. MCPで読む、localで実装、browserで検証、必要な時だけFigmaへ戻す
+5. rate limit時はscreenshot、export、local artifactへfallbackする
+
+MCPは無限に叩くものではない。**tool callを予算化したworkflow**にする。
+
+---
+
+<!--
 _class: dense rank ch07
 -->
 
@@ -1542,6 +1645,7 @@ GitHub starsの目安。人気は変動するため、導入判断はofficial性
 | GitHub MCP | 30,495 | issue、PR、repo workflow |
 | Serena | 25,036 | codebase理解、symbolic editing |
 | AWS MCP servers | 9,224 | AWS操作と知識 |
+| Figma MCP | plan依存 | design context、canvas往復 |
 
 ---
 
@@ -1759,8 +1863,9 @@ _class: compact ch08
 3. route policyで公開面を絞る
 4. descriptionとschemaをagent向けに整える
 5. Claude/Codex/Cursorで実タスク検証する
-6. output cap、audit、rate limit、authを入れる
-7. write toolは承認とscopeを分けて追加する
+6. output cap、audit、rate limit、auth、quotaを入れる
+7. Skillに「どの順序でMCPを使うか」を明文化する
+8. write toolは承認とscopeを分けて追加する
 
 最初から巨大serverを作らず、1つの業務フローを安定化させる。
 
@@ -1781,6 +1886,8 @@ MCPが使える場合にMCPを優先する理由:
 - セキュリティ: auth、scope、approval、auditをserver/host境界で扱える
 - provider効果: agent向けの安全なproduct surfaceを設計できる
 - 開発効果: API、frontend、cloud、repo理解を同じagent workflowへ統合できる
+- 定型化: SkillにMCPの使い方を書くと、後半の反復処理が安定する
+- 現実性: Figmaのようなquota付きMCPは、呼び出し回数も設計に入れる
 
 **MCPはagent時代のintegration layer。**
 
@@ -1830,6 +1937,8 @@ _class: dense ch09
 - Playwright MCP: https://github.com/microsoft/playwright-mcp
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - Serena: https://github.com/oraios/serena
+- Figma MCP guide: https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server
+- Figma MCP rate limits: https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/
 
 ---
 
@@ -1864,6 +1973,7 @@ _class: dense ch09
 - OpenAI Structured Outputs: https://developers.openai.com/api/docs/guides/structured-outputs
 - OpenAI Structured Outputs announcement: https://openai.com/index/introducing-structured-outputs-in-the-api/
 - OpenAI MCP and connectors: https://developers.openai.com/api/docs/guides/tools-connectors-mcp
+- Agent Skills specification: https://agentskills.io/specification
 - MCP governance: https://modelcontextprotocol.io/community/governance
 - MCP roadmap: https://modelcontextprotocol.io/development/roadmap
 - MCP authorization: https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization
