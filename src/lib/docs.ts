@@ -5,17 +5,33 @@ export type DocEntry = CollectionEntry<"docs">;
 export type DocSummary = {
   entry: DocEntry;
   href: string;
+  markdownHref: string;
   section: string;
   sectionLabel: string;
   slug: string;
+  themeId?: string;
   title: string;
 };
 
+export type ThemeSummary = DocSummary & {
+  children: DocSummary[];
+};
+
 const sectionLabels: Record<string, string> = {
+  themes: "Research Themes",
   slides: "Slides",
   research: "Research",
   sources: "Sources",
   tasks: "Tasks",
+};
+
+const kindLabels: Record<string, string> = {
+  theme: "Research theme",
+  slides: "Slide",
+  research: "Research note",
+  sources: "Source links",
+  task: "Research task",
+  article: "Article",
 };
 
 export function routeSlug(id: string): string {
@@ -30,8 +46,16 @@ export function titleFromEntry(entry: DocEntry): string {
   return entry.data.navTitle ?? entry.data.title;
 }
 
+export function kindLabel(kind: string): string {
+  return kindLabels[kind] ?? kind;
+}
+
 export function hrefForSlug(slug: string, base = import.meta.env.BASE_URL): string {
   return `${base}${slug}/`.replace(/\/{2,}/g, "/");
+}
+
+export function markdownHrefForSlug(slug: string, base = import.meta.env.BASE_URL): string {
+  return `${base}${slug}.md`.replace(/\/{2,}/g, "/");
 }
 
 export function deckHref(base = import.meta.env.BASE_URL): string {
@@ -49,9 +73,11 @@ export async function getDocSummaries(): Promise<DocSummary[]> {
       return {
         entry,
         href: hrefForSlug(slug),
+        markdownHref: markdownHrefForSlug(slug),
         section,
         sectionLabel: sectionLabels[section] ?? section,
         slug,
+        themeId: entry.data.themeId,
         title: titleFromEntry(entry),
       };
     })
@@ -60,6 +86,15 @@ export async function getDocSummaries(): Promise<DocSummary[]> {
       if (orderDiff !== 0) return orderDiff;
       return a.title.localeCompare(b.title, "ja");
     });
+}
+
+export function getThemeSummaries(docs: DocSummary[]): ThemeSummary[] {
+  const themes = docs.filter((doc) => doc.entry.data.kind === "theme");
+
+  return themes.map((theme) => ({
+    ...theme,
+    children: docs.filter((doc) => doc.themeId === theme.entry.data.themeId && doc.slug !== theme.slug),
+  }));
 }
 
 export function groupDocsBySection(docs: DocSummary[]): Map<string, DocSummary[]> {

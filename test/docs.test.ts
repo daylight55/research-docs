@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const contentRoot = join(process.cwd(), "src/content/docs");
@@ -21,6 +21,7 @@ describe("documentation content", () => {
       "slides/mcp-internal-presentation.md",
       "sources/mcp-source-links.md",
       "tasks/research-tasks.md",
+      "themes/mcp-internal-presentation.md",
     ]);
   });
 
@@ -32,5 +33,16 @@ describe("documentation content", () => {
       expect(text).toMatch(/\nkind: .+\n/);
       expect(text).toMatch(/\norder: \d+\n/);
     }
+  });
+
+  it("keeps crawl discovery and raw markdown routes wired", () => {
+    const llmsEndpoint = join(process.cwd(), "src/pages/llms.txt.ts");
+    const buildScript = readFileSync(join(process.cwd(), "scripts/build-pages-site.sh"), "utf8");
+    const endpoint = readFileSync(llmsEndpoint, "utf8");
+
+    expect(existsSync(llmsEndpoint)).toBe(true);
+    expect(endpoint).toContain("Raw Markdown");
+    expect(endpoint).toContain("Every rendered document page has a matching raw Markdown URL");
+    expect(buildScript).toContain('cp "$file" "$out_dir/$rel"');
   });
 });
