@@ -11,6 +11,12 @@ mkdir -p "$out_dir" "$screenshots"
 
 npx marp "$deck" --html --theme theme/research.css --output "$html"
 
+deck_dir="$(dirname "$deck")"
+if [ -d "$deck_dir/diagrams" ]; then
+  rm -rf "$out_dir/diagrams"
+  cp -R "$deck_dir/diagrams" "$out_dir/diagrams"
+fi
+
 node scripts/screenshot-slides.mjs "$html" "$screenshots"
 
 echo "Rendered $html"

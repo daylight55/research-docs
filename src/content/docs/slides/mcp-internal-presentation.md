@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: mcp-modern
+theme: research
 paginate: true
 size: 16:9
 title: MCPを開発現場でどう使うべきか

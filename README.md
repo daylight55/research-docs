@@ -26,7 +26,7 @@ npm run slide:verify
 - Live site: https://daylight55.github.io/research-docs/ (`gh-pages` branch, root)
 - Pull request previews: `https://daylight55.github.io/research-docs/pr-preview/pr-<PR_NUMBER>/`
 - [Marp slide deck source](./src/content/docs/slides/mcp-internal-presentation.md)
-- [Marp custom theme](./themes/mcp-modern.css)
+- [Marp custom theme](./theme/research.css)
 - [Detailed research notes](./src/content/docs/research/mcp-slide-research.md)
 - [Source links](./src/content/docs/sources/mcp-source-links.md)
 - [Research task checklist](./src/content/docs/tasks/research-tasks.md)

@@ -16,7 +16,7 @@ mkdir -p "$out_dir/slides/mcp-internal-presentation/deck"
 
 npx marp \
   src/content/docs/slides/mcp-internal-presentation.md \
-  --theme themes/mcp-modern.css \
+  --theme theme/research.css \
   --html \
   --output "$out_dir/slides/mcp-internal-presentation/deck/index.html"
 
