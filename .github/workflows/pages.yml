@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - contents/**
       - src/**
       - package.json
       - package-lock.json
@@ -20,6 +21,7 @@ on:
       - synchronize
       - closed
     paths:
+      - contents/**
       - src/**
       - package.json
       - package-lock.json
