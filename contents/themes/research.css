@@ -30,6 +30,40 @@ section::after {
   font-size: 0.55em;
 }
 
+.source-note {
+  bottom: 22px;
+  color: rgba(73, 88, 110, 0.68);
+  font-size: 0.32em !important;
+  line-height: 1.25;
+  margin: 0;
+  max-inline-size: 560px;
+  position: absolute;
+  right: 94px;
+  text-align: right;
+  z-index: 4;
+}
+
+.source-note a {
+  color: rgba(25, 92, 139, 0.78);
+  text-decoration: none;
+}
+
+.source-note a:hover {
+  text-decoration: underline;
+}
+
+section.title .source-note,
+section.lead .source-note,
+section.section .source-note {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+section.title .source-note a,
+section.lead .source-note a,
+section.section .source-note a {
+  color: rgba(255, 255, 255, 0.86);
+}
+
 h1,
 h2,
 h3,

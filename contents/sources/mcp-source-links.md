@@ -98,6 +98,15 @@ order: 30
 - [Google Gemini function calling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tools/function-calling)
 - [Hugging Face function-calling fine-tuning](https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning)
 
+## Token-Aware MCP Design
+
+- [Anthropic advanced tool use and token-efficient tool use](https://www.anthropic.com/engineering/advanced-tool-use)
+- [MCP tools: structuredContent and outputSchema](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
+- [MCP resources: large read-only context surface](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
+- [Atlassian Engineering: MCP compression](https://www.atlassian.com/blog/atlassian-engineering/mcp-compression-saving-tokens-in-sre-agent-systems)
+- [Semantic Tool Discovery for Large Language Models](https://arxiv.org/abs/2603.20313)
+- [RAG-MCP: Mitigating prompt bloat in LLM tool selection via retrieval-augmented generation](https://arxiv.org/abs/2505.03275)
+
 ## Broader Agent Action Surfaces
 
 - [Chrome WebMCP overview](https://developer.chrome.com/docs/ai/webmcp)
