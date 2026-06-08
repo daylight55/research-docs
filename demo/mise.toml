@@ -1,0 +1,42 @@
+[tools]
+node = "22.13.1"
+uv = "latest"
+
+[tasks.test]
+description = "Run the demo test suite"
+run = "uv run pytest"
+
+[tasks."mcp:verify"]
+description = "Verify FastMCP tool listing and a forecast call through the MCP stack"
+run = """
+uv run python - <<'PY'
+import asyncio
+from fastmcp import Client
+from weather_mcp_demo.server import mcp
+
+async def main():
+    async with Client(mcp) as client:
+        tools = [tool.name for tool in await client.list_tools()]
+        print("TOOLS=" + ",".join(tools))
+        result = await client.call_tool("get_weather_forecast", {"location": "tokyo", "days": 3})
+        print("DECISION=" + result.data["decision"])
+
+asyncio.run(main())
+PY
+"""
+
+[tasks."apps:dev"]
+description = "Open the FastMCP Apps development UI"
+run = "uv run fastmcp dev apps src/weather_mcp_demo/server.py:mcp"
+
+[tasks."inspector"]
+description = "Start MCP Inspector UI against the weather-app-demo stdio server"
+run = "npx -y @modelcontextprotocol/inspector --config mcp-inspector.config.json --server weather-app-demo"
+
+[tasks."inspector:tools"]
+description = "List weather-app-demo tools through MCP Inspector CLI"
+run = "npx -y @modelcontextprotocol/inspector-cli --cli --config mcp-inspector.config.json --server weather-app-demo --method tools/list"
+
+[tasks."inspector:forecast"]
+description = "Call get_weather_forecast through MCP Inspector CLI"
+run = "npx -y @modelcontextprotocol/inspector-cli --cli --config mcp-inspector.config.json --server weather-app-demo --method tools/call --tool-name get_weather_forecast --tool-arg location=tokyo --tool-arg days=3"

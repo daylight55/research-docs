@@ -53,6 +53,67 @@ uv run fastmcp dev apps src/weather_mcp_demo/server.py:mcp
 
 Open the dev UI at `http://localhost:8080`, choose `show_weather_explorer`, and launch it.
 
+## MCP Inspector
+
+MCP Inspector is useful when you want to inspect the same server that Codex or
+Claude Desktop will call. It is a separate MCP client/proxy, so it does not
+attach to an existing Codex thread or share Codex's model session. The practical
+linkage is config-level: Codex, Claude Desktop, and MCP Inspector should point to
+the same MCP server command.
+
+For this demo, the shared command is stored in `mcp-inspector.config.json`, and
+mise tasks wrap the common startup and smoke-check commands.
+
+```bash
+cd demo
+mise trust
+mise run inspector
+```
+
+The Inspector UI opens at `http://localhost:6274`. The Inspector proxy requires
+a session token by default and prints a URL with `MCP_PROXY_AUTH_TOKEN`
+pre-filled. If the browser does not open automatically, copy that URL from the
+terminal output. The token is for the Inspector proxy only; it is not OpenAI,
+Codex, or Claude authentication.
+
+Useful smoke checks:
+
+```bash
+cd demo
+mise run inspector:tools
+mise run inspector:forecast
+```
+
+The Codex App/CLI side uses `~/.codex/config.toml` or a trusted project-scoped
+`.codex/config.toml`, not `mcp-inspector.config.json`. Keep the command and args
+equivalent to the Inspector config. After changing Codex MCP config, start a new
+Codex thread or restart the app if the server does not appear. In Codex, use
+`/mcp` to see the connected MCP servers.
+
+For local development, mise is enough here because the demo only needs Node.js
+for `npx @modelcontextprotocol/inspector` and `uv` for the Python server. A
+devbox setup would be heavier without adding isolation that this demo currently
+needs.
+
+Available mise tasks:
+
+```bash
+cd demo
+mise tasks
+```
+
+- `mise run test`: run pytest.
+- `mise run mcp:verify`: verify FastMCP tool listing and a forecast call.
+- `mise run apps:dev`: open the FastMCP Apps development UI.
+- `mise run inspector`: start the MCP Inspector browser UI with `@modelcontextprotocol/inspector`.
+- `mise run inspector:tools`: list tools through `@modelcontextprotocol/inspector-cli`.
+- `mise run inspector:forecast`: call `get_weather_forecast` through `@modelcontextprotocol/inspector-cli`.
+
+References:
+
+- [MCP Inspector README](https://github.com/modelcontextprotocol/inspector)
+- [Codex MCP configuration](https://developers.openai.com/codex/mcp)
+
 ## Claude Desktop config
 
 Claude Desktop reads local MCP server settings from `claude_desktop_config.json`.
