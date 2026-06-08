@@ -1,0 +1,71 @@
+---
+import "../styles/site.css";
+import { deckHref, getDocSummaries, groupDocsBySection } from "../lib/docs";
+
+type Props = {
+  description?: string;
+  title: string;
+};
+
+const { description, title } = Astro.props;
+const docs = await getDocSummaries();
+const groups = groupDocsBySection(docs);
+const currentPath = Astro.url.pathname;
+const deckUrl = deckHref();
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description ?? "Research documents and slide materials."} />
+    <title>{title} | research-docs</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href={import.meta.env.BASE_URL}>
+          <span class="brand-mark">RD</span>
+          <span>
+            <strong>research-docs</strong>
+            <small>MCP internal presentation</small>
+          </span>
+        </a>
+        <nav class="top-actions" aria-label="Primary">
+          <a href={deckUrl}>Slide deck</a>
+          <a href={`${import.meta.env.BASE_URL}sources/mcp-source-links/`}>Sources</a>
+        </nav>
+      </header>
+
+      <div class="content-grid">
+        <aside class="sidebar" aria-label="Document navigation">
+          <div class="sidebar-title">Documents</div>
+          {
+            Array.from(groups.entries()).map(([section, items]) => (
+              <section class="nav-section" aria-label={section}>
+                <h2>{section}</h2>
+                <ul>
+                  {items.map((item) => {
+                    const active = currentPath.endsWith(new URL(item.href, Astro.url).pathname);
+                    return (
+                      <li>
+                        <a class:list={[{ active }]} href={item.href}>
+                          {item.title}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))
+          }
+        </aside>
+
+        <main class="main-panel">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
