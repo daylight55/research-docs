@@ -6,7 +6,7 @@ paginate: true
 
 <!-- _class: title -->
 
-<div class="eyebrow">research-docs slide kit</div>
+<div class="eyebrow">research-docs slide templates</div>
 
 # 調査結果を再利用できるスライドにする
 
@@ -114,7 +114,7 @@ paginate: true
   </div>
   <div class="step">
     <div class="step-number">2</div>
-    <div><strong>パターンを選ぶ</strong><br><span class="text-muted">`slides/example.md` から近いレイアウトを使う。</span></div>
+    <div><strong>パターンを選ぶ</strong><br><span class="text-muted">`contents/templates/slides/example.md` から近いレイアウトを使う。</span></div>
   </div>
   <div class="step">
     <div class="step-number">3</div>

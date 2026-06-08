@@ -12,14 +12,14 @@ Use this skill whenever creating or restyling Marp slides in this repository.
 Read these files before editing slides:
 
 1. `docs/slide-style-guide.md`
-2. `slides/example.md`
-3. `theme/research.css`
+2. `contents/templates/slides/example.md`
+3. `contents/themes/research.css`
 
 ## Workflow
 
 1. Identify the slide's single main claim.
-2. Choose the closest pattern from `slides/example.md`.
-3. Reuse the existing classes in `theme/research.css`; do not invent inline colors or one-off spacing.
+2. Choose the closest pattern from `contents/templates/slides/example.md`.
+3. Reuse the existing classes in `contents/themes/research.css`; do not invent inline colors or one-off spacing.
 4. Keep accent colors to one or two per slide.
 5. Move long source details into `.caption`.
 6. Run `npm run slide:verify` after substantial edits.

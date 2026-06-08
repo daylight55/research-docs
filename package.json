@@ -8,11 +8,12 @@
     "build": "astro build",
     "test": "vitest run",
     "build:site": "scripts/build-pages-site.sh site",
-    "slide:html": "marp slides/example.md --html --theme theme/research.css --output dist/example.html",
-    "slide:pdf": "marp slides/example.md --html --theme theme/research.css --pdf --allow-local-files --output dist/example.pdf",
-    "slide:verify": "bash scripts/verify-slides.sh slides/example.md",
-    "slide:mcp:html": "marp src/content/docs/slides/mcp-internal-presentation.md --html --theme theme/research.css --output dist/mcp-internal-presentation.html",
-    "slide:mcp:verify": "bash scripts/verify-slides.sh src/content/docs/slides/mcp-internal-presentation.md"
+    "template:topic": "scaffdog generate research-topic",
+    "slide:html": "marp contents/templates/slides/example.md --html --theme contents/themes/research.css --output dist/example.html",
+    "slide:pdf": "marp contents/templates/slides/example.md --html --theme contents/themes/research.css --pdf --allow-local-files --output dist/example.pdf",
+    "slide:verify": "bash scripts/verify-slides.sh contents/templates/slides/example.md",
+    "slide:mcp:html": "marp contents/slides/mcp-internal-presentation.md --html --theme contents/themes/research.css --output dist/mcp-internal-presentation.html",
+    "slide:mcp:verify": "bash scripts/verify-slides.sh contents/slides/mcp-internal-presentation.md"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "playwright": "^1.52.0",
+    "scaffdog": "^4.1.0",
     "vitest": "4.1.8"
   }
 }
