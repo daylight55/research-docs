@@ -2175,26 +2175,32 @@ _class: dense ch08
 
 <p class="chapter-label">08 / ガバナンスと導入</p>
 
-## Token-awareなMCP設計
+## コンテキスト効率を意識したMCP設計
 
-悪い例:
+「Token-aware」とは、**agentに読ませる情報量を意識すること**。
+
+MCPでは、tool一覧、description、schema、実行結果、error、logもmodel contextに入る。
+
+つまり、全部見せるMCPは **遅い / 高い / 誤選択が増える**。
+
+設計ルール:
+
+- tool catalog: 似たtoolを増やしすぎない
+- tool result: raw JSON/log全量ではなく、summary + stable IDを返す
+- large context: actionはtool、読み物や大きな文書はresourceに分ける
+- write action: read/writeを分け、危険操作はconfirmationを要求する
 
 ```text
-call_api(method, path, body) -> raw JSON / raw logを全部返す
+避けたい: call_api(method, path, body) -> raw JSON / raw logを全部返す
 ```
-
-良い例:
 
 ```text
 search_incidents(query, severity, limit) -> summary + incident_id
 get_incident_detail(incident_id, fields) -> bounded structured detail
 summarize_incident(incident_id) -> agent-ready summary
-create_incident_update(incident_id, body) -> write with confirmation
 ```
 
-agentに必要なのは「全データ」ではなく「次の判断に十分な最小context」。
-
-参考情報源: Anthropic Advanced Tool Use、MCP Tools structuredContent/outputSchema、Atlassian MCP compression、Semantic Tool Discovery・RAG-MCP研究。
+要点: agentに必要なのは「全データ」ではなく、**次の判断に十分な最小context**。
 
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="https://www.atlassian.com/blog/atlassian-engineering/mcp-compression-saving-tokens-in-sre-agent-systems">Atlassian MCP compression</a>; <a href="https://arxiv.org/abs/2603.20313">Semantic Tool Discovery</a>; <a href="https://arxiv.org/abs/2505.03275">RAG-MCP</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
