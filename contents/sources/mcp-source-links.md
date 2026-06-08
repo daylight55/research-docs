@@ -121,6 +121,8 @@ order: 30
 - [Chrome WebMCP comparison](https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja)
 - [Playwright MCP](https://github.com/microsoft/playwright-mcp)
 - [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp)
+- [Figma MCP server guide](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server)
+- [Figma MCP rate limits and access](https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/)
 
 ## AWS and AgentCore
 
