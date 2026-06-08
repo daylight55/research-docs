@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "weather-app-demo": {
+      "type": "stdio",
+      "command": "uv",
+      "args": [
+        "--directory",
+        ".",
+        "run",
+        "python",
+        "-m",
+        "weather_mcp_demo.server"
+      ]
+    }
+  }
+}
