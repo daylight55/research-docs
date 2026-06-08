@@ -149,3 +149,12 @@ order: 30
 - [Marp CLI](https://github.com/marp-team/marp-cli)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 - [PR Preview Action](https://github.com/rossjrw/pr-preview-action)
+
+## Slide Logo Assets
+
+- [The SVG: Model Context Protocol icon](https://thesvg.com/icon/model-context-protocol)
+- [Simple Icons: Anthropic](https://simpleicons.org/?q=anthropic)
+- [Simple Icons: GitHub](https://simpleicons.org/?q=github)
+- [Simple Icons: Cursor](https://simpleicons.org/?q=cursor)
+- [Simple Icons: FastAPI](https://simpleicons.org/?q=fastapi)
+- [Simple Icons: OpenAPI Initiative](https://simpleicons.org/?q=openapi)

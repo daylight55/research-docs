@@ -7,7 +7,12 @@
     "dev": "astro dev",
     "build": "astro build",
     "test": "vitest run",
-    "build:site": "scripts/build-pages-site.sh site"
+    "build:site": "scripts/build-pages-site.sh site",
+    "slide:html": "marp slides/example.md --html --theme theme/research.css --output dist/example.html",
+    "slide:pdf": "marp slides/example.md --html --theme theme/research.css --pdf --allow-local-files --output dist/example.pdf",
+    "slide:verify": "bash scripts/verify-slides.sh slides/example.md",
+    "slide:mcp:html": "marp src/content/docs/slides/mcp-internal-presentation.md --html --theme theme/research.css --output dist/mcp-internal-presentation.html",
+    "slide:mcp:verify": "bash scripts/verify-slides.sh src/content/docs/slides/mcp-internal-presentation.md"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",
@@ -20,6 +25,7 @@
     "typescript": "5.9.3"
   },
   "devDependencies": {
+    "playwright": "^1.52.0",
     "vitest": "4.1.8"
   }
 }
