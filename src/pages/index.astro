@@ -1,9 +1,9 @@
 ---
 import DocsLayout from "../layouts/DocsLayout.astro";
-import { deckHref, getDocSummaries, groupDocsBySection } from "../lib/docs";
+import { deckHref, getDocSummaries, getThemeSummaries, kindLabel } from "../lib/docs";
 
 const docs = await getDocSummaries();
-const groups = groupDocsBySection(docs);
+const themes = getThemeSummaries(docs);
 ---
 
 <DocsLayout
@@ -11,37 +11,54 @@ const groups = groupDocsBySection(docs);
   description="MCP社内発表向けのスライド、調査メモ、参照元、タスク記録を配布するドキュメントサイト。"
 >
   <section class="page-header">
-    <p class="eyebrow">MCP internal presentation</p>
-    <h1>スライドと調査メモをまとめて配布する</h1>
+    <p class="eyebrow">Topic-centered research workspace</p>
+    <h1>調査テーマを親にして、成果物と作業をまとめる</h1>
     <p>
-      Marpスライド、通常のMarkdownレンダリング、調査元リンク、作業チェックリストを同じサイトで確認できる。
-      ページは<code>src/content/docs</code>配下のファイル構造から自動生成される。
+      slide、research note、source links、research task をそれぞれ独立した一覧にせず、特定の調査テーマ配下に集約する。
+      テーマ単位で進捗、根拠、発表資料、次の作業を追える構成にする。
     </p>
     <div class="action-row">
       <a class="primary-action" href={deckHref()}>プレゼンHTMLを見る</a>
-      <a class="secondary-action" href={`${import.meta.env.BASE_URL}slides/mcp-internal-presentation/`}>
-        スライドMarkdownを読む
+      <a class="secondary-action" href={`${import.meta.env.BASE_URL}themes/mcp-internal-presentation/`}>
+        テーマ概要を見る
       </a>
     </div>
   </section>
 
-  <section class="doc-groups" aria-label="Document groups">
+  <section class="theme-groups" aria-label="Research themes">
     {
-      Array.from(groups.entries()).map(([section, items]) => (
-        <section class="doc-group">
-          <h2>{section}</h2>
-          <div class="doc-list">
-            {items.map(({ entry, href, title }) => (
-              <article class="doc-card">
-                <a href={href}>
-                  <span>{entry.data.kind}</span>
-                  <strong>{title}</strong>
-                  {entry.data.description && <p>{entry.data.description}</p>}
-                </a>
-              </article>
+      themes.map((theme) => (
+        <article class="theme-card">
+          <div class="theme-card-main">
+            <p class="theme-status">{theme.entry.data.status ?? "active"}</p>
+            <h2><a href={theme.href}>{theme.title}</a></h2>
+            {theme.entry.data.description && <p>{theme.entry.data.description}</p>}
+            <dl class="theme-meta">
+              {theme.entry.data.owner && (
+                <div>
+                  <dt>Owner</dt>
+                  <dd>{theme.entry.data.owner}</dd>
+                </div>
+              )}
+              {theme.entry.data.updatedAt && (
+                <div>
+                  <dt>Updated</dt>
+                  <dd>{theme.entry.data.updatedAt}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          <div class="artifact-list" aria-label={`${theme.title} artifacts`}>
+            {theme.children.map(({ entry, href, title }) => (
+              <a class="artifact-link" href={href}>
+                <span>{kindLabel(entry.data.kind)}</span>
+                <strong>{title}</strong>
+                {entry.data.description && <p>{entry.data.description}</p>}
+              </a>
             ))}
           </div>
-        </section>
+        </article>
       ))
     }
   </section>
