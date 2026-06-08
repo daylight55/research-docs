@@ -34,6 +34,7 @@ order: 30
 - [MCP Apps extension docs](https://modelcontextprotocol.io/extensions/apps)
 - [MCP Apps stable specification](https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx)
 - [MCP Apps official repository](https://github.com/modelcontextprotocol/ext-apps)
+- [MCP Apps official media: Claude color picker app GIF](https://github.com/modelcontextprotocol/ext-apps/blob/main/media/claude-colorpicker-apps.gif)
 - [MCP extension support matrix](https://modelcontextprotocol.io/extensions/client-matrix)
 - [MCP Tasks extension overview](https://modelcontextprotocol.io/extensions/tasks/overview)
 - [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification)

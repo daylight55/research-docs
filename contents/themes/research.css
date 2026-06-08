@@ -608,6 +608,50 @@ img.diagram {
   max-inline-size: 100%;
 }
 
+.app-shot-split {
+  align-items: start;
+  display: grid;
+  gap: 26px;
+  grid-template-columns: minmax(0, 0.78fr) minmax(520px, 1fr);
+}
+
+.app-shot-split > div {
+  display: grid;
+  gap: 0.72em;
+}
+
+.app-shot-split ol {
+  margin-block: 0;
+  padding-inline-start: 1.12em;
+}
+
+.app-shot-split li {
+  line-height: 1.36;
+  margin-block: 0.18em;
+}
+
+.app-shot {
+  margin: 0;
+}
+
+.app-shot img {
+  background: #111820;
+  border: 1px solid rgba(23, 32, 51, 0.18);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: block;
+  inline-size: 100%;
+  max-block-size: 390px;
+  object-fit: contain;
+}
+
+.app-shot figcaption {
+  color: var(--rd-muted);
+  font-size: 0.52em;
+  line-height: 1.24;
+  margin-block-start: 0.5em;
+}
+
 section.dense img.diagram {
   max-block-size: 385px;
 }

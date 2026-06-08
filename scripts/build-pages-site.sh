@@ -36,6 +36,14 @@ copy_slide_logos() {
   done < <(find contents/slides/logos -maxdepth 1 -type f -name "*.svg" | sort)
 }
 
+copy_slide_screenshots() {
+  local dest="$1"
+  mkdir -p "$dest"
+  while IFS= read -r file; do
+    cp "$file" "$dest/$(basename "$file")"
+  done < <(find contents/slides/screenshots -maxdepth 1 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" -o -name "*.gif" \) | sort)
+}
+
 if [ -d contents/slides/diagrams ]; then
   copy_slide_diagrams "$out_dir/slides/mcp-internal-presentation/diagrams"
   copy_slide_diagrams "$out_dir/slides/mcp-internal-presentation/deck/diagrams"
@@ -44,6 +52,11 @@ fi
 if [ -d contents/slides/logos ]; then
   copy_slide_logos "$out_dir/slides/mcp-internal-presentation/logos"
   copy_slide_logos "$out_dir/slides/mcp-internal-presentation/deck/logos"
+fi
+
+if [ -d contents/slides/screenshots ]; then
+  copy_slide_screenshots "$out_dir/slides/mcp-internal-presentation/screenshots"
+  copy_slide_screenshots "$out_dir/slides/mcp-internal-presentation/deck/screenshots"
 fi
 
 while IFS= read -r file; do
