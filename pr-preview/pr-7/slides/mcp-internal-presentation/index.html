@@ -2118,6 +2118,29 @@ _class: compact ch08
 <p>modelにはstructured result、userにはchart / form / dashboard / canvasを見せられる。</p>
 <hr>
 <!--
+_class: compact ch08
+-->
+<p class="chapter-label">08 / ガバナンスと導入</p>
+<h2 id="mcp-appsの画面例-会話内に操作uiが出る"><a href="#mcp-appsの画面例-会話内に操作uiが出る">MCP Appsの画面例: 会話内に操作UIが出る</a></h2>
+<div class="app-shot-split">
+<div>
+<p>MCP Appsでは、tool実行結果が単なるtextではなく、host内のsandboxed iframeとして表示される。</p>
+<ol>
+<li>Userが「color pickerを出して」と依頼</li>
+<li>MCP toolがstructured resultと<code>ui://</code> resource参照を返す</li>
+<li>HostがHTML/JSをsandboxed iframeでrenderする</li>
+<li>Userはcolor pickerを直接操作する</li>
+<li>UIの選択や追加tool callがhost経由でmodel/serverへ戻る</li>
+</ol>
+<div class="callout">会話はagentのまま、操作面だけが小さなweb appになる。</div>
+</div>
+<figure class="app-shot">
+  <img src="screenshots/mcp-apps-claude-colorpicker.png" alt="MCP Apps color picker UI rendered inside Claude conversation">
+  <figcaption>Source: modelcontextprotocol/ext-apps media, color picker MCP App in Claude.ai</figcaption>
+</figure>
+</div>
+<hr>
+<!--
 _class: dense ch08
 -->
 <p class="chapter-label">08 / ガバナンスと導入</p>
