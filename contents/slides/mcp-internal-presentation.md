@@ -54,17 +54,63 @@ _class: compact ch00
 
 ## Agent Skills + MCPで支援範囲が広がる
 
-Skillは「どう進めるか」、MCPは「何を読める/実行できるか」を持つ。
+Skillは「どう進めるか」を配布する形式。MCPは「外部systemをどう読める/実行できるか」を公開するprotocol。
 
 | レイヤー | 役割 | 開発現場での例 |
 |---|---|---|
-| Agent Skill | 手順、判断基準、検証、出力形式 | PR review、incident triage、release手順 |
-| MCP server | live data/action、認証、schema、承認 | GitHub、Sentry、Slack、AWS、社内API |
+| Agent Skill | 手順、判断基準、検証、出力形式、必要ならscript | PR review、incident triage、release手順 |
+| MCP server | live data/action、認証、schema、承認、監査 | GitHub、Sentry、Slack、AWS、社内API |
 | Plugin/App | Skill + App + MCPを配布単位にする | team workflow package |
 
-結果としてAI Agentは、助言だけでなく**調査 -> 実行 -> 検証 -> 報告**まで支援できる。
+ややこしい点: Skillもscriptで外部接続を伴う処理を実行できる。違いは「実行できるか」ではなく、**再利用する接続契約と権限境界をどこに置くか**。
 
-<p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
+<p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="https://agentskills.io/skill-creation/using-scripts">Agent Skills scripts</a>; <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
+
+---
+
+<!--
+_class: dense ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## Agent Skills仕様: scriptも持てる
+
+Agent Skillsは`SKILL.md`だけでなく、`scripts/`、`references/`、`assets/`を含められる。
+
+| 構成要素 | 何を持つか | 注意点 |
+|---|---|---|
+| `SKILL.md` | trigger description、手順、判断基準、出力形式 | activation時に読まれる。長すぎるとcontextを使う |
+| `scripts/` | bash / Python / JSなどの実行可能script | 外部API呼び出しも可能。hostのshell権限とsecret管理に依存 |
+| `references/` | 詳細手順、policy、domain docs | 必要時だけ読むprogressive disclosure |
+| `assets/` | template、schema、画像、サンプル | 生成物や定型formatの再利用に向く |
+| `allowed-tools` | pre-approved toolsの宣言 | experimentalでclient実装差がある |
+
+scriptを使うなら、非対話、`--help`、structured output、dry-run、idempotency、secretの渡し方を設計する。
+
+<p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="https://agentskills.io/skill-creation/using-scripts">Agent Skills scripts</a>; <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a></p>
+
+---
+
+<!--
+_class: dense ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## SkillsとMCPの違いと選び分け
+
+| 判断軸 | Agent Skillを選ぶ | MCP serverを選ぶ |
+|---|---|---|
+| 主目的 | workflow、判断、検証、出力形式を固定したい | 外部systemのdata/actionをagent-nativeに公開したい |
+| 実行場所 | agentの作業環境。scriptはlocal/ephemeralに寄る | server / gateway / SaaS側。複数clientから使える |
+| 契約 | Markdown手順 + script interface | tool/resource/prompt schema、transport、auth、capability |
+| 認証/監査 | hostのsecret/shell運用に寄りがち。client実装差も出る | OAuth、scope、approval、audit、rate limitをserver境界に置ける |
+| 向く処理 | repo固有手順、local build/test、変換、検証、手順の型化 | SaaS/DB/API操作、共有connector、権限付きwrite、組織横断利用 |
+
+結論: **Skillはprocedure、MCPはintegration contract**。shared external actionはMCP化し、Skillはそれをいつどう使うかを書く。
+
+<p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
 
@@ -74,7 +120,7 @@ _class: compact ch00
 
 <p class="chapter-label">00 / 全体像</p>
 
-## SkillにMCP利用手順を入れると後半が定型化する
+## 組み合わせると後半が定型化する
 
 MCP serverを接続するだけでは、agentは「使えるtool」を知るだけ。  
 Skillに順序・判断基準・検証条件を書くと、後半の作業が再利用可能な型になる。

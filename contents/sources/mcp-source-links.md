@@ -88,6 +88,8 @@ order: 30
 - [OpenAI Apps SDK quickstart](https://developers.openai.com/apps-sdk/quickstart)
 - [OpenAI Codex manual](https://developers.openai.com/codex/codex-manual.md)
 - [Agent Skills specification](https://agentskills.io/specification)
+- [Agent Skills using scripts](https://agentskills.io/skill-creation/using-scripts)
+- [OpenAI Codex Skills](https://developers.openai.com/codex/skills)
 - [OpenAI skills repository](https://github.com/openai/skills)
 - [Anthropic tool use overview](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
 - [Anthropic define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
