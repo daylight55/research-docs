@@ -3,6 +3,7 @@ title: MCP internal presentation research notes
 navTitle: Research notes
 description: MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。
 kind: research
+themeId: mcp-internal-presentation
 order: 20
 ---
 
