@@ -2792,9 +2792,11 @@ MCPがproviderにとって特に有効な場合:
 - agent-driven screen scrapingや脆いbrowser automationを減らしたい。
 - providerがraw CRUDだけでなく、`summarize_incident`、`create_release_note`、`get_customer_health_snapshot`のようなhigher-level toolを公開できる。
 
-### token-awareなMCP server設計
+### コンテキスト効率を意識したMCP server設計
 
-最良のMCP serverはtool数が最も多いserverではない。agentが正しいtoolを見つけ、十分最小のresultを受け取れるserverである。
+「Token-aware」は、単にtoken料金を下げるという意味ではない。MCP serverが公開するtool定義、tool description、input schema、実行結果、error、log、resource本文は、agentが判断するためのcontextとして扱われる。したがって、MCP server設計では「人間向けAPIの全機能をそのまま見せる」のではなく、agentが少ないcontextで正しいtoolを選び、次の判断に十分な最小情報を受け取れるようにする必要がある。
+
+言い換えると、最良のMCP serverはtool数が最も多いserverではない。agentが迷わず使えるtool catalogと、boundedでstructuredなresultを返すserverである。
 
 参考情報源:
 
