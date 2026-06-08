@@ -7,6 +7,7 @@ title: MCPを開発現場でどう使うべきか
 navTitle: MCP internal presentation
 description: 社内発表向けMCP解説、要所のQ&A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
 kind: slides
+themeId: mcp-internal-presentation
 order: 10
 footer: "MCP internal presentation"
 ---
