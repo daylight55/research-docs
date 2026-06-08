@@ -81,6 +81,18 @@ Agent SkillsとMCPを組み合わせると、AI Agentが支援できる範囲を
 
 Codex manualでは、SkillsはCLI、IDE extension、Codex appで利用でき、必要時に`SKILL.md`を読むprogressive disclosureでcontextを抑えると説明されている。また、MCPは外部tools/shared systemsへの接続面であり、実務上はSkillと組み合わせると有効だと説明されている。Pluginsはskills、apps、MCP serversをbundleできるため、チーム内で「PR review skill + GitHub/Sentry MCP」「incident triage skill + CloudWatch/Sentry/Slack MCP」のような支援パッケージを配布できる。
 
+注意点として、Agent Skillsは単なるMarkdown手順ではない。Agent Skills仕様では、必須の`SKILL.md`に加えて、実行可能コードを置く`scripts/`、詳細資料を置く`references/`、templateやschemaを置く`assets/`を任意で含められる。さらに`allowed-tools`でpre-approved toolsを宣言できるが、これはexperimentalでclient実装差がある。OpenAI Codex Skillsの説明でも、Skillsは「workflowをより可靠に実行するためのinstructions、resources、optional scripts」を含む仕組みとして扱われている。
+
+そのため、SkillとMCPの違いは「外部接続できるかどうか」ではない。Skillのscriptも、shell権限、環境変数、network access、secretが与えられれば外部APIを呼び出せる。違いは、再利用する接続契約、権限境界、監査、schema、transportをどこに置くかである。
+
+選び分けは次のように考えるとよい。
+
+- **Agent Skillを選ぶ場合**: repo/team固有の手順、判断基準、検証、変換、local build/test、deterministic helper script、複数toolをまたぐorchestrationを型化したいとき。
+- **MCP serverを選ぶ場合**: SaaS、DB、社内APIなどを複数clientや複数agentから使う、権限付きwrite操作を公開する、OAuth/scope/approval/audit/rate limitをserver境界で管理したいとき。
+- **組み合わせる場合**: Skillに「いつ、どの順序で、どのMCP toolを呼び、何を検証するか」を書き、MCP側に認証済みのdata/action contractを置く。実務ではこの形が最も説明しやすい。
+
+scriptをSkillに入れる場合は、agentic useに向くinterfaceにする必要がある。非対話で動くこと、`--help`を持つこと、入力と出力が明確なこと、structured outputを返すこと、dry-runやidempotencyを考慮すること、secretをログに出さないことが重要になる。外部systemへの長期的な接続面をscriptに閉じ込めると、認証更新、監査、rate limit、複数client対応が各Skillに散らばるため、共有性が必要になった時点でMCP化を検討する。
+
 設計上の示唆:
 
 - Skill descriptionには「いつ起動すべきか」「対象外は何か」「使うMCPや確認手順」を短く前方に書く。descriptionが長すぎると初期context上で短縮される可能性がある。
