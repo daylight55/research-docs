@@ -30,6 +30,40 @@ section::after {
   font-size: 0.55em;
 }
 
+.source-note {
+  bottom: 22px;
+  color: rgba(73, 88, 110, 0.68);
+  font-size: 0.32em !important;
+  line-height: 1.25;
+  margin: 0;
+  max-inline-size: 560px;
+  position: absolute;
+  right: 94px;
+  text-align: right;
+  z-index: 4;
+}
+
+.source-note a {
+  color: rgba(25, 92, 139, 0.78);
+  text-decoration: none;
+}
+
+.source-note a:hover {
+  text-decoration: underline;
+}
+
+section.title .source-note,
+section.lead .source-note,
+section.section .source-note {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+section.title .source-note a,
+section.lead .source-note a,
+section.section .source-note a {
+  color: rgba(255, 255, 255, 0.86);
+}
+
 h1,
 h2,
 h3,
@@ -608,6 +642,50 @@ img.diagram {
   max-inline-size: 100%;
 }
 
+.app-shot-split {
+  align-items: start;
+  display: grid;
+  gap: 26px;
+  grid-template-columns: minmax(0, 0.78fr) minmax(520px, 1fr);
+}
+
+.app-shot-split > div {
+  display: grid;
+  gap: 0.72em;
+}
+
+.app-shot-split ol {
+  margin-block: 0;
+  padding-inline-start: 1.12em;
+}
+
+.app-shot-split li {
+  line-height: 1.36;
+  margin-block: 0.18em;
+}
+
+.app-shot {
+  margin: 0;
+}
+
+.app-shot img {
+  background: #111820;
+  border: 1px solid rgba(23, 32, 51, 0.18);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: block;
+  inline-size: 100%;
+  max-block-size: 390px;
+  object-fit: contain;
+}
+
+.app-shot figcaption {
+  color: var(--rd-muted);
+  font-size: 0.52em;
+  line-height: 1.24;
+  margin-block-start: 0.5em;
+}
+
 section.dense img.diagram {
   max-block-size: 385px;
 }
@@ -764,4 +842,84 @@ section.note {
   color: var(--rd-teal);
   font-size: 1.25em;
   font-weight: 900;
+}
+
+.timeline-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block-start: 0.7em;
+}
+
+.timeline-grid > div {
+  background: var(--rd-panel);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: grid;
+  gap: 0.18em;
+  min-block-size: 118px;
+  padding: 0.55em 0.62em;
+}
+
+.timeline-grid strong {
+  color: var(--rd-teal);
+  font-size: 0.78em;
+  line-height: 1;
+}
+
+.timeline-grid span {
+  color: var(--rd-ink);
+  font-size: 0.74em;
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.timeline-grid p {
+  color: var(--rd-muted);
+  font-size: 0.58em;
+  line-height: 1.28;
+  margin: 0;
+}
+
+.surface-map {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.surface-card {
+  background: var(--rd-panel);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: grid;
+  gap: 0.22em;
+  min-block-size: 136px;
+  padding: 0.62em 0.72em;
+}
+
+.surface-card.highlight {
+  background: linear-gradient(135deg, rgba(47, 156, 149, 0.16), var(--rd-panel));
+  border-color: rgba(47, 156, 149, 0.42);
+}
+
+.surface-card strong {
+  color: var(--rd-blue);
+  font-size: 0.76em;
+  line-height: 1.1;
+}
+
+.surface-card span {
+  color: var(--rd-ink);
+  font-size: 0.68em;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.surface-card p {
+  color: var(--rd-muted);
+  font-size: 0.58em;
+  line-height: 1.28;
+  margin: 0;
 }

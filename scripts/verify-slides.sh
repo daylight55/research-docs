@@ -22,6 +22,15 @@ if [ -d "$deck_dir/logos" ]; then
   cp -R "$deck_dir/logos" "$out_dir/logos"
 fi
 
+if [ -d "$deck_dir/screenshots" ]; then
+  rm -rf "$out_dir/screenshots-assets"
+  cp -R "$deck_dir/screenshots" "$out_dir/screenshots-assets"
+  rm -rf "$out_dir/screenshots"
+  mkdir -p "$out_dir/screenshots"
+  cp -R "$out_dir/screenshots-assets/." "$out_dir/screenshots/"
+  rm -rf "$out_dir/screenshots-assets"
+fi
+
 node scripts/screenshot-slides.mjs "$html" "$screenshots"
 
 echo "Rendered $html"

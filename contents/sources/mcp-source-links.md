@@ -27,7 +27,16 @@ order: 30
 - [MCP security best practices](https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices)
 - [MCP tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
 - [MCP sampling](https://modelcontextprotocol.io/specification/2025-11-25/client/sampling)
+- [MCP elicitation](https://modelcontextprotocol.io/specification/2025-11-25/client/elicitation)
+- [MCP tasks in 2025-11-25 specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks)
+- [MCP Extensions SEP-2133](https://modelcontextprotocol.io/seps/2133-extensions)
 - [MCP Apps SEP-1865](https://modelcontextprotocol.io/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp)
+- [MCP Apps extension docs](https://modelcontextprotocol.io/extensions/apps)
+- [MCP Apps stable specification](https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx)
+- [MCP Apps official repository](https://github.com/modelcontextprotocol/ext-apps)
+- [MCP Apps official media: Claude color picker app GIF](https://github.com/modelcontextprotocol/ext-apps/blob/main/media/claude-colorpicker-apps.gif)
+- [MCP extension support matrix](https://modelcontextprotocol.io/extensions/client-matrix)
+- [MCP Tasks extension overview](https://modelcontextprotocol.io/extensions/tasks/overview)
 - [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification)
 - [Anthropic launch post](https://www.anthropic.com/news/model-context-protocol)
 - [MCP reference servers](https://github.com/modelcontextprotocol/servers)
@@ -67,6 +76,10 @@ order: 30
 
 ## Tool Use and Model-Side Generation
 
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- [Toolformer: Language Models Can Teach Themselves to Use Tools](https://arxiv.org/abs/2302.04761)
+- [OpenAI ChatGPT plugins announcement](https://openai.com/index/chatgpt-plugins/)
+- [OpenAI function calling and API updates announcement](https://openai.com/index/function-calling-and-other-api-updates/)
 - [OpenAI using tools](https://developers.openai.com/api/docs/guides/tools)
 - [OpenAI function calling](https://developers.openai.com/api/docs/guides/function-calling)
 - [OpenAI structured outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs)
@@ -75,6 +88,8 @@ order: 30
 - [OpenAI Apps SDK quickstart](https://developers.openai.com/apps-sdk/quickstart)
 - [OpenAI Codex manual](https://developers.openai.com/codex/codex-manual.md)
 - [Agent Skills specification](https://agentskills.io/specification)
+- [Agent Skills using scripts](https://agentskills.io/skill-creation/using-scripts)
+- [OpenAI Codex Skills](https://developers.openai.com/codex/skills)
 - [OpenAI skills repository](https://github.com/openai/skills)
 - [Anthropic tool use overview](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
 - [Anthropic define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
@@ -85,10 +100,22 @@ order: 30
 - [Google Gemini function calling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tools/function-calling)
 - [Hugging Face function-calling fine-tuning](https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning)
 
+## Token-Aware MCP Design
+
+- [Anthropic advanced tool use and token-efficient tool use](https://www.anthropic.com/engineering/advanced-tool-use)
+- [MCP tools: structuredContent and outputSchema](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
+- [MCP resources: large read-only context surface](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
+- [Atlassian Engineering: MCP compression](https://www.atlassian.com/blog/atlassian-engineering/mcp-compression-saving-tokens-in-sre-agent-systems)
+- [Semantic Tool Discovery for Large Language Models](https://arxiv.org/abs/2603.20313)
+- [RAG-MCP: Mitigating prompt bloat in LLM tool selection via retrieval-augmented generation](https://arxiv.org/abs/2505.03275)
+
 ## Broader Agent Action Surfaces
 
 - [Chrome WebMCP overview](https://developer.chrome.com/docs/ai/webmcp)
 - [Chrome WebMCP comparison](https://developer.chrome.com/docs/ai/webmcp/compare-mcp)
+- [Chrome WebMCP Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api)
+- [Chrome WebMCP Declarative API](https://developer.chrome.com/docs/ai/webmcp/declarative-api)
+- [Zenn: WebMCPを雑に学ぶ、そしてフロントエンドがどうなるか考える](https://zenn.dev/844/articles/64233a8dd6a1fd)
 - [Google Agent2Agent announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)
 - [Google Cloud donates A2A to Linux Foundation](https://developers.googleblog.com/en/google-cloud-donates-a2a-to-linux-foundation/)
 
@@ -118,7 +145,11 @@ order: 30
 
 ## Frontend and Browser MCP
 
+- [Chrome WebMCP overview](https://developer.chrome.com/docs/ai/webmcp)
 - [Chrome WebMCP comparison](https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja)
+- [Chrome WebMCP Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api)
+- [Chrome WebMCP Declarative API](https://developer.chrome.com/docs/ai/webmcp/declarative-api)
+- [Zenn: WebMCPを雑に学ぶ、そしてフロントエンドがどうなるか考える](https://zenn.dev/844/articles/64233a8dd6a1fd)
 - [Playwright MCP](https://github.com/microsoft/playwright-mcp)
 - [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp)
 - [Figma MCP server guide](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server)
