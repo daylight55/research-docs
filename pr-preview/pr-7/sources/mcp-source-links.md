@@ -101,6 +101,9 @@ order: 30
 
 - [Chrome WebMCP overview](https://developer.chrome.com/docs/ai/webmcp)
 - [Chrome WebMCP comparison](https://developer.chrome.com/docs/ai/webmcp/compare-mcp)
+- [Chrome WebMCP Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api)
+- [Chrome WebMCP Declarative API](https://developer.chrome.com/docs/ai/webmcp/declarative-api)
+- [Zenn: WebMCPを雑に学ぶ、そしてフロントエンドがどうなるか考える](https://zenn.dev/844/articles/64233a8dd6a1fd)
 - [Google Agent2Agent announcement](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)
 - [Google Cloud donates A2A to Linux Foundation](https://developers.googleblog.com/en/google-cloud-donates-a2a-to-linux-foundation/)
 
@@ -130,7 +133,11 @@ order: 30
 
 ## Frontend and Browser MCP
 
+- [Chrome WebMCP overview](https://developer.chrome.com/docs/ai/webmcp)
 - [Chrome WebMCP comparison](https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja)
+- [Chrome WebMCP Imperative API](https://developer.chrome.com/docs/ai/webmcp/imperative-api)
+- [Chrome WebMCP Declarative API](https://developer.chrome.com/docs/ai/webmcp/declarative-api)
+- [Zenn: WebMCPを雑に学ぶ、そしてフロントエンドがどうなるか考える](https://zenn.dev/844/articles/64233a8dd6a1fd)
 - [Playwright MCP](https://github.com/microsoft/playwright-mcp)
 - [Chrome DevTools MCP](https://github.com/ChromeDevTools/chrome-devtools-mcp)
 - [Figma MCP server guide](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server)

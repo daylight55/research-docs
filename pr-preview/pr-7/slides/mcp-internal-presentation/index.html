@@ -1666,6 +1666,89 @@ _class: compact ch07
 <p>設計としては、<strong>backendはMCP、frontendはWebMCP、検証はbrowser MCP</strong>が整理しやすい。</p>
 <hr>
 <!--
+_class: dense ch07
+-->
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+<h2 id="webmcpとは何を読む仕組みか"><a href="#webmcpとは何を読む仕組みか">WebMCPとは何を読む仕組みか</a></h2>
+<p>WebMCPは、web page自身が「この画面でagentに使わせたい機能」をbrowser agentへ宣言するproposed web standard。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>誰が</th><th>何を実装/読む</th><th>結果</th></tr></thead><tbody><tr><td>Web app</td><td><code>document.modelContext.registerTool()</code> またはform属性</td><td>tool名、説明、JSON Schema、実行関数を登録</td></tr><tr><td>Browser</td><td>live tab内のtool catalog、DOM、session/cookie、権限</td><td>pageにいる時だけagentへ能力を見せる</td></tr><tr><td>Browser agent</td><td>tool一覧とschema</td><td>click推測ではなく、明示された関数/フォームとして呼ぶ</td></tr><tr><td>User</td><td>visible UIと確認dialog</td><td>何が実行されたかを画面上で確認できる</td></tr></tbody></table>
+<p>MCPがbackend/serviceをどこからでも使える接続面なら、WebMCPは<strong>いま開いているWeb UIをagent-readableにする接続面</strong>。</p>
+<hr>
+<!--
+_class: dense ch07
+-->
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+<h2 id="webmcpの最小実装イメージ"><a href="#webmcpの最小実装イメージ">WebMCPの最小実装イメージ</a></h2>
+<div class="grid two">
+<div>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#E1E4E8">document.modelContext.</span><span style="color:#B392F0">registerTool</span><span style="color:#E1E4E8">({</span></span>
+<span class="line"><span style="color:#E1E4E8">  name: </span><span style="color:#9ECBFF">"addTodo"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  description: </span><span style="color:#9ECBFF">"Todoを追加する"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">  inputSchema: {</span></span>
+<span class="line"><span style="color:#E1E4E8">    type: </span><span style="color:#9ECBFF">"object"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E1E4E8">    properties: {</span></span>
+<span class="line"><span style="color:#E1E4E8">      text: { type: </span><span style="color:#9ECBFF">"string"</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    required: [</span><span style="color:#9ECBFF">"text"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  },</span></span>
+<span class="line"><span style="color:#B392F0">  execute</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">async</span><span style="color:#E1E4E8"> ({ </span><span style="color:#FFAB70">text</span><span style="color:#E1E4E8"> }) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    addTodo</span><span style="color:#E1E4E8">(text);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#9ECBFF"> "added: "</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> text;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+</div>
+<div>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="html"><code><span class="line"><span style="color:#E1E4E8">&#x3C;</span><span style="color:#85E89D">form</span></span>
+<span class="line"><span style="color:#B392F0">  toolname</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"supportRequest"</span></span>
+<span class="line"><span style="color:#B392F0">  tooldescription</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"問い合わせを作成する"</span></span>
+<span class="line"><span style="color:#B392F0">  action</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"/support"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">input</span><span style="color:#B392F0"> name</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"summary"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;</span><span style="color:#85E89D">select</span><span style="color:#B392F0"> name</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"team"</span></span>
+<span class="line"><span style="color:#B392F0">    toolparamdescription</span><span style="color:#E1E4E8">=</span><span style="color:#9ECBFF">"担当team"</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">option</span><span style="color:#E1E4E8">>Billing&#x3C;/</span><span style="color:#85E89D">option</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">    &#x3C;</span><span style="color:#85E89D">option</span><span style="color:#E1E4E8">>Technical&#x3C;/</span><span style="color:#85E89D">option</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">  &#x3C;/</span><span style="color:#85E89D">select</span><span style="color:#E1E4E8">></span></span>
+<span class="line"><span style="color:#E1E4E8">&#x3C;/</span><span style="color:#85E89D">form</span><span style="color:#E1E4E8">></span></span></code></pre>
+</div>
+</div>
+<ul>
+<li>Imperative API: React/Next.jsなどのstate更新、navigation、diagnosticsを関数として出す</li>
+<li>Declarative API: 既存formに属性を足し、browserがschema化してagentへ見せる</li>
+<li>最新注意: 初期記事の<code>navigator.modelContext</code>ではなく、公式例は<code>document.modelContext</code></li>
+<li>制約: 2026-06時点ではflag/origin trial前提。open tab、origin isolation、permissions policyが必要</li>
+</ul>
+<hr>
+<!--
 _class: compact ch07
 -->
 <p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
@@ -2197,7 +2280,11 @@ _class: dense ch09
 <li>MCP tools: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">https://modelcontextprotocol.io/specification/2025-11-25/server/tools</a></li>
 <li>Claude Code MCP docs: <a href="https://code.claude.com/docs/en/mcp">https://code.claude.com/docs/en/mcp</a></li>
 <li>FastMCP OpenAPI docs: <a href="https://gofastmcp.com/servers/openapi">https://gofastmcp.com/servers/openapi</a></li>
+<li>Chrome WebMCP overview: <a href="https://developer.chrome.com/docs/ai/webmcp">https://developer.chrome.com/docs/ai/webmcp</a></li>
 <li>Chrome WebMCP comparison: <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja">https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja</a></li>
+<li>Chrome WebMCP Imperative API: <a href="https://developer.chrome.com/docs/ai/webmcp/imperative-api">https://developer.chrome.com/docs/ai/webmcp/imperative-api</a></li>
+<li>Chrome WebMCP Declarative API: <a href="https://developer.chrome.com/docs/ai/webmcp/declarative-api">https://developer.chrome.com/docs/ai/webmcp/declarative-api</a></li>
+<li>Zenn WebMCP overview: <a href="https://zenn.dev/844/articles/64233a8dd6a1fd">https://zenn.dev/844/articles/64233a8dd6a1fd</a></li>
 </ul>
 <hr>
 <!--

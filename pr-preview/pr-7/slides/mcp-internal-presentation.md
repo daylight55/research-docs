@@ -1534,6 +1534,83 @@ _class: compact ch07
 ---
 
 <!--
+_class: dense ch07
+-->
+
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+
+## WebMCPとは何を読む仕組みか
+
+WebMCPは、web page自身が「この画面でagentに使わせたい機能」をbrowser agentへ宣言するproposed web standard。
+
+| 誰が | 何を実装/読む | 結果 |
+|---|---|---|
+| Web app | `document.modelContext.registerTool()` またはform属性 | tool名、説明、JSON Schema、実行関数を登録 |
+| Browser | live tab内のtool catalog、DOM、session/cookie、権限 | pageにいる時だけagentへ能力を見せる |
+| Browser agent | tool一覧とschema | click推測ではなく、明示された関数/フォームとして呼ぶ |
+| User | visible UIと確認dialog | 何が実行されたかを画面上で確認できる |
+
+MCPがbackend/serviceをどこからでも使える接続面なら、WebMCPは**いま開いているWeb UIをagent-readableにする接続面**。
+
+---
+
+<!--
+_class: dense ch07
+-->
+
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+
+## WebMCPの最小実装イメージ
+
+<div class="grid two">
+<div>
+
+```js
+document.modelContext.registerTool({
+  name: "addTodo",
+  description: "Todoを追加する",
+  inputSchema: {
+    type: "object",
+    properties: {
+      text: { type: "string" }
+    },
+    required: ["text"]
+  },
+  execute: async ({ text }) => {
+    addTodo(text);
+    return "added: " + text;
+  }
+});
+```
+
+</div>
+<div>
+
+```html
+<form
+  toolname="supportRequest"
+  tooldescription="問い合わせを作成する"
+  action="/support">
+  <input name="summary">
+  <select name="team"
+    toolparamdescription="担当team">
+    <option>Billing</option>
+    <option>Technical</option>
+  </select>
+</form>
+```
+
+</div>
+</div>
+
+- Imperative API: React/Next.jsなどのstate更新、navigation、diagnosticsを関数として出す
+- Declarative API: 既存formに属性を足し、browserがschema化してagentへ見せる
+- 最新注意: 初期記事の`navigator.modelContext`ではなく、公式例は`document.modelContext`
+- 制約: 2026-06時点ではflag/origin trial前提。open tab、origin isolation、permissions policyが必要
+
+---
+
+<!--
 _class: compact ch07
 -->
 
@@ -1940,7 +2017,11 @@ _class: dense ch09
 - MCP tools: https://modelcontextprotocol.io/specification/2025-11-25/server/tools
 - Claude Code MCP docs: https://code.claude.com/docs/en/mcp
 - FastMCP OpenAPI docs: https://gofastmcp.com/servers/openapi
+- Chrome WebMCP overview: https://developer.chrome.com/docs/ai/webmcp
 - Chrome WebMCP comparison: https://developer.chrome.com/docs/ai/webmcp/compare-mcp?hl=ja
+- Chrome WebMCP Imperative API: https://developer.chrome.com/docs/ai/webmcp/imperative-api
+- Chrome WebMCP Declarative API: https://developer.chrome.com/docs/ai/webmcp/declarative-api
+- Zenn WebMCP overview: https://zenn.dev/844/articles/64233a8dd6a1fd
 
 ---
 
