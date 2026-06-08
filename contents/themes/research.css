@@ -765,3 +765,83 @@ section.note {
   font-size: 1.25em;
   font-weight: 900;
 }
+
+.timeline-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-block-start: 0.7em;
+}
+
+.timeline-grid > div {
+  background: var(--rd-panel);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: grid;
+  gap: 0.18em;
+  min-block-size: 118px;
+  padding: 0.55em 0.62em;
+}
+
+.timeline-grid strong {
+  color: var(--rd-teal);
+  font-size: 0.78em;
+  line-height: 1;
+}
+
+.timeline-grid span {
+  color: var(--rd-ink);
+  font-size: 0.74em;
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.timeline-grid p {
+  color: var(--rd-muted);
+  font-size: 0.58em;
+  line-height: 1.28;
+  margin: 0;
+}
+
+.surface-map {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.surface-card {
+  background: var(--rd-panel);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: grid;
+  gap: 0.22em;
+  min-block-size: 136px;
+  padding: 0.62em 0.72em;
+}
+
+.surface-card.highlight {
+  background: linear-gradient(135deg, rgba(47, 156, 149, 0.16), var(--rd-panel));
+  border-color: rgba(47, 156, 149, 0.42);
+}
+
+.surface-card strong {
+  color: var(--rd-blue);
+  font-size: 0.76em;
+  line-height: 1.1;
+}
+
+.surface-card span {
+  color: var(--rd-ink);
+  font-size: 0.68em;
+  font-weight: 800;
+  line-height: 1.12;
+}
+
+.surface-card p {
+  color: var(--rd-muted);
+  font-size: 0.58em;
+  line-height: 1.28;
+  margin: 0;
+}
