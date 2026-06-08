@@ -2784,6 +2784,14 @@ MCPがproviderにとって特に有効な場合:
 
 最良のMCP serverはtool数が最も多いserverではない。agentが正しいtoolを見つけ、十分最小のresultを受け取れるserverである。
 
+参考情報源:
+
+- Anthropic advanced tool use記事は、大量tool定義のcontext overhead、tool search、programmatic tool callingによるtoken削減例を示している。
+- MCP tools specificationは、tool resultを`structuredContent`、`content`、`_meta`に分け、`outputSchema`でstructured outputを宣言できることを示している。
+- MCP resources specificationは、大きなread-only contextをtool callではなくresourceとして公開する設計面を示している。
+- Atlassian EngineeringのMCP compression記事は、SRE agent systemでtool responseを圧縮しtoken使用量を抑える実務上の工夫を示している。
+- Semantic Tool DiscoveryやRAG-MCPは、大量tool catalogをすべてpromptへ入れるのではなく、retrievalで必要toolだけを選ぶ研究方向を示している。
+
 - まずsearch/list toolを提供し、次にdetail/read toolを提供する。
 - defaultではlog/document全体ではなく、summary + stable IDを返す。
 - pagination、cursor、`limit`、`since`、`severity`、`status`、`fields` parameterを使う。
