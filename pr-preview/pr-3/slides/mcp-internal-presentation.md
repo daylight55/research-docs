@@ -1077,6 +1077,47 @@ _class: dense ch05
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 
+## Auth用語を先に押さえる
+
+| 用語 | まず何か | MCPでの意味 |
+|---|---|---|
+| OAuth 2.1 | passwordを渡さずtokenで権限委任する枠組み | HTTP Remote MCPのauth baseline |
+| OIDC Discovery | auth/token endpointを自動発見する仕組み | clientがIdP設定を手で埋めない |
+| PKCE | authorization code横取り対策 | public clientでもcode交換を守る |
+| scope | tokenで許す操作範囲 | read/writeなどを最小化する |
+| audience/resource | tokenの宛先 | 別serverへのtoken再利用を防ぐ |
+
+Remote MCPでは「誰の権限で、どのserverに、どのscopeで入るか」をprotocol側で明示する。
+
+---
+
+<!--
+_class: dense ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
+## MCP authで特殊に見える概念
+
+| 概念 | 何を解決するか |
+|---|---|
+| Protected Resource Metadata | MCP serverが対応するauthorization serverを発見させる |
+| `WWW-Authenticate` | 401/403でmetadata URLや必要scopeを返す |
+| Client ID Metadata Document | URL形式のclient_idで未知clientのmetadataを公開する |
+| Dynamic Client Registration | client_idを動的登録する互換/fallback経路 |
+| Step-up authorization | `insufficient_scope`時に追加scopeへ同意してretryする |
+| Token passthrough禁止 | inbound tokenをdownstream APIへそのまま渡さない |
+
+Remote MCPの難所はJSON-RPCではなく、tokenの宛先・scope・委任境界を壊さないこと。
+
+---
+
+<!--
+_class: dense ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
 ## 認証方法の現在地
 
 | 方法 | 向く用途 | 注意 |
@@ -1164,6 +1205,20 @@ _class: dense ch05
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 
+## LLMはMCPを直接叩いていない
+
+<img class="diagram" src="diagrams/mcp-tool-call-generation-flow.svg" alt="MCP tool call generation flow" />
+
+MCPはLLMの出力形式ではなく、hostがtool catalogと実行を安定して扱うための接続protocol。
+
+---
+
+<!--
+_class: dense ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
 ## Q. tool callのテキストはどう生成される？
 
 **A. MCP serverではなく、hostがLLMへtool定義を渡し、LLMがtool_use/tool_callを生成する。**
@@ -1191,21 +1246,57 @@ _class: dense ch05
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 
+## なぜ`name + arguments`を出せるのか
+
+| レイヤー | 公開情報から見える工夫 |
+|---|---|
+| Prompt/context | tool definitionをmodelが読める形式で注入する |
+| Training/post-training | tool call形式、schema、拒否、複数stepを学習する |
+| Runtime constraints | strict schema / Structured Outputs / constrained decoding |
+| Host loop | validation、approval、retry、MCP JSON-RPC変換 |
+
+MCP固有の魔法ではなく、tool calling能力 + host adapter + protocol実装の組み合わせ。
+
+---
+
+<!--
+_class: dense ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
 ## Q. MCP用にLLMをfine-tuningする必要がある？
 
-**A. 通常は不要。まずtool surfaceを設計する。**
+**A. 通常は不要。最初に直すべきものはmodelではなくtool surface。**
 
 - MCP接続に必要なのはmodel専用trainingではなく、host/client/serverのprotocol実装
 - modelはtool/function calling能力で`name + arguments`を生成する
-- 開発者が最初に調整すべきもの:
-  - tool名
-  - description
-  - input/output schema
-  - result size
-  - error message
-- 公開情報ではfunction calling向けfine-tuning例はあるが、MCP専用fine-tuning要件ではない
+- まず調整する順番: tool名 -> description -> schema -> result size -> error
+- tool数が多い場合はtool search、defer loading、gateway側routingを検討する
+- 公開情報にはfunction calling向けfine-tuning例があるが、MCP専用fine-tuning要件ではない
 
 大量・類似・複雑なtoolで精度が足りない場合に、tool-use evalやfine-tuningを検討する。
+
+---
+
+<!--
+_class: dense ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
+## Provider側の工夫: 公開情報ベース
+
+| 工夫 | 例 |
+|---|---|
+| tool定義のcontext注入 | OpenAI / Anthropic tool calling docs |
+| description / examples重視 | Anthropic define tools、tool use examples |
+| schema遵守 | OpenAI Structured Outputs、strict tools |
+| constrained decoding | JSON Schemaから有効tokenだけを許可 |
+| token削減 | tool search、deferred loading、programmatic tool calling |
+| eval / fine-tuning | function calling eval、RFT、open model fine-tuning |
+
+社内APIのMCP化では、providerの学習を期待する前に、tool interfaceを小さく明確にする。
 
 ---
 
@@ -1678,6 +1769,8 @@ _class: dense ch09
 - JSON-RPC 2.0 specification: https://www.jsonrpc.org/specification
 - MCP lifecycle: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle
 - MCP sampling: https://modelcontextprotocol.io/specification/2025-11-25/client/sampling
+- MCP authorization: https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization
+- MCP changelog: https://modelcontextprotocol.io/specification/2025-11-25/changelog
 - Anthropic tool use overview: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
 - Anthropic define tools: https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
 - OpenAI function calling fine-tuning: https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling
@@ -1692,6 +1785,10 @@ _class: dense ch09
 
 ## 主な参照 4
 
+- OpenAI function calling: https://developers.openai.com/api/docs/guides/function-calling
+- OpenAI Structured Outputs: https://developers.openai.com/api/docs/guides/structured-outputs
+- OpenAI Structured Outputs announcement: https://openai.com/index/introducing-structured-outputs-in-the-api/
+- OpenAI MCP and connectors: https://developers.openai.com/api/docs/guides/tools-connectors-mcp
 - MCP governance: https://modelcontextprotocol.io/community/governance
 - MCP roadmap: https://modelcontextprotocol.io/development/roadmap
 - MCP authorization: https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization
