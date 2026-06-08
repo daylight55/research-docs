@@ -3016,7 +3016,7 @@ Current recommended Marp practice is to keep slide content in Markdown and move 
 
 Applied design decisions in this deck:
 
-- Added `themes/mcp-modern.css` as a reusable custom Marp theme.
+- Added `contents/themes/mcp-modern.css` as a reusable custom Marp theme.
 - Kept the Markdown source as the primary artifact.
 - Added section-divider slides for Frontend, Cloud, and Developer MCPs.
 - Mixed narrative explanation slides with targeted Q&A slides instead of making every slide a question.

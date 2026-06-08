@@ -16,7 +16,7 @@ npm run slide:verify
 For a specific deck:
 
 ```sh
-bash scripts/verify-slides.sh slides/example.md
+bash scripts/verify-slides.sh contents/templates/slides/example.md
 ```
 
 ## Inspection Points
@@ -33,4 +33,4 @@ bash scripts/verify-slides.sh slides/example.md
 - Convert 5 or more vertical items into `.grid.two`.
 - Split a dense slide into a claim slide and an evidence slide.
 - Move source URLs and caveats into `.caption`.
-- Replace one-off inline styles with classes from `theme/research.css`.
+- Replace one-off inline styles with classes from `contents/themes/research.css`.

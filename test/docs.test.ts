@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const contentRoot = join(process.cwd(), "src/content/docs");
+const contentRoot = join(process.cwd(), "contents");
+const contentSections = ["research", "slides", "sources", "tasks", "themes"];
 
 function markdownFiles(dir = contentRoot): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -12,9 +13,25 @@ function markdownFiles(dir = contentRoot): string[] {
   });
 }
 
+function distributedMarkdownFiles(): string[] {
+  return contentSections.flatMap((section) => markdownFiles(join(contentRoot, section)));
+}
+
 describe("documentation content", () => {
-  it("keeps all distributed markdown under src/content/docs", () => {
-    const files = markdownFiles().map((file) => relative(contentRoot, file));
+  it("keeps reusable slide assets under contents", () => {
+    const root = process.cwd();
+
+    expect(existsSync(join(root, "contents/templates/slides/example.md"))).toBe(true);
+    expect(existsSync(join(root, "contents/themes/research.css"))).toBe(true);
+    expect(existsSync(join(root, "contents/themes/mcp-modern.css"))).toBe(true);
+    expect(existsSync(join(root, "slides"))).toBe(false);
+    expect(existsSync(join(root, "theme"))).toBe(false);
+    expect(existsSync(join(root, "themes"))).toBe(false);
+  });
+
+  it("keeps all distributed markdown under top-level contents sections", () => {
+    const root = process.cwd();
+    const files = distributedMarkdownFiles().map((file) => relative(contentRoot, file));
 
     expect(files).toEqual([
       "research/mcp-slide-research.md",
@@ -23,10 +40,13 @@ describe("documentation content", () => {
       "tasks/research-tasks.md",
       "themes/mcp-internal-presentation.md",
     ]);
+
+    expect(existsSync(join(root, "src/content"))).toBe(false);
+    expect(existsSync(join(contentRoot, "docs"))).toBe(false);
   });
 
   it("requires frontmatter titles for automatic navigation", () => {
-    for (const file of markdownFiles()) {
+    for (const file of distributedMarkdownFiles()) {
       const text = readFileSync(file, "utf8");
       expect(text.startsWith("---\n"), `${file} should start with frontmatter`).toBe(true);
       expect(text).toMatch(/\ntitle: .+\n/);
