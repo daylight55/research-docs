@@ -1,3 +1,11 @@
+---
+title: MCP internal presentation research notes
+navTitle: Research notes
+description: MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。
+kind: research
+order: 20
+---
+
 # MCP internal presentation research notes
 
 Date: 2026-06-07
@@ -21,7 +29,72 @@ This is a technical specification review plus ecosystem survey, not a formal aca
 - Chrome DevTools MCP: https://github.com/ChromeDevTools/chrome-devtools-mcp
 - AWS MCP Server GA / Agent Toolkit: https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/ and https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/
 - AgentCore Gateway / Identity: https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html, https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-MCPservers.html, and https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html
+- JSON-RPC 2.0 specification: https://www.jsonrpc.org/specification
+- MCP lifecycle/tools/transports/sampling specification pages: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle, https://modelcontextprotocol.io/specification/2025-11-25/server/tools, https://modelcontextprotocol.io/specification/2025-11-25/basic/transports, and https://modelcontextprotocol.io/specification/2025-11-25/client/sampling
+- Anthropic tool use docs: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview and https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
+- OpenAI function-calling fine-tuning cookbook and RFT guide: https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling and https://developers.openai.com/api/docs/guides/reinforcement-fine-tuning
+- Hugging Face Agents Course function-calling fine-tuning note: https://huggingface.co/learn/agents-course/en/bonus-unit1/fine-tuning
 - GitHub repository star counts: fetched via GitHub REST API on 2026-06-07.
+
+## 2026-06-08追加調査: MCPを含むLLM action surfaceの広がり
+
+この発表ではMCPを主題にするが、MCPだけが「LLMが外部世界を扱う方法」ではない。2026年時点では、function calling、built-in tools、connectors、Remote MCP、ChatGPT Apps / Apps SDK、Codex plugins/apps、browser use、computer use、WebMCP、Agent2Agentのように、LLMが情報を取得し、構造化された指示を出し、実アクションへつなげる選択肢が増えている。
+
+### Evidence matrix
+
+| 選択肢 | 一次情報で確認した内容 | スライド上の扱い |
+|---|---|---|
+| OpenAI tools / function calling | OpenAIのtools guideはbuilt-in tools、function calling、tool search、remote MCP serversでmodel capabilityを拡張できると説明している。function callingはcustom codeを呼び、追加data/capabilityにアクセスさせる仕組み。 | MCPをtool callingの代替ではなく、tool discovery/execution/authを含む接続面として説明する。 |
+| OpenAI Apps SDK | Apps SDK quickstartは、ChatGPT appにはMCP serverでcapability/toolsを公開し、任意でChatGPT内iframeにweb component UIを表示すると説明している。 | MCP Apps / UI-bearing surfaceの流れと、MCPがアプリ体験にも広がる文脈で扱う。 |
+| OpenAI / Anthropic computer use | OpenAI computer useはmodelがscreenshotでUIを観察し、click/type/scrollなどのactionsを返し、code側が実行して次のscreenshotを返すloop。Anthropicもscreenshot、mouse、keyboard、desktop automationを説明している。 | browser/computer useは「UIを見て操作する」選択肢として、MCPのstructured tool callと比較する。 |
+| Codex App / Agent Skills | Codex manualではCodex Appがparallel threads、worktrees、automations、Git操作、terminal、in-app browser、browser use、computer use、skills、plugins、MCP supportを持つと説明されている。Agent Skillsは再利用可能なworkflowを持ち、progressive disclosureで必要時に読み込まれる。Pluginsはskills、apps、MCP serversをbundleできる。 | Codex AppはMCPだけでなく、terminal/browser/computer/pluginsを組み合わせるagent execution environmentとして紹介する。さらにSkillは手順、MCPは外部操作という分担を冒頭で示す。 |
+| MCP公式 | MCP公式introは、MCPをAI applicationとexternal systemsを接続するopen-source standardとし、data sources、tools、workflowsにアクセスする仕組みと説明している。 | MCPの中心定義として扱う。 |
+| Chrome WebMCP | Chromeの比較ページは、MCPはbackend向け、WebMCPはfrontend向けで、JavaScriptやHTML annotationsによりbrowser内agentがweb UIを理解・操作するための標準案と説明している。 | Frontend上のcapability宣言として、MCPとは別の広がりとして扱う。 |
+| Google Agent2Agent | GoogleのA2A発表は、agent同士が情報交換しactionをcoordinationするopen protocolと説明し、MCPを補完するものと位置づける。 | MCPはagent-to-tool、A2Aはagent-to-agentの補完関係として短く紹介する。 |
+| Anthropic advanced tool use | Anthropicは、MCP tool definitionsは重要なcontextだが、多数serverを接続するとtokensが増えると説明。5 server / 58 toolsでrequest前に約55K tokens、Jira追加でさらに約17K、100K超overheadになり得る例を示す。Tool searchは約77K -> 約8.7K、programmatic tool callingは43,588 -> 27,297 tokensの削減例を示す。 | token比較グラフの公開値として使う。ただし「MCPなら常に少ない」ではなく「tool surfaceの設計がtoken効率を決める」と説明する。 |
+
+### なぜ冒頭で広い地図を出すか
+
+MCPだけを突然説明すると、「function callingやCLIと何が違うのか」「Codex Appやbrowser操作とどう使い分けるのか」が見えにくい。実務上は、agentが外部世界へ出る経路を次のように整理すると理解しやすい。
+
+1. **Model output format**: function calling / tool calling。modelが`name + arguments`を出す。
+2. **Provider tools**: web search、file search、computer useなど、providerが用意するbuilt-in capability。
+3. **Connector / Remote MCP**: SaaSや社内APIを認証付きtool catalogとして使う。
+4. **Agent environment**: Codex Appのようにterminal、browser、computer use、plugins、MCP、skillsを束ねる実行環境。
+5. **Frontend capability**: WebMCPのようにweb page側がbrowser agent向けcapabilityを宣言する。
+6. **Agent-to-agent**: A2Aのようにagent間でtaskやmessageをやり取りする。
+
+このスライドは、その中でも **「既存APIや業務systemをagent-nativeな接続面として公開するにはどう設計するか」** に焦点を置く。そのため、MCP server構築、Remote MCP、description/schema、auth、token効率、provider controlを中心に扱う。
+
+### Agent Skills + MCP: 手順と操作面を分離する
+
+Agent SkillsとMCPを組み合わせると、AI Agentが支援できる範囲を「助言」から「調査、実行、検証、報告」へ広げやすい。重要なのは、SkillとMCPを同じものとして扱わず、次のように責務を分けること。
+
+| レイヤー | 何を持つか | なぜ効くか |
+|---|---|---|
+| Agent Skill | workflow、判断基準、検証手順、出力形式、参考資料、必要ならhelper script | agentが毎回ゼロから手順を推測せず、チームの実務手順に沿って動ける。 |
+| MCP server | 外部systemのtool/resource/prompt、schema、auth、scope、structured result、承認境界 | agentがUIやCLIを推測せず、宣言済みcapabilityとして外部systemを扱える。 |
+| Plugin/App | skill、app integration、MCP server config、assetを配布する単位 | 個人の暗黙知ではなく、team workflow packageとして再利用できる。 |
+
+Codex manualでは、SkillsはCLI、IDE extension、Codex appで利用でき、必要時に`SKILL.md`を読むprogressive disclosureでcontextを抑えると説明されている。また、MCPは外部tools/shared systemsへの接続面であり、実務上はSkillと組み合わせると有効だと説明されている。Pluginsはskills、apps、MCP serversをbundleできるため、チーム内で「PR review skill + GitHub/Sentry MCP」「incident triage skill + CloudWatch/Sentry/Slack MCP」のような支援パッケージを配布できる。
+
+設計上の示唆:
+
+- Skill descriptionには「いつ起動すべきか」「対象外は何か」「使うMCPや確認手順」を短く前方に書く。descriptionが長すぎると初期context上で短縮される可能性がある。
+- MCP側のtool descriptionには、agentが選択を誤らないように、入力条件、権限境界、副作用、返却粒度、失敗時の扱いを書く。
+- 複数Agentで使う場合は、Skillをworkflowのsource of truthにし、MCP設定はproject/user/orgの管理単位で分ける。社内標準の支援手順はrepo-scoped skillやplugin、個人作業の好みはuser skillに置く。
+- MCPが使える外部操作はMCPを前提にし、browser/computer useはUI確認やMCP未対応の例外経路として位置づける。
+
+### Token比較の扱い
+
+Token使用量はmodel、client、tool定義、result size、retrieval strategy、screenshot解像度、ログ量、承認UI、会話履歴で大きく変わる。したがってスライドのCLI/Browser/MCP token rangeは、厳密なベンチマークではなく「同じ作業をagentにさせるときにcontextへ入りやすい情報量」の概念比較である。
+
+ただし、次の定性的傾向は複数の一次情報と実務経験に整合する。
+
+- Browser/computer useはscreenshot、DOM、UI state、待機、再試行が入りやすく、視覚検証には強いがtoken/latencyが増えやすい。
+- CLIはstdout/stderr、help、stack trace、raw logが入りやすく、local executionには強いがservice操作では出力制御が必要。
+- MCPはtool名、description、schema、structured result、pagination/output capを設計できるため、反復service/data/actionではcontextを小さく保ちやすい。
+- ただしMCPも、巨大なtool catalogを全部model contextへ入れるとtoken overheadが大きい。Anthropicの公開例はこのリスクを定量的に示している。
 
 ## Expanded beginner-friendly notes, 2026-06-07
 
@@ -47,6 +120,8 @@ MCPはFunction CallingやTool Callingの代替ではない。Function Callingは
 OpenAPIはHTTP APIの契約を記述する仕様。MCPはAI clientに対してResources、Tools、Promptsを提供するプロトコル。OpenAPIはMCP serverを作るための良い入力になり得るが、OpenAPIをそのまま全部MCP公開するのは危険。admin、internal、write系endpointは、AIが呼んでよい操作かを別途判断する必要がある。
 
 API Gatewayは人間/アプリケーション向けAPIの入口。MCP serverはAI agent向けの入口。両者は役割が異なる。実運用では、既存API Gatewayの後ろにあるAPIをMCP adapterから呼び出す構成がわかりやすい。
+
+![MCP Host Client Server architecture](../slides/diagrams/mcp-architecture.svg)
 
 | 仕組み | 主な役割 | MCPとの関係 |
 |---|---|---|
@@ -122,9 +197,322 @@ Streamable HTTP:
 - 社内共通・Claude custom connector・SaaS連携: Streamable HTTP。
 - 旧SSE serverは残っているが、新規ならHTTPを優先する。
 
+### 6.1 JSON-RPCで実際に何が送られるか
+
+MCPのmessageはJSON-RPC 2.0のrequest、response、notificationとして表現される。JSON-RPC 2.0自体はtransport-agnosticなRPC仕様で、requestには`jsonrpc: "2.0"`、`method`、必要に応じて`params`、response対応のための`id`が入る。`id`がないrequestはnotificationで、responseを返さない。MCPはこの汎用RPC envelopeの`method`名として`initialize`、`tools/list`、`tools/call`、`resources/read`などを定義している。
+
+MCPの実務理解では、次の4種類を押さえると十分。
+
+| 種類 | 例 | 何のため |
+|---|---|---|
+| lifecycle | `initialize`, `notifications/initialized` | protocol version、capability、client/server情報を交換する |
+| discovery | `tools/list`, `resources/list`, `prompts/list` | LLM/hostが使える能力を発見する |
+| invocation | `tools/call`, `resources/read` | 実際にtoolを呼ぶ、resourceを読む |
+| control/error | `notifications/cancelled`, JSON-RPC `error` | timeout、cancel、protocol errorを扱う |
+
+#### initialize
+
+接続直後にclientがserverへ送る。ここでprotocol version、client capability、client implementation情報を渡す。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "sampling": {},
+      "elicitation": { "form": {} }
+    },
+    "clientInfo": {
+      "name": "claude-code",
+      "version": "1.0.0"
+    }
+  }
+}
+```
+
+serverは対応version、server capability、server情報、任意のinstructionsを返す。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {
+      "tools": { "listChanged": true },
+      "resources": { "listChanged": true }
+    },
+    "serverInfo": {
+      "name": "inventory-mcp",
+      "version": "0.1.0"
+    },
+    "instructions": "Use read tools before write tools."
+  }
+}
+```
+
+その後、clientは`notifications/initialized`を送って通常運用へ入る。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/initialized"
+}
+```
+
+#### tools/list
+
+clientはserverが公開するtoolを取得する。ここで返る`name`、`description`、`inputSchema`、必要なら`outputSchema`が、host側でLLMに渡されるtool定義の材料になる。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "result": {
+    "tools": [
+      {
+        "name": "inventory.search_items",
+        "title": "Search inventory items",
+        "description": "Search inventory items by keyword. Use this before reserving stock when the exact SKU is unknown. Returns at most 20 items with stable item IDs.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Keyword, product name, or SKU fragment."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 10
+            }
+          },
+          "required": ["query"],
+          "additionalProperties": false
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "item_id": { "type": "string" },
+                  "name": { "type": "string" },
+                  "stock": { "type": "integer" }
+                },
+                "required": ["item_id", "name", "stock"]
+              }
+            }
+          },
+          "required": ["items"]
+        }
+      }
+    ]
+  }
+}
+```
+
+#### tools/call
+
+LLMが「このtoolを使うべき」と判断すると、host/clientはMCP serverへ`tools/call`を送る。LLM自身がHTTP APIを叩くのではない。LLMはtool名とargumentsを生成し、hostが承認、validation、transport、authを処理してserverへ送る。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "inventory.search_items",
+    "arguments": {
+      "query": "notebook",
+      "limit": 5
+    }
+  }
+}
+```
+
+serverはtool resultを返す。自然文の`content`だけでなく、機械処理しやすい`structuredContent`を返せる。`outputSchema`を定義した場合、serverはそれに合うstructured resultを返す必要があり、clientは検証できる。
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Found 1 item: Notebook A (sku-001), stock 42."
+      }
+    ],
+    "structuredContent": {
+      "items": [
+        {
+          "item_id": "sku-001",
+          "name": "Notebook A",
+          "stock": 42
+        }
+      ]
+    },
+    "isError": false
+  }
+}
+```
+
+#### errors
+
+MCPでは「JSON-RPC protocol error」と「tool execution error」を分ける。protocol errorはmethod名不正、params不正、version不一致のようなRPC構造の問題。tool execution errorは、業務API側のvalidation、rate limit、権限不足など、tool実行上の問題で、`isError: true`のtool resultとして返せる。
+
+Protocol error:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "error": {
+    "code": -32602,
+    "message": "Unknown tool: inventory.delete_everything"
+  }
+}
+```
+
+Tool execution error:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Cannot reserve item: requested quantity exceeds available stock. Retry with quantity <= 42."
+      }
+    ],
+    "isError": true
+  }
+}
+```
+
+実装方針:
+
+- protocol errorはclient/server実装やschema不一致の問題として扱う。
+- tool execution errorはLLMが自己修正できるよう、原因、制約、retry guidanceを短く返す。
+- `structuredContent`と`outputSchema`を使うと、後続tool callやUI表示で壊れにくい。
+- `content`へ巨大なraw logを入れず、summary、stable ID、paginationを返す。
+
+### 6.2 JSON-RPCはtransportでどう運ばれるか
+
+stdio:
+
+- clientがserver processを起動する。
+- stdin/stdoutにnewline-delimitedなJSON-RPC messageを流す。
+- stdoutはprotocol専用。通常ログをstdoutへ出すとclientがJSON-RPCとして読んで壊れる。
+- stderrはログ用途に使える。
+
+Streamable HTTP:
+
+```http
+POST /mcp HTTP/1.1
+Authorization: Bearer <access_token>
+Accept: application/json, text/event-stream
+Content-Type: application/json
+MCP-Protocol-Version: 2025-11-25
+MCP-Session-Id: 1868a90c...
+```
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "inventory.search_items",
+    "arguments": { "query": "notebook" }
+  }
+}
+```
+
+要点:
+
+- clientからserverへのJSON-RPC messageはPOSTで送る。
+- responseは`application/json`の単一JSON、または`text/event-stream`のSSE streamで返る。
+- serverが`MCP-Session-Id`を返した場合、clientは後続requestで同じsession headerを付ける。
+- HTTP利用時は交渉済みversionを`MCP-Protocol-Version` headerで送る。
+- Remote/local HTTP serverはOrigin validation、localhost bind、authを設計する。
+
+### 6.3 tool説明文はどのようにLLMへ渡るか
+
+MCP serverがLLMへ直接promptを送るわけではない。基本フローは次の通り。
+
+```text
+MCP server
+  -> tools/listでtool metadataを返す
+MCP host/client
+  -> tool name / description / inputSchema / outputSchema / annotationsを受け取る
+  -> 使用中のmodel provider APIに合うtool/function schemaへ変換する
+LLM
+  -> user prompt + system prompt + tool definitionsを見て、tool_use/tool_callを生成する
+MCP host/client
+  -> tool_useをMCP tools/callに変換してserverへ送る
+```
+
+公開情報から言えること:
+
+- MCP tools specはtoolを「model-controlled」と説明しており、modelがcontextとuser promptに基づいてtoolを発見・呼び出せる設計である。ただしhuman-in-the-loopや承認UIが推奨される。
+- Anthropic docsは、Claude APIに`tools`を渡すと、tool定義、tool設定、user system promptからtool use用のspecial system promptが構築されると説明している。つまりdescriptionとschemaは単なるドキュメントではなく、model input tokenとして扱われる。
+- Anthropic docsは、Claudeがuser requestとtool descriptionに基づいてtoolを呼ぶか判断すると説明している。`tool_choice`でauto/any/specific/noneを制御でき、strict tool useでschema一致を強められる。
+- OpenAI Cookbookは、`tools` parameterがfunction仕様をmodelへ渡し、modelが仕様に沿ったargumentsを生成できるようにするためのものだと説明している。APIやmodelは関数を実行せず、実行はapplication側の責任である。
+- Gemini docsも、function callingではmodelが必要性を判断してstructured dataでfunctionとparametersを出力し、applicationが実行して結果を戻す、と説明している。
+
+したがってMCP server開発者が「チューニング」する対象は、まずLLM model本体ではなく、tool surfaceである。
+
+1. tool名: service/resource/actionがわかる名前にする。
+2. description: 何をするか、いつ使うか、いつ使わないか、返すもの、制約を書く。
+3. schema: required、enum、format、minimum/maximum、additionalPropertiesを使い曖昧さを減らす。
+4. output: structuredContent、stable IDs、summary、paginationで次の判断を助ける。
+5. error: retry可能な制約とmissing scopeを短く返す。
+
+### 6.4 MCP接続にLLM専用fine-tuningは必要か
+
+結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP `tools/call`へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。
+
+ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。
+
+- OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。
+- OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。
+- Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。
+
+この情報をMCP文脈へ翻訳すると、次のようになる。
+
+| レイヤー | 誰が担うか | MCP server開発者の設計対象 |
+|---|---|---|
+| MCP protocol | host/client/server SDK | JSON-RPC lifecycle、transport、auth、schema validation |
+| tool metadata | MCP server | name、description、inputSchema、outputSchema、annotations |
+| tool call generation | LLM + host/model API | provider固有のtool/function calling能力 |
+| model tuning | model providerまたはmodel owner | tool選択精度、schema遵守、multi-tool planning |
+
+社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。
+
 ### 7. Authorization: なぜOAuth 2.1とaudienceが重要か
 
 Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。
+
+![Remote MCP OAuth connection flow](../slides/diagrams/mcp-remote-auth-flow.svg)
 
 初心者向けに言うと、Remote MCPの認証で避けたい事故は3つ。
 
@@ -137,6 +525,8 @@ MCP specはtoken passthroughを禁じ、Resource Indicatorsでtokenの対象reso
 ### 8. 既存APIをMCP化するときの設計原則
 
 既存APIをMCP対応させる最短路は、API本体を書き換えることではない。APIはそのまま残し、MCP adapterを追加する。
+
+![Existing API to MCP adapter flow](../slides/diagrams/mcp-api-adapter-flow.svg)
 
 推奨構成:
 
@@ -656,6 +1046,400 @@ Claude.ai custom connector usage:
 - If the user is logged into Claude Code with a Claude.ai account, Claude.ai connectors can also appear in Claude Code. Use `/mcp` to inspect and authenticate them.
 - If a connector does not appear in Claude Code, check `/status`; API-key, Bedrock, Vertex, or third-party auth modes can prevent Claude.ai connectors from loading.
 - Treat every connector as a privileged integration. Review scopes, disable unnecessary tools, and be careful with "always allow" behavior for write-capable tools.
+
+## Multi-agent MCP configuration strategy
+
+When multiple agents or IDEs use the same MCP servers, the main design problem is not "where do I paste this JSON?". It is "which settings are shared as product policy, and which settings stay personal?" The practical rule is:
+
+- Project config defines the shared capability: server name, URL/command, transport, allowed environment names, tool allowlists, and version pins.
+- User config defines personal access: OAuth login state, API tokens, local paths, optional personal servers, and per-user deny decisions.
+- Organization config defines policy: fixed approved server set, allowlists/denylists, sandbox rules, audit/telemetry expectations, and whether users can add arbitrary servers.
+- Remote MCP or a gateway should be preferred for team-wide services. Local `stdio` is useful for local files, Git, and one-developer tools, but it is harder to govern consistently across machines.
+
+The important detail is that MCP client configuration formats are not yet identical across tools. Claude Code and Cursor use `mcpServers`. VS Code uses `servers`. Codex CLI uses TOML. Microsoft APM exists partly to solve this by declaring dependencies once and writing runtime-specific config files.
+
+### Project/user/org scope by client
+
+| Client / runtime | Project scope | User scope | Organization / managed scope | Config key |
+|---|---|---|---|---|
+| Claude Code | `.mcp.json` at repo root; checked into VCS for team-shared servers | `~/.claude.json`; available across projects for that user | `managed-mcp.json`, `allowedMcpServers`, `deniedMcpServers`, managed settings | `mcpServers` |
+| VS Code / GitHub Copilot | `.vscode/mcp.json`; share with project | user profile `mcp.json`; can sync via Settings Sync | `chat.mcp.access`, enterprise policies, sandbox, discovery controls | `servers` |
+| Cursor | `.cursor/mcp.json`; project-specific | `~/.cursor/mcp.json`; global | extension API / enterprise automation can register dynamically | `mcpServers` |
+| Codex CLI | project `.codex/config.toml` where supported | `~/.codex/config.toml` | distribute via repo policy or package manager | `[mcp_servers.*]` |
+| Claude.ai custom connectors | not repo-file based | user connects/authenticates to connector | Team/Enterprise admin adds connector, users authenticate individually | connector settings |
+| AWS AgentCore Gateway / Azure API Management | central remote endpoint registered by clients | user or agent authenticates to endpoint | gateway/API management policy, OAuth/OIDC, rate limit, audit | client-specific wrapper |
+
+Decision guide:
+
+- Use project scope when the server is part of the repo workflow, such as Playwright MCP for frontend testing, an internal API MCP for this service, or a docs MCP tied to the project.
+- Use user scope when the server is personal or crosses many projects, such as Sentry, personal GitHub, browser automation, or a local note/search server.
+- Use organization scope when the server touches production systems, customer data, source control at broad scope, billing, cloud infrastructure, or privileged write operations.
+- Use Remote MCP for shared SaaS/internal APIs. Use `stdio` only when the server must run locally or access local files directly.
+
+### Quick command and config snippets
+
+Use these as slide-level examples. They are intentionally short; real production configs should add version pins, scopes, policy, observability, and secret handling.
+
+Claude Code commands:
+
+```bash
+# Remote MCP, project-shared
+claude mcp add --transport http inventory --scope project https://mcp.example.com/mcp
+
+# Remote MCP, personal cross-project tool
+claude mcp add --transport http sentry --scope user https://mcp.sentry.dev/mcp
+
+# Local stdio MCP for a project-local tool
+claude mcp add --transport stdio api-tools --scope project -- python tools/mcp_server.py
+
+# OAuth-backed Remote MCP; complete login inside Claude Code
+claude mcp add --transport http inventory https://mcp.example.com/mcp
+claude
+/mcp
+
+# Inspect and remove
+claude mcp list
+claude mcp get inventory
+claude mcp remove inventory
+```
+
+Claude Code project `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "${INVENTORY_MCP_URL:-https://mcp.example.com/mcp}",
+      "oauth": {
+        "scopes": "inventory:read inventory:reserve"
+      }
+    },
+    "api-tools": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["tools/mcp_server.py"]
+    }
+  }
+}
+```
+
+VS Code workspace `.vscode/mcp.json`:
+
+```json
+{
+  "inputs": [
+    { "type": "promptString", "id": "token", "password": true }
+  ],
+  "servers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "headers": { "Authorization": "Bearer ${input:token}" }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"],
+      "sandboxEnabled": true
+    }
+  }
+}
+```
+
+Cursor project `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "url": "https://mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:INVENTORY_MCP_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+Codex CLI project `.codex/config.toml` example:
+
+```toml
+[mcp_servers.inventory]
+transport = "http"
+url = "https://mcp.example.com/mcp"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp"]
+```
+
+Microsoft APM `apm.yml`:
+
+```yaml
+name: internal-agent-context
+dependencies:
+  mcp:
+    - io.github.microsoft/playwright-mcp
+    - name: inventory
+      registry: false
+      transport: http
+      url: https://mcp.example.com/mcp
+```
+
+APM commands:
+
+```bash
+apm install --mcp io.github.microsoft/playwright-mcp
+apm install --mcp inventory --transport http --url https://mcp.example.com/mcp
+apm install
+apm mcp list
+```
+
+Claude Code managed policy snippets:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com/mcp"
+    }
+  }
+}
+```
+
+```json
+{
+  "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [
+    { "serverUrl": "https://mcp.internal.example.com/*" }
+  ],
+  "deniedMcpServers": [
+    { "serverCommand": ["npx", "-y", "unapproved-package"] }
+  ]
+}
+```
+
+### Claude Code examples
+
+Project-shared `.mcp.json` should avoid raw secrets and should use stable server names:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "type": "http",
+      "url": "${INVENTORY_MCP_URL:-https://mcp.example.com/mcp}",
+      "oauth": {
+        "scopes": "inventory:read inventory:reserve"
+      },
+      "timeout": 60000
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@0.0.41"]
+    }
+  }
+}
+```
+
+Use scope intentionally:
+
+```bash
+# Team-shared repo definition
+claude mcp add --transport http inventory --scope project https://mcp.example.com/mcp
+
+# Personal server available across projects
+claude mcp add --transport http sentry --scope user https://mcp.sentry.dev/mcp
+
+# Private experiment for only this project path
+claude mcp add --transport stdio scratch --scope local -- node tools/mcp-dev.js
+```
+
+Claude Code precedence matters. When the same server name appears in multiple scopes, Claude Code connects once and uses the highest-precedence entry: local, project, user, plugin-provided, then Claude.ai connector. Entries are not field-merged. This means "same name, partial override" is a bad pattern; define the complete server entry at the intended scope.
+
+For managed organization control, Claude Code supports `managed-mcp.json` at system paths. It can force a fixed server set, disable MCP entirely, or combine fixed servers with allowlists/denylists. Do not store credentials in this file because system-level files are readable by users on the machine; use per-user OAuth, environment expansion, or a `headersHelper`.
+
+Managed Claude Code example:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    },
+    "company-internal": {
+      "type": "http",
+      "url": "https://mcp.internal.example.com/mcp",
+      "oauth": {
+        "scopes": "tools:read tickets:write"
+      }
+    }
+  }
+}
+```
+
+Policy example:
+
+```json
+{
+  "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [
+    { "serverUrl": "https://api.githubcopilot.com/*" },
+    { "serverUrl": "https://mcp.internal.example.com/*" }
+  ],
+  "deniedMcpServers": [
+    { "serverCommand": ["npx", "-y", "unapproved-package"] }
+  ]
+}
+```
+
+Use URL or command allowlist entries for enforcement. A server-name-only allowlist is weak because users choose the label.
+
+### VS Code / GitHub Copilot configuration
+
+VS Code stores MCP configuration in `mcp.json`, but its schema uses a top-level `servers` object rather than `mcpServers`.
+
+Workspace example in `.vscode/mcp.json`:
+
+```json
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "inventory-token",
+      "description": "Inventory MCP token",
+      "password": true
+    }
+  ],
+  "servers": {
+    "inventory": {
+      "type": "http",
+      "url": "https://mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${input:inventory-token}"
+      }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"],
+      "sandboxEnabled": true
+    }
+  },
+  "sandbox": {
+    "filesystem": {
+      "allowWrite": ["${workspaceFolder}"],
+      "denyRead": ["${userHome}/.ssh"]
+    },
+    "network": {
+      "allowedDomains": ["mcp.example.com"]
+    }
+  }
+}
+```
+
+Operational notes from VS Code docs:
+
+- `.vscode/mcp.json` is the right place for team-shared project servers.
+- `MCP: Open User Configuration` opens the user profile `mcp.json`; use it for personal global servers.
+- `MCP: Add Server` can write to Workspace or Global.
+- Dev Containers can declare MCP servers through `customizations.vscode.mcp.servers`; this is useful when the server should run inside the container rather than on the host.
+- VS Code can discover MCP config from other applications when `chat.mcp.discovery.enabled` is enabled.
+- Sandbox is available on macOS/Linux for local stdio servers and can restrict file/network access; it is not available on Windows.
+- Enable/disable state is stored separately from `mcp.json`, so a shared file can remain stable while each developer toggles tools locally.
+
+### Cursor configuration
+
+Cursor uses `.cursor/mcp.json` for project-specific tools and `~/.cursor/mcp.json` for global tools. Its JSON shape is closer to Claude Code:
+
+```json
+{
+  "mcpServers": {
+    "inventory": {
+      "url": "https://mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:INVENTORY_MCP_TOKEN}"
+      }
+    },
+    "local-server": {
+      "command": "python",
+      "args": ["${workspaceFolder}/tools/mcp_server.py"],
+      "env": {
+        "API_KEY": "${env:API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Cursor supports `stdio`, SSE, and Streamable HTTP. Its CLI can reuse the configured MCP servers, and `cursor-agent mcp list` shows configured servers and whether the source is project or global. Cursor also exposes an extension API for programmatic registration without directly editing `mcp.json`, which is useful for enterprise setup automation.
+
+### Microsoft APM as a multi-agent config layer
+
+Microsoft's Agent Package Manager (APM) is not an MCP client by itself. It is a dependency manager for agent context. The useful idea for this presentation is that `apm.yml` can become a single source of truth for skills, prompts, instructions, plugins, and MCP servers, then `apm install` writes runtime-specific files for GitHub Copilot, Claude Code, Cursor, Codex, Gemini, OpenCode, and Windsurf.
+
+Minimal `apm.yml` pattern:
+
+```yaml
+name: internal-agent-context
+version: 1.0.0
+
+dependencies:
+  mcp:
+    - io.github.github/github-mcp-server
+    - io.github.microsoft/playwright-mcp
+    - name: inventory
+      registry: false
+      transport: http
+      url: https://mcp.example.com/mcp
+      headers:
+        Authorization: "Bearer ${INVENTORY_MCP_TOKEN}"
+```
+
+APM writes different target files because each harness has a different schema:
+
+| Harness | File | Shape |
+|---|---|---|
+| VS Code / Copilot | `.vscode/mcp.json` | JSON `servers` |
+| Claude Code | `.mcp.json` or `~/.claude.json` | JSON `mcpServers` |
+| Cursor | `.cursor/mcp.json` | JSON `mcpServers` |
+| Codex CLI | `.codex/config.toml` or `~/.codex/config.toml` | TOML `[mcp_servers.*]` |
+| Gemini CLI | `.gemini/settings.json` or `~/.gemini/settings.json` | JSON `mcpServers` |
+
+This is a good fit when a team wants many agents to see the same curated server set but does not want to maintain five config syntaxes by hand. The tradeoff is that APM becomes another supply-chain dependency, so lockfiles, policy files, and CI checks should be part of adoption.
+
+### Azure API Management / API Center angle
+
+Microsoft Azure API Management (APIM) is a different concept from APM. APIM can expose REST APIs managed in API Management as remote MCP servers, and can also front existing MCP-compatible servers. It is useful for service-provider governance:
+
+- Existing REST operations can become MCP tools.
+- APIM can centralize authentication, authorization, rate limits, quotas, IP filtering, caching, and monitoring.
+- Azure API Center can register and discover MCP servers as a private enterprise registry.
+- Current Microsoft docs note that APIM MCP support focuses on tools and does not support MCP resources or prompts.
+
+For an enterprise provider, this is the pattern:
+
+```text
+Agent/IDE -> Remote MCP endpoint in APIM -> policy/auth/rate limit/audit -> existing API or MCP backend
+```
+
+This is similar in spirit to AWS AgentCore Gateway: a governed remote endpoint is easier for many agents to consume than many local stdio processes.
+
+### Maintenance checklist for shared MCP settings
+
+- Keep an internal registry: server name, owner, purpose, transport, auth model, data classification, write capability, production impact, and approved clients.
+- Pin package versions for `stdio` servers. Avoid `npx -y package` without a version in project-shared config.
+- For remote servers, prefer stable HTTPS URLs and OAuth. Avoid committing bearer tokens.
+- Review `tools/list` output when upgrading a server. Tool names, descriptions, and schemas are part of the contract seen by the model.
+- Keep server descriptions short and front-load safety-critical constraints.
+- Separate config from enablement. Let developers disable noisy tools locally without changing shared files where the client supports it.
+- Use sandbox or containers for local stdio servers that run arbitrary packages.
+- Log tool calls with user, server, tool, arguments class, result status, and correlation ID. Do not log secrets or full sensitive payloads.
+- Treat MCP server updates like dependency updates: check release notes, CVEs, tool-surface diffs, auth changes, and approval UX.
+- For organization rollout, start with read-only tools and a narrow allowlist, then add write tools with explicit user confirmation and audit.
 
 ## MCP server design rules for engineers
 
@@ -1255,6 +2039,38 @@ Rules to emphasize:
 - Token passthrough is forbidden.
 - Treat scopes as least-privilege and support incremental/step-up authorization where possible.
 
+## Maintenance and specification governance
+
+MCP is not maintained as an IETF RFC. The normative source is the Model Context Protocol specification and schema in the `modelcontextprotocol/modelcontextprotocol` GitHub organization and the published documentation at `modelcontextprotocol.io`.
+
+Current governance picture:
+
+- MCP has been established as "Model Context Protocol, a Series of LF Projects, LLC".
+- Anthropic announced on 2025-12-09 that it was donating MCP to the Agentic AI Foundation (AAIF), a directed fund under the Linux Foundation, co-founded by Anthropic, Block, and OpenAI, with support from Google, Microsoft, AWS, Cloudflare, and Bloomberg.
+- The governance document says governance changes approved by the project must also be approved by LF Projects, LLC.
+- Technical governance is individual-maintainer based, not company-seat based.
+- Lead Maintainers, Core Maintainers, and Maintainers together form the MCP Steering Group.
+- Core Maintainers steer the MCP specification and overall project direction. Lead Maintainers have final decision authority.
+- Proposed major specification changes use Specification Enhancement Proposals (SEPs).
+- Working Groups produce concrete deliverables such as SEPs, reference implementations, SDK work, registry work, or tooling. Interest Groups collect problems, use cases, and recommendations.
+
+What is "RFC" and what is not:
+
+- MCP itself is not an RFC. It is an open protocol specification maintained by the MCP project.
+- MCP uses JSON-RPC 2.0 for message envelopes. JSON-RPC 2.0 is a standalone specification, not an IETF RFC.
+- The MCP specification uses RFC 2119 / RFC 8174 terminology (`MUST`, `SHOULD`, `MAY`) to express requirement levels.
+- MCP authorization builds on standard OAuth/OIDC and RFC documents, including RFC 9728 Protected Resource Metadata, RFC 8414 Authorization Server Metadata, RFC 8707 Resource Indicators, PKCE, and OIDC Discovery.
+- Therefore the accurate phrasing is: "MCP is governed by the MCP project under LF Projects/AAIF, while parts of its auth/security design reference established RFC/OIDC standards."
+
+Maintenance responsibilities for a team adopting MCP:
+
+- Track the spec version your servers target. The current docs expose versioned specs such as `2025-06-18` and `2025-11-25`, plus `latest` and `draft`.
+- Treat schema changes as protocol changes. The official repo states that the TypeScript schema is the source of truth and JSON Schema is generated for compatibility.
+- Subscribe to spec changelogs and SEP activity for features that affect operations, especially authorization, transports, server identity, tool filtering, tasks, and registry metadata.
+- Keep SDK versions aligned with the protocol revision you support. Do not assume every client has implemented the newest optional feature.
+- Build compatibility tests around `initialize`, `tools/list`, `tools/call`, auth challenge handling, and cancellation/error behavior.
+- Document which features your server supports: tools, resources, prompts, elicitation, sampling, roots, and transport/auth combinations.
+
 ## History
 
 - 2024-11-25: Anthropic announced and open-sourced MCP, including the spec/SDKs, local MCP support in Claude Desktop, and a repository of prebuilt servers.
@@ -1263,6 +2079,7 @@ Rules to emphasize:
 - The initial transport included HTTP+SSE.
 - Later specs introduced Streamable HTTP, stronger auth, better security guidance, and richer capabilities.
 - 2025-11-25 latest spec changes include OIDC discovery support, Client ID Metadata Documents, incremental scope consent, icon metadata, URL elicitation, tool calling support in sampling, experimental tasks, SDK tiering, governance, and working/interest groups.
+- 2025-12-09: Anthropic announced the donation of MCP to the Linux Foundation's Agentic AI Foundation while keeping the MCP governance model community-driven.
 - The old third-party server list in `modelcontextprotocol/servers` has been retired in favor of the MCP Registry.
 - The MCP Registry preview launched 2025-09-08; its v0.1 API entered a freeze on 2025-10-24 according to the registry repo.
 
@@ -1943,6 +2760,122 @@ Operational:
 
 ## Future important points
 
+## Current state, roadmap, controversy, and non-developer expansion, 2026-06-08
+
+### Executive synthesis
+
+MCP is no longer just a developer tool protocol. The credible current picture is:
+
+- **High confidence**: MCP has moved from Anthropic-originated experiment to multi-vendor infrastructure. Anthropic launched MCP on 2024-11-25 as an open standard for connecting AI assistants to data systems and tools. On 2025-12-09 Anthropic donated MCP to the Agentic AI Foundation under the Linux Foundation, with backing from Anthropic, Block, OpenAI, Google, Microsoft, AWS, Cloudflare, and Bloomberg. Official roadmap and governance pages now describe WGs, IGs, SEPs, maintainers, and enterprise-readiness work.
+- **High confidence**: Current production pressure is not "how to send JSON-RPC" but **trust, authorization, discovery, observability, and enterprise administration**. The official roadmap lists transport/session work, agent communication, governance maturation, enterprise readiness, triggers, streamed/reference results, security/authorization, extension ecosystem, conformance tests, SDK tiers, and reference implementations.
+- **High confidence**: Authentication has converged around HTTP-based OAuth/OIDC patterns, but implementation maturity remains uneven. The latest authorization spec says authorization is optional overall, HTTP transports should follow the spec, stdio should retrieve credentials from the environment, and HTTP authorization is based on OAuth 2.1, RFC 8414 authorization server metadata, RFC 7591 dynamic client registration, RFC 9728 protected resource metadata, RFC 8707 resource indicators, PKCE, audience validation, and no token passthrough.
+- **Medium to high confidence**: The biggest controversy is security semantics, not syntax. Public security research and guidance focus on tool poisoning/line jumping, prompt injection through tool descriptions/resources/results, malicious or compromised MCP servers, overly broad scopes, token passthrough, confused deputy, registry/marketplace trust, local stdio command execution, and weak user approval UX.
+- **High confidence**: Non-developer use cases are expanding into CRM, finance, sales, service, enterprise knowledge, calendar/email/docs, analytics, and industry data. Examples include Salesforce hosted MCP servers exposing org data/flows/Apex/actions to AI clients, Claude finance connectors for FactSet/MSCI/LSEG/S&P Global, OpenAI connectors for Gmail/Calendar/Drive/Teams/Outlook/SharePoint/Dropbox, and NetSuite MCP/AI Connector workflows for finance, inventory, analytics, and role-based business access.
+
+### Timeline and controversy history
+
+![MCP trust and roadmap flow](../slides/diagrams/mcp-trust-roadmap.svg)
+
+| Period | What happened | Why it matters |
+|---|---|---|
+| 2024-11 | Anthropic announced MCP as an open standard for connecting AI assistants to content repositories, business tools, and development environments. | Framed MCP as the answer to fragmented, custom AI integrations. |
+| Early 2025 | Local stdio servers and developer tools drove adoption. | MCP proved useful quickly, but inherited local process privileges and tool-description trust issues. |
+| 2025-04 | Invariant Labs and Trail of Bits popularized tool poisoning / line jumping concerns. | The dispute shifted from "MCP is convenient" to "tool metadata is model input and can be adversarial before any tool call." |
+| 2025-03 to 2025-06 | Remote MCP and Streamable HTTP matured; OAuth-based authorization became central. | Production deployments needed internet-reachable servers, sessions, auth, and enterprise policy. |
+| 2025-11 | One-year spec release added/clarified major capabilities such as tasks, authorization improvements, extensions, and enterprise/security features. | MCP moved from local connector protocol toward production agent infrastructure. |
+| 2025-12 | Anthropic donated MCP to AAIF under the Linux Foundation. | Addressed vendor-neutrality concerns and formalized a multi-company governance direction. |
+| 2026 | NSA and other security groups published MCP security guidance; enterprise vendors expanded MCP support. | Current state is "adopt, but govern aggressively." |
+
+The debate has two legitimate sides:
+
+- Pro-MCP argument: A common protocol is better than every AI product inventing its own connector, screen scraping, plugin format, or tool schema. Provider-owned MCP servers can enforce scope, audit, consent, output caps, and domain-specific workflows.
+- Skeptical argument: MCP can collapse trust boundaries if hosts blindly inject tool descriptions into model context, users connect untrusted servers, local stdio commands run with broad privileges, or remote servers implement OAuth incorrectly. The protocol cannot by itself prove tool intent or sanitize downstream content.
+
+The balanced position for this deck:
+
+> MCP is becoming the standard integration layer for agentic systems, but production use is security engineering, not just connector installation.
+
+### Authentication and authorization methods
+
+| Method | Where it fits | Main risk / design point |
+|---|---|---|
+| stdio + environment credentials | local developer tools, local filesystem/git/browser servers | inherits local user privileges; secrets must not leak to stdout/logs |
+| HTTP Bearer token | simple remote/internal server | acceptable for controlled systems, but weak if no audience/scope validation |
+| OAuth 2.1 authorization code + PKCE | user-delegated Remote MCP | best general pattern for user consent and public clients |
+| Dynamic Client Registration | unknown MCP clients connecting to new auth servers | reduces manual registration friction but needs policy and validation |
+| Protected Resource Metadata / Authorization Server Metadata | client discovers auth server for protected MCP resource | prevents hardcoded auth assumptions |
+| Resource Indicators / audience binding | token is minted for a specific MCP server | critical to prevent token replay across services |
+| Step-up authorization / incremental scopes | request stronger scope only when needed | aligns least privilege with actual tool call |
+| Token exchange / OBO | gateway or agent invokes downstream APIs as user/agent | avoids forbidden token passthrough and preserves delegation chain |
+| Workload identity / DPoP / mTLS-like sender constraints | server-to-server and enterprise environments | roadmap/extension area for stronger proof-of-possession and machine identity |
+
+Implementation rule:
+
+- The MCP server should validate inbound tokens for itself.
+- The MCP server should obtain separate downstream credentials for backend APIs.
+- The MCP server should not forward the MCP client's token as-is to a downstream API.
+- Hosts should show approvals for sensitive calls and log what data is sent to remote servers.
+
+### Main future disputes
+
+| Dispute | Question | Likely direction |
+|---|---|---|
+| Trust and attestation | How does a host know a server/tool is the one it claims to be? | registry metadata, server cards, signatures, enterprise allowlists, conformance tests |
+| Tool metadata as prompt | Are descriptions executable influence over the model? | tool-description review, pinning, diff alerts, tool annotations, policy scanners |
+| Auth boundary | Is the user, client, host, server, or downstream API the principal? | resource indicators, OBO token exchange, workload identity, enterprise SSO |
+| Local stdio power | Should local MCP be treated like running arbitrary code? | explicit command display, sandboxing, trusted project config, org policy |
+| Marketplace/registry safety | Who vets public MCP servers? | official provider servers, trust tiers, vulnerability disclosure, private registries |
+| Large tool catalogs | How does a model select from thousands of tools? | tool search, programmatic tool calling, deferred loading, semantic routing |
+| UI-bearing MCP | Should MCP return interactive UI, not just text/data? | MCP Apps/extensions, sandboxed iframes, auditable postMessage JSON-RPC |
+| Event-driven agents | How do servers push changes or long-running results safely? | triggers, tasks, streamed/reference results, resumption protocols |
+
+### Non-developer use-case expansion
+
+MCP's early adoption was developer-heavy because GitHub, filesystem, browser, database, and cloud operations are easy to demonstrate. The current enterprise expansion is broader:
+
+| Domain | MCP value | Examples from public sources |
+|---|---|---|
+| Sales / CRM | pull account history, opportunities, case activity, stakeholders inside an AI assistant | Salesforce hosted MCP servers |
+| Finance | trusted market data, index data, DCF/morning notes, accounting workflows | Claude finance connectors for FactSet/MSCI/LSEG/S&P Global; NetSuite AI Connector |
+| Customer support | connect agents to tickets, CRM, order status, external systems | Salesforce Agentforce and Zendesk-style agent interoperability |
+| Enterprise knowledge | query Drive, SharePoint, Teams, Outlook, Dropbox, docs, internal knowledge | OpenAI connectors and Claude connectors |
+| Operations / analytics | discover trends, generate dashboards, query data warehouse, summarize incidents | NetSuite analytics workflow, internal ops MCP servers |
+| Life sciences / healthcare | connect research platforms and regulated data contexts | Claude connector directory categories such as life sciences/healthcare |
+| Retail / inventory | multimodal intake, inventory logging, sales order creation | NetSuite inventory and MCP Apps examples |
+| Low-code agents | business users attach external tools without building custom integrations | Copilot Studio MCP GA, Agentforce MCP client/server support |
+
+The pattern is not "everyone becomes a developer." It is "business users stay inside an assistant, while providers expose governed workflows through MCP."
+
+### Roadmap interpretation
+
+Official roadmap language is intentionally non-committal: items are priorities, not promises. Still, the direction is clear:
+
+1. **Transport scalability**: simplify HTTP/session/resumption and avoid proliferating official transports.
+2. **Agent communication**: tasks, retry, expiry, long-running operations, call-now/fetch-later semantics.
+3. **Governance maturation**: contributor ladder, WG delegation, public charters, SEP process.
+4. **Enterprise readiness**: audit trails, observability, SSO-integrated auth, gateway/proxy behavior, config portability.
+5. **On the horizon**: triggers, event-driven updates, streamed/reference results, security/authorization extensions, MCP Apps, skills-like composed capabilities, registry extension support.
+6. **Validation**: conformance tests, SDK tiers, reference implementations.
+
+For internal adoption, read the roadmap as an operating checklist:
+
+- Prefer official/provider-hosted Remote MCP where possible.
+- Treat local stdio as trusted code execution.
+- Require OAuth/OIDC, audience validation, scope minimization, and no token passthrough for remote servers.
+- Keep an approved server catalog.
+- Monitor tool changes and tool-call audit logs.
+- Separate read-only, write, and destructive tools.
+- Budget for security review; do not treat MCP as "just an API wrapper."
+
+### Source credibility notes
+
+- Official MCP docs/spec/roadmap/governance: primary source for normative requirements and roadmap intent.
+- Anthropic launch/donation posts: primary source for history, origin, and governance transition, but naturally pro-MCP.
+- Microsoft/Google/Salesforce/OpenAI/Claude/Cloudflare docs/blogs: strong evidence of ecosystem adoption; product-specific and promotional, so use for "what vendors are doing," not neutral risk assessment.
+- NSA, OWASP, Trail of Bits, Semgrep, Invariant/Snyk, academic/security papers: stronger evidence for threat categories; some claims are attack-lab or measurement-specific and should not be generalized without context.
+
+## Future important points
+
 Likely strategic points:
 
 - Remote MCP will matter more than local-only MCP as organizations standardize agent access to SaaS/internal tools.
@@ -1971,6 +2904,8 @@ Based on current official materials, present roadmap as "direction of travel", n
 
 ## Recommended slide structure
 
+The deck should not be pure Q&A. Use a normal explanatory story for the core concepts, then insert Q&A slides where engineers are likely to object or need a decision rule.
+
 1. Title: MCP: AI agents and external systems need a protocol
 2. Why now: agents need live data, tools, workflows, and governance
 3. What MCP is: open protocol + JSON-RPC + capability negotiation
@@ -1979,14 +2914,16 @@ Based on current official materials, present roadmap as "direction of travel", n
 6. Runtime flow: initialize -> discover -> approve -> call -> return
 7. Transports: stdio vs Streamable HTTP
 8. Auth: OAuth 2.1, Protected Resource Metadata, Resource Indicators, PKCE
-9. History: Anthropic launch to current spec/registry
-10. Use cases: engineering, enterprise knowledge, business operations, agent platforms
-11. Ecosystem: GitHub, Stripe, OpenAI connectors, registry, reference servers
-12. Developer MCPs we use: GitHub, Figma, Drive, Slack, Notion, Sentry, Firecrawl, Context7, OpenAI Docs
-13. Security rules: approval, least privilege, no token passthrough, trusted servers
-14. What changes for us: build once, connect many clients; but operate like production integrations
-15. Future points: registry, remote MCP, auth maturity, MCP Apps, durable tasks
-16. Summary: MCP is the integration layer for governed agentic work
+9. Multi-agent configuration: project/user/org settings, client schema differences, APM
+10. Governance: LF/AAIF, Steering Group, SEPs, RFC boundary
+11. History: Anthropic launch to current spec/registry
+12. Use cases: engineering, enterprise knowledge, business operations, agent platforms
+13. Ecosystem: GitHub, Stripe, OpenAI connectors, registry, reference servers
+14. Developer MCPs we use: GitHub, Figma, Drive, Slack, Notion, Sentry, Firecrawl, Context7, OpenAI Docs
+15. Security rules: approval, least privilege, no token passthrough, trusted servers
+16. What changes for us: build once, connect many clients; but operate like production integrations
+17. Future points: registry, remote MCP, auth maturity, MCP Apps, durable tasks
+18. Summary: MCP is the integration layer for governed agentic work
 
 ## Marp slide production method
 
@@ -2004,6 +2941,7 @@ Applied design decisions in this deck:
 - Added `themes/mcp-modern.css` as a reusable custom Marp theme.
 - Kept the Markdown source as the primary artifact.
 - Added section-divider slides for Frontend, Cloud, and Developer MCPs.
+- Mixed narrative explanation slides with targeted Q&A slides instead of making every slide a question.
 - Added `compact`, `dense`, `split`, `cards`, and `rank` classes to control information density per slide.
 - Used a calm technical palette with teal, vermilion, and violet accents rather than a single-hue theme.
 - Verified with `marp-cli` HTML export and PNG export for visual inspection.
