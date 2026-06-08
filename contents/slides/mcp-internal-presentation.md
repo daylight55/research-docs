@@ -1803,6 +1803,92 @@ _class: dense ch08
 ---
 
 <!--
+_class: dense ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## 最新仕様は「toolだけ」から広がっている
+
+| 仕様面 | 位置づけ | 何が増えるか | 導入時の確認 |
+|---|---|---|---|
+| MCP Apps | Stable extension | tool結果にinteractive UIを付ける | client support、sandbox、fallback |
+| URL elicitation | 2025-11-25 core | sensitive入力を外部URLへ逃がす | domain表示、user consent、OAuth境界 |
+| Sampling with tools | 2025-11-25 core | server側agent loopがclient経由でtool use | user approval、tool visibility、cost |
+| Structured output/resource links | 2025-11-25 core | resultをschemaとresource URIで扱う | validation、pagination、audience |
+| Tasks | experimental / extension化 | 長時間処理をtask handleで追跡 | opt-in、polling、TTL、cancel |
+
+ポイントは「できること」ではなく、**host/client/serverがその仕様を本当に実装しているか**。
+
+---
+
+<!--
+_class: compact ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## MCP Apps: tool結果がUIを持つ
+
+MCP Appsは、MCP serverが`ui://` resourceを宣言し、toolのmetadataからそのUIを参照する公式拡張。
+
+```text
+tools/list
+  tool._meta.ui.resourceUri = "ui://..."
+
+resources/read
+  text/html;profile=mcp-app
+
+host
+  sandboxed iframeでrender
+  postMessage + JSON-RPCでUIと通信
+```
+
+modelにはstructured result、userにはchart / form / dashboard / canvasを見せられる。
+
+---
+
+<!--
+_class: dense ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## Appsで増える設計責任
+
+| 設計対象 | 見るべき点 |
+|---|---|
+| Extension negotiation | `io.modelcontextprotocol/ui`をclient/server双方が宣言しているか |
+| Fallback | UI非対応clientでもtext/structured resultで意味が通るか |
+| Sandbox | iframe、origin、CSP、permission policy、外部通信domain |
+| UI state | UI操作をmodel contextへ戻す範囲、auditできる粒度 |
+| Tool calls from UI | UI発のtool callも承認/ログ/権限境界を通るか |
+| Product variance | Claude、ChatGPT、VS Codeなどでhost supportと制限が違う前提 |
+
+MCP Appsは「web appを埋める機能」ではなく、**agentの会話内に安全な操作面を出す仕様**。
+
+---
+
+<!--
+_class: dense ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## Tasks / elicitation / samplingの読み方
+
+| 機能 | 使いどころ | 注意 |
+|---|---|---|
+| Tasks | CI、batch処理、deploy、approval待ちなど長時間処理 | まだ実装差が大きい。polling/TTL/cancelを設計する |
+| Elicitation form | tool実行中に不足情報をuserから受け取る | password/token/payment credentialをformで取らない |
+| Elicitation URL | OAuth、payment、third-party authなどsensitive flow | client authとは別。domain表示とuser consentが必要 |
+| Sampling with tools | serverがclient経由でagentic subtaskを実行 | user control、prompt visibility、tool approvalが必要 |
+
+最新仕様ほど、**capability negotiation + user consent + fallback**をセットで見る。
+
+---
+
+<!--
 _class: compact ch08
 -->
 
@@ -1888,6 +1974,7 @@ MCPが使える場合にMCPを優先する理由:
 - 開発効果: API、frontend、cloud、repo理解を同じagent workflowへ統合できる
 - 定型化: SkillにMCPの使い方を書くと、後半の反復処理が安定する
 - 現実性: Figmaのようなquota付きMCPは、呼び出し回数も設計に入れる
+- 拡張性: Apps / Tasksなど最新仕様は、client supportとfallback確認が前提
 
 **MCPはagent時代のintegration layer。**
 
@@ -1953,8 +2040,12 @@ _class: dense ch09
 - JSON-RPC 2.0 specification: https://www.jsonrpc.org/specification
 - MCP lifecycle: https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle
 - MCP sampling: https://modelcontextprotocol.io/specification/2025-11-25/client/sampling
+- MCP elicitation: https://modelcontextprotocol.io/specification/2025-11-25/client/elicitation
+- MCP tasks: https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks
 - MCP authorization: https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization
 - MCP changelog: https://modelcontextprotocol.io/specification/2025-11-25/changelog
+- MCP Extensions SEP-2133: https://modelcontextprotocol.io/seps/2133-extensions
+- MCP Apps docs: https://modelcontextprotocol.io/extensions/apps
 - Anthropic tool use overview: https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview
 - Anthropic define tools: https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools
 - OpenAI function calling fine-tuning: https://developers.openai.com/cookbook/examples/fine_tuning_for_function_calling
@@ -2000,3 +2091,21 @@ _class: dense ch09
 - OpenAI MCP connectors: https://developers.openai.com/api/docs/guides/tools-connectors-mcp
 - Microsoft Copilot Studio MCP GA: https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/model-context-protocol-mcp-is-now-generally-available-in-microsoft-copilot-studio/
 - Salesforce Hosted MCP Servers GA: https://developer.salesforce.com/blogs/2026/04/salesforce-hosted-mcp-servers-are-now-generally-available
+
+---
+
+<!--
+_class: dense ch09
+-->
+
+<p class="chapter-label">09 / References</p>
+
+## 主な参照 6
+
+- MCP Apps stable specification: https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx
+- MCP Apps official repository: https://github.com/modelcontextprotocol/ext-apps
+- MCP Apps announcement: https://blog.modelcontextprotocol.io/posts/2026-01-26-mcp-apps/
+- MCP extension support matrix: https://modelcontextprotocol.io/extensions/client-matrix
+- MCP Tasks extension overview: https://modelcontextprotocol.io/extensions/tasks/overview
+- SEP-1865 MCP Apps: https://modelcontextprotocol.io/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp
+- SEP-2663 Tasks Extension: https://modelcontextprotocol.io/seps/2663-tasks-extension

@@ -2967,6 +2967,34 @@ Use the figures only as "official docs at time of writing" because Figma reserve
 
 Source note: the public docs table is compact and may omit some Enterprise row details in crawled text; cite the official rate-limit page rather than reproducing an exhaustive pricing table.
 
+### MCP Apps and latest feature specifications
+
+The latest material should be presented as a three-layer stack rather than as one undifferentiated "new MCP" bucket:
+
+1. **Stable core specification: MCP 2025-11-25.** The official specification page identifies 2025-11-25 as the latest core version. Important additions for this deck are URL mode elicitation, sampling with tools, JSON Schema 2020-12 defaults, icons/metadata, structured output/resource links, authorization discovery improvements, and experimental tasks.
+2. **Stable official extension: MCP Apps 2026-01-26.** The `modelcontextprotocol/ext-apps` repository lists the 2026-01-26 Apps specification as Stable. The extension identifier is `io.modelcontextprotocol/ui`; it defines UI resources using the `ui://` scheme, tool-to-UI linkage via metadata, HTML resources with `text/html;profile=mcp-app`, bidirectional JSON-RPC communication with the host, and mandatory sandboxing/security metadata.
+3. **Experimental or actively evolving surfaces.** Tasks are useful for durable, long-running execution, but the 2025-11-25 core page explicitly labels them experimental. Later extension material also frames task support as opt-in and client/server-dependent. Treat Tasks as a design direction to plan for, not as a capability every current MCP client can rely on.
+
+Slide implication: avoid saying "MCP now supports UI everywhere." The accurate claim is:
+
+- MCP Apps are a Stable official extension, not part of the minimum core conformance surface.
+- Host support varies, and extension support must be negotiated.
+- A server should provide a meaningful text or structured fallback for clients that do not support the UI extension.
+- UI-bearing MCP changes the trust boundary: the server supplies HTML/JavaScript resources, the host renders them in a sandboxed iframe, and UI-initiated tool calls must still pass through host-side approval/audit paths.
+
+This also connects to the Agent Skills theme. A skill should specify when to use Apps-capable MCP output versus when to fall back to screenshots, structured JSON, or local artifacts. For quota-limited MCPs such as Figma, the same skill should tell the agent to narrow the target frame/node before fetching design context, cache extracted context when possible, and avoid burning calls on broad exploration.
+
+#### Latest feature matrix for slides
+
+| Feature | Specification status | Deck framing |
+|---|---|---|
+| MCP Apps | Stable official extension, `io.modelcontextprotocol/ui` | Tool results can carry interactive UI, but only where host/client support is present. |
+| URL elicitation | Core 2025-11-25 | Sensitive or third-party interactions move to an external URL with clear user consent. |
+| Sampling with tools | Core 2025-11-25 | Servers can request client-side model work with tools, but user approval and visibility matter. |
+| Resource links and structured output | Core 2025-11-25 tools surface | Prefer bounded structured results and resource URIs over raw dumps. |
+| Tasks | Experimental in 2025-11-25; extension direction | Use for long-running jobs only after confirming support and lifecycle semantics. |
+| Extensions | Final SEP process | Optional, composable capabilities; not every MCP client implements every extension. |
+
 ### Roadmap interpretation
 
 Official roadmap language is intentionally non-committal: items are priorities, not promises. Still, the direction is clear:
