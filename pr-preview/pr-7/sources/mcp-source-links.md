@@ -75,6 +75,10 @@ order: 30
 
 ## Tool Use and Model-Side Generation
 
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- [Toolformer: Language Models Can Teach Themselves to Use Tools](https://arxiv.org/abs/2302.04761)
+- [OpenAI ChatGPT plugins announcement](https://openai.com/index/chatgpt-plugins/)
+- [OpenAI function calling and API updates announcement](https://openai.com/index/function-calling-and-other-api-updates/)
 - [OpenAI using tools](https://developers.openai.com/api/docs/guides/tools)
 - [OpenAI function calling](https://developers.openai.com/api/docs/guides/function-calling)
 - [OpenAI structured outputs guide](https://developers.openai.com/api/docs/guides/structured-outputs)

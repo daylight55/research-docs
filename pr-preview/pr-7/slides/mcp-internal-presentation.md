@@ -29,31 +29,41 @@ _class: compact ch00
 
 <p class="chapter-label">00 / 全体像</p>
 
-## なぜ今この話か
+## Agent tool利用の変遷
 
-<div class="logo-split">
-<div class="logo-copy">
+Agentが外部世界へ出る方法は、研究上の「action生成」から、APIのtool calling、UI操作、標準protocol、app化へ広がってきた。
 
-LLMが外部情報を得て、指示を出し、実アクションする経路が急に増えている。
-
-- Function/tool calling: modelが`name + arguments`を生成する
-- Built-in tools / connectors: web search、file search、SaaS data、Remote MCP
-- Apps SDK / ChatGPT Apps: MCP server + iframe UIでアプリ体験を作る
-- Codex App: skills、plugins、MCP、browser use、computer use、terminalを組み合わせる
-- WebMCP / A2A: frontend上のtool化、agent間連携も出てきている
-
-MCPは単独の流行ではなく、**LLMが外部世界を扱う設計面が増えている現象の一部**。
-
+<div class="timeline-grid">
+  <div><strong>2022</strong><span>ReAct</span><p>reasoning traceとactionを交互に生成し、検索・環境操作をtask loopに入れる。</p></div>
+  <div><strong>2023</strong><span>Plugins / Function calling</span><p>ChatGPT plugins、JSON schema付きfunction callingで「名前+引数」のtool callが主流化。</p></div>
+  <div><strong>2024</strong><span>Structured / Computer use</span><p>structured outputsでschema追従を強め、computer useで画面を見て操作する経路が登場。</p></div>
+  <div><strong>2024-11</strong><span>MCP</span><p>AnthropicがMCPを公開。data source / business tool / dev環境を標準protocolで接続する方向へ。</p></div>
+  <div><strong>2025</strong><span>Remote MCP / A2A</span><p>connectorはlocalからremote/gatewayへ。A2Aはagent間coordinationのprotocolとして補完。</p></div>
+  <div><strong>2026</strong><span>MCP Apps / WebMCP</span><p>tool resultがUIを持ち、web page側もbrowser agent向けcapabilityを宣言する流れへ。</p></div>
 </div>
-<div class="logo-panel">
-  <div class="logo-grid">
-    <div class="brand-card"><img src="logos/anthropic.svg" alt="Anthropic logo" /><strong>Claude / Host</strong><span>tool承認と実行環境</span></div>
-    <div class="brand-card"><img src="logos/model-context-protocol.svg" alt="MCP logo" /><strong>MCP</strong><span>外部接続の契約</span></div>
-    <div class="brand-card"><img src="logos/github.svg" alt="GitHub logo" /><strong>GitHub</strong><span>開発データとaction</span></div>
-    <div class="brand-card"><img src="logos/cursor.svg" alt="Cursor logo" /><strong>Cursor / IDE</strong><span>開発現場のagent入口</span></div>
-  </div>
+
+<p class="caption">流れは一方向の置き換えではない。現在は「model出力」「実行環境」「外部接続protocol」「UI/agent間連携」が重なって使われる。</p>
+
+---
+
+<!--
+_class: dense ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## 現状の技術地図
+
+<div class="surface-map">
+  <div class="surface-card"><strong>1. Model output</strong><span>Function / tool calling</span><p>modelが`name + arguments`を出す。実行と検証はapplication側の責務。</p></div>
+  <div class="surface-card"><strong>2. Provider tools</strong><span>Built-in tools</span><p>web search、file search、computer use、shellなどをprovider/runtimeが用意する。</p></div>
+  <div class="surface-card highlight"><strong>3. Connector protocol</strong><span>MCP / Remote MCP</span><p>tool catalog、schema、transport、auth、approvalを外部system側の契約にする。</p></div>
+  <div class="surface-card"><strong>4. Agent environment</strong><span>Codex / IDE / workflow runtime</span><p>terminal、browser、MCP、skills、pluginsを束ねて実作業を進める。</p></div>
+  <div class="surface-card"><strong>5. UI-bearing tools</strong><span>Apps SDK / MCP Apps / WebMCP</span><p>tool結果やweb page capabilityをUIとしてagent体験に組み込む。</p></div>
+  <div class="surface-card"><strong>6. Multi-agent</strong><span>A2A / handoff</span><p>1つのagentが全toolを抱えるのではなく、専門agent間でtaskを受け渡す。</p></div>
 </div>
-</div>
+
+<div class="callout">MCPの位置づけ: function callingの代替ではなく、外部systemをagent-nativeに公開するための接続面。</div>
 
 ---
 
@@ -73,28 +83,6 @@ MCPは「便利な拡張」ではなく、AI Agentに外部systemを使わせる
 - 制限: Figma MCPのように、plan/seatごとの呼び出し予算も設計対象になる
 
 この4点を軸に、既存API・開発tool・業務SaaSをagent-nativeな接続面として見直す。
-
----
-
-<!--
-_class: dense ch00
--->
-
-<p class="chapter-label">00 / 全体像</p>
-
-## LLMが外部世界を使う選択肢
-
-| 選択肢 | LLMが得る情報 | アクションの形 | 強い場面 |
-|---|---|---|---|
-| Function calling | tool名、description、schema | app側関数呼び出し | 自前アプリ内の軽量tool |
-| Built-in tools | provider定義tool | search / file / computerなど | すぐ使える標準能力 |
-| Connectors / Remote MCP | SaaS/APIのtool catalog | authenticated tool call | 組織data、業務SaaS |
-| Agent Skills | 手順、判断基準、参照資料 | workflow orchestration | 反復支援の型 |
-| Codex plugins/apps | skills、apps、MCP、browser/computer | repo操作、外部app操作 | 開発・調査・レビュー |
-| WebMCP | HTML/JSで宣言されたpage capability | browser内agent action | frontend上の構造化操作 |
-| A2A | 他agentのcapability/task | agent間message/task | 複数agent協調 |
-
-この地図の中で、MCPは**外部systemをagent向けに宣言する標準接続面**。
 
 ---
 
