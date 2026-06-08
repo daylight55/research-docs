@@ -29,50 +29,6 @@ _class: compact ch00
 
 <p class="chapter-label">00 / 全体像</p>
 
-## Agent tool利用の変遷
-
-Agentが外部世界へ出る方法は、研究上の「action生成」から、APIのtool calling、UI操作、標準protocol、app化へ広がってきた。
-
-<div class="timeline-grid">
-  <div><strong>2022</strong><span>ReAct</span><p>reasoning traceとactionを交互に生成し、検索・環境操作をtask loopに入れる。</p></div>
-  <div><strong>2023</strong><span>Plugins / Function calling</span><p>ChatGPT plugins、JSON schema付きfunction callingで「名前+引数」のtool callが主流化。</p></div>
-  <div><strong>2024</strong><span>Structured / Computer use</span><p>structured outputsでschema追従を強め、computer useで画面を見て操作する経路が登場。</p></div>
-  <div><strong>2024-11</strong><span>MCP</span><p>AnthropicがMCPを公開。data source / business tool / dev環境を標準protocolで接続する方向へ。</p></div>
-  <div><strong>2025</strong><span>Remote MCP / A2A</span><p>connectorはlocalからremote/gatewayへ。A2Aはagent間coordinationのprotocolとして補完。</p></div>
-  <div><strong>2026</strong><span>MCP Apps / WebMCP</span><p>tool resultがUIを持ち、web page側もbrowser agent向けcapabilityを宣言する流れへ。</p></div>
-</div>
-
-<p class="caption">流れは一方向の置き換えではない。現在は「model出力」「実行環境」「外部接続protocol」「UI/agent間連携」が重なって使われる。</p>
-
----
-
-<!--
-_class: dense ch00
--->
-
-<p class="chapter-label">00 / 全体像</p>
-
-## 現状の技術地図
-
-<div class="surface-map">
-  <div class="surface-card"><strong>1. Model output</strong><span>Function / tool calling</span><p>modelが`name + arguments`を出す。実行と検証はapplication側の責務。</p></div>
-  <div class="surface-card"><strong>2. Provider tools</strong><span>Built-in tools</span><p>web search、file search、computer use、shellなどをprovider/runtimeが用意する。</p></div>
-  <div class="surface-card highlight"><strong>3. Connector protocol</strong><span>MCP / Remote MCP</span><p>tool catalog、schema、transport、auth、approvalを外部system側の契約にする。</p></div>
-  <div class="surface-card"><strong>4. Agent environment</strong><span>Codex / IDE / workflow runtime</span><p>terminal、browser、MCP、skills、pluginsを束ねて実作業を進める。</p></div>
-  <div class="surface-card"><strong>5. UI-bearing tools</strong><span>Apps SDK / MCP Apps / WebMCP</span><p>tool結果やweb page capabilityをUIとしてagent体験に組み込む。</p></div>
-  <div class="surface-card"><strong>6. Multi-agent</strong><span>A2A / handoff</span><p>1つのagentが全toolを抱えるのではなく、専門agent間でtaskを受け渡す。</p></div>
-</div>
-
-<div class="callout">MCPの位置づけ: function callingの代替ではなく、外部systemをagent-nativeに公開するための接続面。</div>
-
----
-
-<!--
-_class: compact ch00
--->
-
-<p class="chapter-label">00 / 全体像</p>
-
 ## 今日の結論
 
 MCPは「便利な拡張」ではなく、AI Agentに外部systemを使わせるための運用設計。
@@ -235,6 +191,50 @@ MCPは「LLMを賢くする技術」ではなく、**LLMが安全に外部世界
   </div>
 </div>
 </div>
+
+---
+
+<!--
+_class: compact ch01
+-->
+
+<p class="chapter-label">01 / 基本概念</p>
+
+## MCPが今の状態になるまで
+
+MCPは「新しい tool 呼び出し機能」ではなく、AI application ごとに増えた外部接続を標準化する流れから広がってきた。
+
+<div class="timeline-grid">
+  <div><strong>2022</strong><span>ReAct / action loop</span><p>reasoningとactionを交互に生成し、検索・環境操作をagent loopへ入れる研究が広がる。</p></div>
+  <div><strong>2023</strong><span>Plugins / function calling</span><p>modelが`name + arguments`を出せるようになったが、tool discovery、auth、実行境界はappごとに実装。</p></div>
+  <div><strong>2024-11</strong><span>MCP launch</span><p>Anthropicがopen protocolとして公開。local server、SDK、reference serverからdeveloper workflowで試される。</p></div>
+  <div><strong>2025前半</strong><span>Local adoption / security</span><p>stdio serverが増え、filesystem/Git/SaaS連携が広がる一方、tool poisoningやsupply chainが問題化。</p></div>
+  <div><strong>2025後半</strong><span>Remote MCP / registry / auth</span><p>shared SaaSやenterprise利用に向け、Streamable HTTP、OAuth/OIDC、registry、tool catalog管理へ焦点が移る。</p></div>
+  <div><strong>2025-12 -> 2026</strong><span>Open governance / Apps</span><p>AAIF / Linux Foundation配下のmulti-vendor protocolへ移り、MCP AppsやUI拡張まで議論が広がる。</p></div>
+</div>
+
+<p class="caption">ここまでの経緯を見ると、MCPは「local 開発者 plugin」から「agentic system の接続インフラ」へ移動している。</p>
+
+---
+
+<!--
+_class: dense ch01
+-->
+
+<p class="chapter-label">01 / 基本概念</p>
+
+## AI Agent潮流の中でのMCPの現在地
+
+<div class="surface-map">
+  <div class="surface-card"><strong>Model output</strong><span>Function / tool calling</span><p>modelが呼び出し意思と引数を表現する層。MCPの代替ではなく、内側の構文に近い。</p></div>
+  <div class="surface-card"><strong>Agent runtime</strong><span>Codex / Claude / IDE</span><p>approval、terminal、browser、computer use、skillsを束ね、作業の進行を管理する層。</p></div>
+  <div class="surface-card highlight"><strong>MCP</strong><span>agent-to-tool / context protocol</span><p>外部systemをtool/resource/prompt catalogとして公開し、transport、auth、schema、auditを設計する層。</p></div>
+  <div class="surface-card"><strong>UI surface</strong><span>MCP Apps / WebMCP</span><p>tool結果やweb page capabilityをUIとしてagent体験へ出す層。</p></div>
+  <div class="surface-card"><strong>Agent coordination</strong><span>A2A / handoff</span><p>agent同士がtaskやcapabilityを受け渡す層。MCPはagent-to-tool、A2Aはagent-to-agent。</p></div>
+  <div class="surface-card"><strong>Governance</strong><span>registry / policy / trust</span><p>server trust、allowlist、scope、approval、ログ、呼び出し予算を管理する層。</p></div>
+</div>
+
+<div class="callout">現在のMCPはAI Agentそのものではなく、agentic systemが外部systemを安全に使うための接続インフラ。</div>
 
 ---
 
@@ -1666,59 +1666,6 @@ _class: section ch08
 # ガバナンスと導入
 
 争点、ロードマップ、社内展開へ広げる
-
----
-
-<!--
-_class: dense ch08
--->
-
-<p class="chapter-label">08 / ガバナンスと導入</p>
-
-## MCPの現在地
-
-| 観点 | 現在地 |
-|---|---|
-| 起点 | 2024-11にAnthropicがopen standardとして公開 |
-| 標準化 | AAIF / Linux Foundation配下のmulti-vendor open protocolへ移行 |
-| 採用 | Claude、OpenAI、Microsoft、Google、Salesforce、AWSなどが対応を拡大 |
-| 主戦場 | local developer toolからRemote MCP / enterprise connectorへ |
-| 未成熟 | auth実装、server trust、registry vetting、audit、large tool catalog |
-
-いまのMCPは「便利な開発者plugin」から、**agentic systemの接続インフラ**へ移りつつある。
-
----
-
-<!--
-_class: dense ch08
--->
-
-<p class="chapter-label">08 / ガバナンスと導入</p>
-
-## 論争の歴史
-
-<img class="diagram" src="diagrams/mcp-trust-roadmap.svg" alt="MCP trust and roadmap flow" />
-
----
-
-<!--
-_class: dense ch08
--->
-
-<p class="chapter-label">08 / ガバナンスと導入</p>
-
-## 論争の歴史から見る現在地
-
-| 時期 | 論点 | 意味 |
-|---|---|---|
-| 2024-11 | custom connector地獄を解くopen protocol | MCPの価値が明確になった |
-| 2025前半 | stdio/local MCPが急増 | local権限とsupply chainが争点化 |
-| 2025-04 | tool poisoning / line jumping | tool descriptionも攻撃面だと認識された |
-| 2025後半 | Remote MCP / OAuth / registry | production運用の問題へ移った |
-| 2025-12 | AAIF/LFへ寄贈 | vendor-neutralityの論点に回答 |
-| 2026 | NSA/OWASP/研究者がsecurity guidance | 導入前提だが、統制必須という現在地 |
-
-結論: **MCPは失敗したprotocolではなく、急成長でtrust設計が追いついていないprotocol。**
 
 ---
 
