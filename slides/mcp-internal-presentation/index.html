@@ -10,6 +10,8 @@ _class: compact ch00
 -->
 <p class="chapter-label">00 / 全体像</p>
 <h2 id="なぜ今この話か"><a href="#なぜ今この話か">なぜ今この話か</a></h2>
+<div class="logo-split">
+<div class="logo-copy">
 <p>LLMが外部情報を得て、指示を出し、実アクションする経路が急に増えている。</p>
 <ul>
 <li>Function/tool calling: modelが<code>name + arguments</code>を生成する</li>
@@ -19,6 +21,16 @@ _class: compact ch00
 <li>WebMCP / A2A: frontend上のtool化、agent間連携も出てきている</li>
 </ul>
 <p>MCPは単独の流行ではなく、<strong>LLMが外部世界を扱う設計面が増えている現象の一部</strong>。</p>
+</div>
+<div class="logo-panel">
+  <div class="logo-grid">
+    <div class="brand-card"><img src="logos/anthropic.svg" alt="Anthropic logo"><strong>Claude / Host</strong><span>tool承認と実行環境</span></div>
+    <div class="brand-card"><img src="logos/model-context-protocol.svg" alt="MCP logo"><strong>MCP</strong><span>外部接続の契約</span></div>
+    <div class="brand-card"><img src="logos/github.svg" alt="GitHub logo"><strong>GitHub</strong><span>開発データとaction</span></div>
+    <div class="brand-card"><img src="logos/cursor.svg" alt="Cursor logo"><strong>Cursor / IDE</strong><span>開発現場のagent入口</span></div>
+  </div>
+</div>
+</div>
 <hr>
 <!--
 _class: dense ch00
@@ -196,6 +208,8 @@ _class: compact ch01
 -->
 <p class="chapter-label">01 / 基本概念</p>
 <h2 id="mcpとは"><a href="#mcpとは">MCPとは？</a></h2>
+<div class="logo-split">
+<div class="logo-copy">
 <p>Model Context Protocol。AI agentが外部のdata / action / workflowを使うための標準protocol。</p>
 <ul>
 <li>何を公開するか: tool、resource、prompt</li>
@@ -204,12 +218,28 @@ _class: compact ch01
 <li>どう守るか: auth、scope、approval、audit、rate limit</li>
 </ul>
 <p>MCPは「LLMを賢くする技術」ではなく、<strong>LLMが安全に外部世界へ出るための接続契約</strong>。</p>
+</div>
+<div class="logo-panel">
+  <div class="logo-hero">
+    <img src="logos/model-context-protocol.svg" alt="Model Context Protocol logo">
+    <strong>Model Context Protocol</strong>
+    <span>agentが外部systemを扱うための共通I/O</span>
+  </div>
+  <div class="concept-stack">
+    <div class="concept-card"><div class="concept-mark">1</div><div><strong>Catalog</strong><span>tool / resource / promptを列挙する</span></div></div>
+    <div class="concept-card"><div class="concept-mark">2</div><div><strong>Call</strong><span>schemaに沿って安全に実行する</span></div></div>
+    <div class="concept-card"><div class="concept-mark">3</div><div><strong>Audit</strong><span>auth、scope、approvalを境界に置く</span></div></div>
+  </div>
+</div>
+</div>
 <hr>
 <!--
 _class: compact ch01
 -->
 <p class="chapter-label">01 / 基本概念</p>
 <h2 id="host--client--serverとは"><a href="#host--client--serverとは">Host / Client / Serverとは？</a></h2>
+<div class="logo-split wide-visual">
+<div class="logo-copy">
 <img class="diagram" src="diagrams/mcp-architecture.svg" alt="MCP Host Client Server architecture">
 <ul>
 <li>Host: user、model、tool承認、接続設定をまとめる</li>
@@ -218,12 +248,24 @@ _class: compact ch01
 <li>Backend: 既存のSaaS、API、DB、社内system</li>
 </ul>
 <p>MCP serverはbackendそのものではなく、<strong>agent向けadapter</strong>として設計する。</p>
+</div>
+<div class="logo-panel">
+  <div class="logo-grid">
+    <div class="brand-card"><img src="logos/anthropic.svg" alt="Anthropic logo"><strong>Host</strong><span>Claude / Desktop / Code</span></div>
+    <div class="brand-card"><img src="logos/cursor.svg" alt="Cursor logo"><strong>IDE Host</strong><span>Cursorなどの開発環境</span></div>
+    <div class="brand-card"><img src="logos/model-context-protocol.svg" alt="MCP logo"><strong>Client</strong><span>protocol通信の境界</span></div>
+    <div class="brand-card"><img src="logos/github.svg" alt="GitHub logo"><strong>Server / Backend</strong><span>GitHub、SaaS、社内API</span></div>
+  </div>
+</div>
+</div>
 <hr>
 <!--
 _class: compact ch01
 -->
 <p class="chapter-label">01 / 基本概念</p>
 <h2 id="tool--resource--promptとは"><a href="#tool--resource--promptとは">Tool / Resource / Promptとは？</a></h2>
+<div class="logo-split">
+<div class="logo-copy">
 
 
 
@@ -252,6 +294,15 @@ _class: compact ch01
 <table><thead><tr><th>種類</th><th>役割</th><th>例</th></tr></thead><tbody><tr><td>Tool</td><td>agentが実行できるaction</td><td><code>search_items</code>, <code>create_issue</code>, <code>deploy_stack</code></td></tr><tr><td>Resource</td><td>agentが読めるcontext/data</td><td>file、log、ticket、schema、document</td></tr><tr><td>Prompt</td><td>再利用できる指示template</td><td>incident調査手順、PR review手順</td></tr></tbody></table>
 <p>開発で最初に使うのは多くの場合tool。</p>
 <p>ただし良いMCP serverは、actionだけでなく<strong>判断材料となるresource</strong>も一緒に設計する。</p>
+</div>
+<div class="logo-panel">
+  <div class="concept-stack">
+    <div class="concept-card"><div class="concept-mark">T</div><div><strong>Tool</strong><span>状態を変える。副作用があるので承認とscopeが重要。</span></div></div>
+    <div class="concept-card"><div class="concept-mark">R</div><div><strong>Resource</strong><span>判断材料を読む。ログ、issue、schema、document。</span></div></div>
+    <div class="concept-card"><div class="concept-mark">P</div><div><strong>Prompt</strong><span>反復する手順やレビュー観点を再利用する。</span></div></div>
+  </div>
+</div>
+</div>
 <hr>
 <!--
 _class: compact ch01
@@ -544,6 +595,8 @@ _class: compact ch03
 -->
 <p class="chapter-label">03 / MCP server構築</p>
 <h2 id="既存apiをmcp化する基本設計"><a href="#既存apiをmcp化する基本設計">既存APIをMCP化する基本設計</a></h2>
+<div class="logo-split">
+<div class="logo-copy">
 <p>API本体を書き換えず、adapter layerを追加する。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>app/</span></span>
 <span class="line"><span>  api/</span></span>
@@ -557,6 +610,18 @@ _class: compact ch03
 <span class="line"><span>    route_policy.py      # expose / exclude policy</span></span>
 <span class="line"><span>    descriptions.py      # model-facing descriptions</span></span></code></pre>
 <p>OpenAPIを契約として使い、MCPでは公開面を絞る。</p>
+</div>
+<div class="logo-panel">
+  <div class="adapter-strip">
+    <div class="brand-card"><img src="logos/fastapi.svg" alt="FastAPI logo"><strong>FastAPI</strong><span>既存API</span></div>
+    <div class="adapter-arrow">→</div>
+    <div class="brand-card"><img src="logos/openapi.svg" alt="OpenAPI Initiative logo"><strong>OpenAPI</strong><span>契約</span></div>
+    <div class="adapter-arrow">→</div>
+    <div class="brand-card"><img src="logos/model-context-protocol.svg" alt="MCP logo"><strong>MCP</strong><span>agent向け公開面</span></div>
+  </div>
+  <div class="callout">既存APIはsource of truthにし、MCP側は説明・制限・承認の境界を担う。</div>
+</div>
+</div>
 <hr>
 <!--
 _class: compact ch03
