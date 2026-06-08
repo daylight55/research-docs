@@ -17,6 +17,11 @@ if [ -d "$deck_dir/diagrams" ]; then
   cp -R "$deck_dir/diagrams" "$out_dir/diagrams"
 fi
 
+if [ -d "$deck_dir/logos" ]; then
+  rm -rf "$out_dir/logos"
+  cp -R "$deck_dir/logos" "$out_dir/logos"
+fi
+
 node scripts/screenshot-slides.mjs "$html" "$screenshots"
 
 echo "Rendered $html"

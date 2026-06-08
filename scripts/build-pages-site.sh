@@ -28,9 +28,22 @@ copy_slide_diagrams() {
   done < <(find src/content/docs/slides/diagrams -maxdepth 1 -type f \( -name "*.svg" -o -name "*.mmd" \) | sort)
 }
 
+copy_slide_logos() {
+  local dest="$1"
+  mkdir -p "$dest"
+  while IFS= read -r file; do
+    cp "$file" "$dest/$(basename "$file")"
+  done < <(find src/content/docs/slides/logos -maxdepth 1 -type f -name "*.svg" | sort)
+}
+
 if [ -d src/content/docs/slides/diagrams ]; then
   copy_slide_diagrams "$out_dir/slides/mcp-internal-presentation/diagrams"
   copy_slide_diagrams "$out_dir/slides/mcp-internal-presentation/deck/diagrams"
+fi
+
+if [ -d src/content/docs/slides/logos ]; then
+  copy_slide_logos "$out_dir/slides/mcp-internal-presentation/logos"
+  copy_slide_logos "$out_dir/slides/mcp-internal-presentation/deck/logos"
 fi
 
 while IFS= read -r file; do

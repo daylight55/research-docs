@@ -620,3 +620,148 @@ section.note {
   color: var(--rd-muted);
   font-size: 20px;
 }
+
+.logo-split {
+  align-items: stretch;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1.04fr) minmax(330px, 0.76fr);
+}
+
+.logo-split.wide-visual {
+  grid-template-columns: minmax(0, 0.88fr) minmax(430px, 1fr);
+}
+
+.logo-split img.diagram {
+  inline-size: 100%;
+  max-block-size: 165px;
+}
+
+.logo-copy {
+  display: grid;
+  gap: 0.55em;
+}
+
+.logo-copy > p {
+  margin: 0;
+}
+
+.logo-copy ul {
+  margin-block-start: 0.1em;
+}
+
+.logo-panel {
+  align-content: center;
+  background: var(--rd-panel);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: grid;
+  gap: 18px;
+  min-block-size: 330px;
+  padding: 22px;
+}
+
+.logo-hero {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  text-align: center;
+}
+
+.logo-hero img {
+  block-size: 112px;
+  inline-size: 112px;
+  object-fit: contain;
+}
+
+.logo-hero strong {
+  color: var(--rd-blue);
+  font-size: 1.15em;
+}
+
+.logo-hero span {
+  color: var(--rd-muted);
+  font-size: 0.72em;
+}
+
+.logo-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.brand-card,
+.concept-card {
+  align-items: center;
+  background: var(--rd-white);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  min-block-size: 88px;
+  padding: 12px;
+  text-align: center;
+}
+
+.brand-card img {
+  block-size: 34px;
+  inline-size: 34px;
+  justify-self: center;
+  object-fit: contain;
+}
+
+.brand-card strong,
+.concept-card strong {
+  color: var(--rd-ink);
+  font-size: 0.82em;
+  line-height: 1.12;
+}
+
+.brand-card span,
+.concept-card span {
+  color: var(--rd-muted);
+  font-size: 0.6em;
+  line-height: 1.2;
+}
+
+.concept-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.concept-card {
+  grid-template-columns: 42px 1fr;
+  min-block-size: 72px;
+  text-align: left;
+}
+
+.concept-mark {
+  align-items: center;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, var(--rd-blue), var(--rd-teal));
+  border-radius: 999px;
+  color: var(--rd-white);
+  display: grid;
+  font-size: 0.72em;
+  font-weight: 900;
+  place-items: center;
+}
+
+.adapter-strip {
+  align-items: center;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr max-content 1fr max-content 1fr;
+}
+
+.adapter-strip .brand-card {
+  min-block-size: 110px;
+}
+
+.adapter-arrow {
+  color: var(--rd-teal);
+  font-size: 1.25em;
+  font-weight: 900;
+}
