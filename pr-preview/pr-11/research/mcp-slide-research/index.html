@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP社内発表調査メモ | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-11/_astro/DocsLayout.BSsUdvSx.css"></head> <body> <div class="site-shell" data-sidebar="closed" data-sidebar-default="closed"> <header class="topbar"> <button class="sidebar-toggle" type="button" aria-controls="theme-sidebar" aria-expanded="false" data-sidebar-toggle> <span class="sidebar-toggle-icon" aria-hidden="true"></span> <span class="visually-hidden">調査テーマ一覧を開閉する</span> </button> <a class="brand" href="/research-docs/pr-preview/pr-11/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>Research themes and reports</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-11/#research-themes">Themes</a> <a href="/research-docs/pr-preview/pr-11/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-11/research/mcp-slide-research/">Research log</a> <a href="/research-docs/pr-preview/pr-11/llms.txt">llms.txt</a> </nav> </header> <div class="content-grid"> <aside id="theme-sidebar" class="sidebar" aria-label="Research theme navigation"> <div class="sidebar-title">Research themes</div> <section class="nav-section" aria-label="MCP internal presentation"> <h2><a class="active" href="/research-docs/pr-preview/pr-11/themes/mcp-internal-presentation/">MCP internal presentation</a></h2> </section> </aside> <main class="main-panel">  <article class="document document-with-index"> <div class="document-content"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP社内発表調査メモ</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p> <div class="action-row">  <a class="secondary-action" href="/research-docs/pr-preview/pr-11/research/mcp-slide-research.md">Raw Markdown</a> </div> </header> <div class="markdown-body"> <h1 id="mcp社内発表調査メモ"><a href="#mcp社内発表調査メモ">MCP社内発表調査メモ</a></h1>
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP社内発表調査メモ | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-11/_astro/DocsLayout.D95rPQZR.css"></head> <body> <div class="site-shell" data-sidebar="closed" data-sidebar-default="closed"> <header class="topbar"> <button class="sidebar-toggle" type="button" aria-controls="theme-sidebar" aria-expanded="false" data-sidebar-toggle> <span class="sidebar-toggle-icon" aria-hidden="true"></span> <span class="visually-hidden">調査テーマ一覧を開閉する</span> </button> <a class="brand" href="/research-docs/pr-preview/pr-11/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>Research themes and reports</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-11/#research-themes">Themes</a> <a href="/research-docs/pr-preview/pr-11/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-11/research/mcp-slide-research/">Research log</a> <a href="/research-docs/pr-preview/pr-11/llms.txt">llms.txt</a> </nav> </header> <div class="content-grid"> <aside id="theme-sidebar" class="sidebar" aria-label="Research theme navigation"> <div class="sidebar-title">Research themes</div> <section class="nav-section" aria-label="MCP internal presentation"> <h2><a class="active" href="/research-docs/pr-preview/pr-11/themes/mcp-internal-presentation/">MCP internal presentation</a></h2> </section> </aside> <main class="main-panel">  <article class="document document-research document-with-index"> <div class="document-content"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP社内発表調査メモ</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p> <div class="action-row">  <a class="secondary-action" href="/research-docs/pr-preview/pr-11/research/mcp-slide-research.md">Raw Markdown</a> </div> </header> <div class="markdown-body"> <h1 id="mcp社内発表調査メモ"><a href="#mcp社内発表調査メモ">MCP社内発表調査メモ</a></h1>
 <p>日付: 2026-06-07
 最終整理: 2026-06-09</p>
 <p>このメモは日付順ではなく、発表資料を作るときに読みやすい順へ再編成している。先に結論とスライド構成を確認し、その後に基礎概念、比較、実装、仕様詳細、エコシステム、ロードマップ、制作メモへ進む。</p>
@@ -510,6 +510,10 @@
 </ul>
 <h3 id="2-mcpとは何か"><a href="#2-mcpとは何か">2. MCPとは何か</a></h3>
 <p>公式定義では、MCPはLLM applicationと外部data source/toolの統合を標準化するopen protocol。JSON-RPC 2.0、stateful session、capability negotiationを使う。</p>
+<blockquote>
+<p>出典抜粋: “open-source standard for connecting AI applications to external systems”<br>
+Source: <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Model Context Protocol introduction</a></p>
+</blockquote>
 <p>基本アーキテクチャ用語:</p>
 <ul>
 <li>Host: Claude Desktop、ChatGPT、Codex、VS Code、CursorなどのAI application/container。</li>
@@ -621,6 +625,10 @@
 
 <table><thead><tr><th>種類</th><th>例</th><th>モデルから見た意味</th></tr></thead><tbody><tr><td>Resource</td><td><code>file:///README.md</code>、DB schema、issue本文、API仕様</td><td>判断材料として読む</td></tr><tr><td>Tool</td><td><code>create_pull_request</code>、<code>search_docs</code>、<code>reserve_inventory</code></td><td>外部世界に問い合わせる、または変更する</td></tr><tr><td>Prompt</td><td><code>review_pr</code>、<code>summarize_incident</code></td><td>作業の型を呼び出す</td></tr></tbody></table>
 <p>Toolは特に強力で、外部API実行、ファイル変更、ブラウザ操作、クラウド操作、決済操作まで可能になる。だからToolは「便利な関数」ではなく「権限を持った操作」として扱う。説明文、入力schema、出力schema、承認UI、監査ログが重要になる。</p>
+<blockquote>
+<p>出典抜粋: “model-controlled” / “human in the loop”<br>
+Source: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools specification</a></p>
+</blockquote>
 <h3 id="7-capability-negotiationとは何か"><a href="#7-capability-negotiationとは何か">7. Capability negotiationとは何か</a></h3>
 <p>MCPでは、clientとserverが接続時に「自分が何をサポートしているか」を宣言する。これがcapability negotiationである。</p>
 <p>なぜ必要か:</p>
@@ -850,6 +858,10 @@
 </ul>
 <h3 id="10-transport-stdioとstreamable-http"><a href="#10-transport-stdioとstreamable-http">10. Transport: stdioとStreamable HTTP</a></h3>
 <p>MCPのmessageはJSON-RPC 2.0で表現される。そのmessageをどの経路で運ぶかがtransportである。</p>
+<blockquote>
+<p>出典抜粋: “MCP uses JSON-RPC to encode messages” / “two standard transport mechanisms”<br>
+Source: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports specification</a></p>
+</blockquote>
 <p>stdio:</p>
 <ul>
 <li>clientがserverプロセスをローカルで起動する。</li>
@@ -1063,6 +1075,10 @@
 <p>社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。</p>
 <h3 id="15-authorization-なぜoauth-21とaudienceが重要か"><a href="#15-authorization-なぜoauth-21とaudienceが重要か">15. Authorization: なぜOAuth 2.1とaudienceが重要か</a></h3>
 <p>Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。</p>
+<blockquote>
+<p>出典抜粋: “Authorization is OPTIONAL” / “HTTP-based transport SHOULD conform”<br>
+Source: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization specification</a></p>
+</blockquote>
 <p><img alt="Remote MCP OAuth connection flow" loading="lazy" decoding="async" width="1430" height="849" src="/research-docs/pr-preview/pr-11/_astro/mcp-remote-auth-flow.CRQBA-es_GTWVF.svg" srcset=""></p>
 <p>初心者向けに言うと、Remote MCPの認証で避けたい事故は3つ。</p>
 <ol>
@@ -1583,6 +1599,10 @@
 <li>agent-driven screen scrapingや脆いbrowser automationを減らしたい。</li>
 <li>providerがraw CRUDだけでなく、<code>summarize_incident</code>、<code>create_release_note</code>、<code>get_customer_health_snapshot</code>のようなhigher-level toolを公開できる。</li>
 </ul>
+<blockquote>
+<p>出典抜粋: “Pick official servers hosted by the service providers themselves”<br>
+Source: <a href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp">OpenAI MCP and Connectors guide</a></p>
+</blockquote>
 <h4 id="コンテキスト効率を意識したmcp-server設計"><a href="#コンテキスト効率を意識したmcp-server設計">コンテキスト効率を意識したMCP server設計</a></h4>
 <p>「Token-aware」は、単にtoken料金を下げるという意味ではない。MCP serverが公開するtool定義、tool description、input schema、実行結果、error、log、resource本文は、agentが判断するためのcontextとして扱われる。したがって、MCP server設計では「人間向けAPIの全機能をそのまま見せる」のではなく、agentが少ないcontextで正しいtoolを選び、次の判断に十分な最小情報を受け取れるようにする必要がある。</p>
 <p>言い換えると、最良のMCP serverはtool数が最も多いserverではない。agentが迷わず使えるtool catalogと、boundedでstructuredなresultを返すserverである。</p>
