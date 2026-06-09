@@ -245,6 +245,24 @@ _class: compact ch01
 ---
 
 <!--
+_class: compact visual ch01
+-->
+
+<p class="chapter-label">01 / 基本概念</p>
+
+## 用語が登場する場所
+
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/mcp-concepts-appear-map.svg" alt="Where Tool Resource Prompt Protocol and Transport appear in an MCP client server connection" />
+</div>
+
+<p class="caption">次の2枚は、この図の右側と中央を順に拡大する。</p>
+
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">MCP lifecycle</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
 _class: compact ch01
 -->
 
@@ -257,9 +275,9 @@ _class: compact ch01
 
 | 種類 | 役割 | 例 |
 |---|---|---|
-| Tool | agentが実行できるaction | `search_items`, `create_issue`, `deploy_stack` |
-| Resource | agentが読めるcontext/data | file、log、ticket、schema、document |
-| Prompt | 再利用できる作業template | incident調査手順、PR review手順 |
+| Tool | agentが実行できるaction | `search`, `create`, `deploy` |
+| Resource | agentが読めるcontext/data | log、issue、schema |
+| Prompt | 再利用できる作業template | incident調査、PR review |
 
 開発で最初に使うのは多くの場合tool。
 
@@ -270,9 +288,9 @@ _class: compact ch01
 </div>
 <div class="logo-panel">
   <div class="concept-stack">
-    <div class="concept-card"><div class="concept-mark">T</div><div><strong>Tool</strong><span>状態を変える。副作用があるので承認とscopeが重要。</span></div></div>
-    <div class="concept-card"><div class="concept-mark">R</div><div><strong>Resource</strong><span>判断材料を読む。ログ、issue、schema、document。</span></div></div>
-    <div class="concept-card"><div class="concept-mark">P</div><div><strong>Prompt</strong><span>反復する手順やレビュー観点を再利用する。</span></div></div>
+    <div class="concept-card"><div class="concept-mark">T</div><div><strong>Tool</strong><br /><span>状態を変える。副作用があるので承認とscopeが重要。</span></div></div>
+    <div class="concept-card"><div class="concept-mark">R</div><div><strong>Resource</strong><br /><span>判断材料を読む。ログ、issue、schema、document。</span></div></div>
+    <div class="concept-card"><div class="concept-mark">P</div><div><strong>Prompt</strong><br /><span>反復する手順やレビュー観点を再利用する。</span></div></div>
   </div>
 </div>
 </div>
