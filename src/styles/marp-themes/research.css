@@ -600,10 +600,16 @@ table {
   width: 100%;
 }
 
+section.table-narrow-first table {
+  table-layout: auto;
+}
+
 section.table-narrow-first th:first-child,
 section.table-narrow-first td:first-child {
-  inline-size: 96px;
-  width: 96px;
+  inline-size: 1%;
+  min-inline-size: 72px;
+  white-space: nowrap;
+  width: 1%;
 }
 
 th {

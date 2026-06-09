@@ -1011,7 +1011,7 @@ _class: compact visual ch05
 ---
 
 <!--
-_class: dense ch05 table-narrow-first
+_class: dense ch05
 -->
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
@@ -1025,7 +1025,7 @@ _class: dense ch05 table-narrow-first
 ---
 
 <!--
-_class: dense ch05
+_class: dense ch05 table-narrow-first
 -->
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
