@@ -83,9 +83,8 @@ function isThemeActive(theme: (typeof themes)[number]) {
       const toggle = document.querySelector("[data-sidebar-toggle]");
       const sidebar = document.querySelector("#theme-sidebar");
       const defaultState = shell?.getAttribute("data-sidebar-default") ?? "open";
-      const storedState = window.localStorage.getItem("researchDocsSidebar");
       const responsiveState = window.matchMedia("(max-width: 900px)").matches ? "closed" : "open";
-      const preferredState = defaultState === "closed" ? defaultState : (storedState ?? responsiveState);
+      const preferredState = responsiveState === "closed" ? "closed" : defaultState;
 
       function setSidebarState(state) {
         shell?.setAttribute("data-sidebar", state);
@@ -100,7 +99,6 @@ function isThemeActive(theme: (typeof themes)[number]) {
       toggle?.addEventListener("click", () => {
         const nextState = shell?.getAttribute("data-sidebar") === "open" ? "closed" : "open";
         setSidebarState(nextState);
-        window.localStorage.setItem("researchDocsSidebar", nextState);
       });
     </script>
   </body>
