@@ -16,16 +16,11 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
 const isSlideSource = entry.data.kind === "slides";
-const sidebarDefaultState = entry.data.kind === "research" ? "closed" : "open";
 const markdownHref = markdownHrefForSlug(routeSlug(entry.id));
 const hasDocumentIndex = headings.length > 0;
 ---
 
-<DocsLayout
-  title={entry.data.title}
-  description={entry.data.description}
-  sidebarDefaultState={sidebarDefaultState}
->
+<DocsLayout title={entry.data.title} description={entry.data.description}>
   <article class:list={["document", `document-${entry.data.kind}`, { "document-with-index": hasDocumentIndex }]}>
     <div class="document-content">
       <header class="doc-header">
