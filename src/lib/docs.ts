@@ -9,16 +9,16 @@ export type DocSummary = {
   section: string;
   sectionLabel: string;
   slug: string;
-  themeId?: string;
+  topicId?: string;
   title: string;
 };
 
-export type ThemeSummary = DocSummary & {
+export type TopicSummary = DocSummary & {
   children: DocSummary[];
 };
 
 const sectionLabels: Record<string, string> = {
-  themes: "Research Themes",
+  topics: "Research Topics",
   slides: "Slides",
   research: "Research",
   sources: "Sources",
@@ -26,7 +26,7 @@ const sectionLabels: Record<string, string> = {
 };
 
 const kindLabels: Record<string, string> = {
-  theme: "Research theme",
+  topic: "Research topic",
   slides: "Slide",
   research: "Research note",
   sources: "Source links",
@@ -77,7 +77,7 @@ export async function getDocSummaries(): Promise<DocSummary[]> {
         section,
         sectionLabel: sectionLabels[section] ?? section,
         slug,
-        themeId: entry.data.themeId,
+        topicId: entry.data.topicId,
         title: titleFromEntry(entry),
       };
     })
@@ -88,12 +88,12 @@ export async function getDocSummaries(): Promise<DocSummary[]> {
     });
 }
 
-export function getThemeSummaries(docs: DocSummary[]): ThemeSummary[] {
-  const themes = docs.filter((doc) => doc.entry.data.kind === "theme");
+export function getTopicSummaries(docs: DocSummary[]): TopicSummary[] {
+  const topics = docs.filter((doc) => doc.entry.data.kind === "topic");
 
-  return themes.map((theme) => ({
-    ...theme,
-    children: docs.filter((doc) => doc.themeId === theme.entry.data.themeId && doc.slug !== theme.slug),
+  return topics.map((topic) => ({
+    ...topic,
+    children: docs.filter((doc) => doc.topicId === topic.entry.data.topicId && doc.slug !== topic.slug),
   }));
 }
 

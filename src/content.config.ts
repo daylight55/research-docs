@@ -6,13 +6,17 @@ const docs = defineCollection({
   loader: glob({
     base: "./contents",
     pattern: [
-      "{themes,slides,research,sources,tasks}/**/*.{md,mdx}",
-      "*/{themes,slides,research,sources,tasks}/**/*.{md,mdx}",
+      "{topics,slides,research,sources,tasks}/**/*.{md,mdx}",
+      "*/{overview,slides,research,sources,tasks}/**/*.{md,mdx}",
       "!templates/**",
     ],
     generateId: ({ entry }) => {
       const parts = entry.split("/");
-      if (parts.length >= 3 && ["themes", "slides", "research", "sources", "tasks"].includes(parts[1])) {
+      if (parts.length >= 3 && parts[1] === "overview") {
+        return `topics/${parts.slice(2).join("/")}`.replace(/\.(md|mdx)$/, "");
+      }
+
+      if (parts.length >= 3 && ["slides", "research", "sources", "tasks"].includes(parts[1])) {
         return parts.slice(1).join("/").replace(/\.(md|mdx)$/, "");
       }
 
@@ -24,8 +28,8 @@ const docs = defineCollection({
       title: z.string(),
       navTitle: z.string().optional(),
       description: z.string().optional(),
-      kind: z.enum(["theme", "slides", "research", "sources", "task", "article"]).default("article"),
-      themeId: z.string().optional(),
+      kind: z.enum(["topic", "slides", "research", "sources", "task", "article"]).default("article"),
+      topicId: z.string().optional(),
       status: z.enum(["draft", "active", "review", "published"]).optional(),
       owner: z.string().optional(),
       updatedAt: z.string().optional(),

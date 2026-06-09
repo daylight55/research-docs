@@ -5,7 +5,7 @@ out_dir="${1:-site}"
 topic_dir="contents/mcp-internal-presentation"
 slide_dir="$topic_dir/slides"
 slide_src="$slide_dir/mcp-internal-presentation.md"
-theme_css="contents/themes/research.css"
+theme_css="contents/marp-themes/research.css"
 
 rm -rf "$out_dir"
 
@@ -80,7 +80,9 @@ fi
 
 content_rel() {
   local rel="${1#contents/}"
-  if [[ "$rel" == */themes/* || "$rel" == */slides/* || "$rel" == */research/* || "$rel" == */sources/* || "$rel" == */tasks/* ]]; then
+  if [[ "$rel" == */overview/* ]]; then
+    printf 'topics/%s\n' "$(basename "$rel")"
+  elif [[ "$rel" == */slides/* || "$rel" == */research/* || "$rel" == */sources/* || "$rel" == */tasks/* ]]; then
     printf '%s\n' "${rel#*/}"
   else
     printf '%s\n' "$rel"

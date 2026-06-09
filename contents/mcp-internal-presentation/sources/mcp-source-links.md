@@ -3,7 +3,7 @@ title: MCP source links
 navTitle: Source links
 description: MCP社内発表資料で参照した一次情報、公式ドキュメント、主要リポジトリ、AWS AgentCore関連情報のリンク集。
 kind: sources
-themeId: mcp-internal-presentation
+topicId: mcp-internal-presentation
 order: 30
 ---
 

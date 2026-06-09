@@ -1,9 +1,9 @@
 ---
 import DocsLayout from "../layouts/DocsLayout.astro";
-import { deckHref, getDocSummaries, getThemeSummaries, kindLabel } from "../lib/docs";
+import { deckHref, getDocSummaries, getTopicSummaries, kindLabel } from "../lib/docs";
 
 const docs = await getDocSummaries();
-const themes = getThemeSummaries(docs);
+const topics = getTopicSummaries(docs);
 ---
 
 <DocsLayout
@@ -12,45 +12,45 @@ const themes = getThemeSummaries(docs);
 >
   <section class="page-header">
     <p class="eyebrow">Topic-centered research workspace</p>
-    <h1>調査テーマを親にして、成果物と作業をまとめる</h1>
+    <h1>調査トピックを親にして、成果物と作業をまとめる</h1>
     <p>
-      slide、research note、source links、research task をそれぞれ独立した一覧にせず、特定の調査テーマ配下に集約する。
-      テーマ単位で進捗、根拠、発表資料、次の作業を追える構成にする。
+      slide、research note、source links、research task をそれぞれ独立した一覧にせず、特定の調査トピック配下に集約する。
+      トピック単位で進捗、根拠、発表資料、次の作業を追える構成にする。
     </p>
     <div class="action-row">
       <a class="primary-action" href={deckHref()}>プレゼンHTMLを見る</a>
-      <a class="secondary-action" href={`${import.meta.env.BASE_URL}themes/mcp-internal-presentation/`}>
-        テーマ概要を見る
+      <a class="secondary-action" href={`${import.meta.env.BASE_URL}topics/mcp-internal-presentation/`}>
+        トピック概要を見る
       </a>
     </div>
   </section>
 
-  <section id="research-themes" class="theme-groups" aria-label="Research themes">
+  <section id="research-topics" class="topic-groups" aria-label="Research topics">
     {
-      themes.map((theme) => (
-        <article class="theme-card">
-          <div class="theme-card-main">
-            <p class="theme-status">{theme.entry.data.status ?? "active"}</p>
-            <h2><a href={theme.href}>{theme.title}</a></h2>
-            {theme.entry.data.description && <p>{theme.entry.data.description}</p>}
-            <dl class="theme-meta">
-              {theme.entry.data.owner && (
+      topics.map((topic) => (
+        <article class="topic-card">
+          <div class="topic-card-main">
+            <p class="topic-status">{topic.entry.data.status ?? "active"}</p>
+            <h2><a href={topic.href}>{topic.title}</a></h2>
+            {topic.entry.data.description && <p>{topic.entry.data.description}</p>}
+            <dl class="topic-meta">
+              {topic.entry.data.owner && (
                 <div>
                   <dt>Owner</dt>
-                  <dd>{theme.entry.data.owner}</dd>
+                  <dd>{topic.entry.data.owner}</dd>
                 </div>
               )}
-              {theme.entry.data.updatedAt && (
+              {topic.entry.data.updatedAt && (
                 <div>
                   <dt>Updated</dt>
-                  <dd>{theme.entry.data.updatedAt}</dd>
+                  <dd>{topic.entry.data.updatedAt}</dd>
                 </div>
               )}
             </dl>
           </div>
 
-          <div class="artifact-list" aria-label={`${theme.title} artifacts`}>
-            {theme.children.map(({ entry, href, title }) => (
+          <div class="artifact-list" aria-label={`${topic.title} artifacts`}>
+            {topic.children.map(({ entry, href, title }) => (
               <a class="artifact-link" href={href}>
                 <span>{kindLabel(entry.data.kind)}</span>
                 <strong>{title}</strong>

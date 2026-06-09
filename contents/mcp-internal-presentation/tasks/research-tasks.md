@@ -3,7 +3,7 @@ title: MCP slide research tasks
 navTitle: Research task checklist
 description: MCP社内発表資料の調査・構成・検証タスクチェックリスト。
 kind: task
-themeId: mcp-internal-presentation
+topicId: mcp-internal-presentation
 order: 40
 ---
 

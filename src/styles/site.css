@@ -353,12 +353,12 @@ h1 {
   gap: 34px;
 }
 
-.theme-groups {
+.topic-groups {
   display: grid;
   gap: 18px;
 }
 
-.theme-card {
+.topic-card {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -368,11 +368,11 @@ h1 {
   padding: clamp(20px, 4vw, 34px);
 }
 
-.theme-card-main {
+.topic-card-main {
   min-inline-size: 0;
 }
 
-.theme-status {
+.topic-status {
   background: #eaf5f4;
   border-radius: 999px;
   color: var(--accent-strong);
@@ -384,21 +384,21 @@ h1 {
   text-transform: uppercase;
 }
 
-.theme-card h2 {
+.topic-card h2 {
   font-size: clamp(1.45rem, 3vw, 2.2rem);
   margin: 0 0 12px;
 }
 
-.theme-card h2 a {
+.topic-card h2 a {
   color: inherit;
   text-decoration: none;
 }
 
-.theme-card h2 a:hover {
+.topic-card h2 a:hover {
   color: var(--accent-strong);
 }
 
-.theme-card-main p,
+.topic-card-main p,
 .artifact-link p {
   color: var(--muted);
   line-height: 1.65;
@@ -406,7 +406,7 @@ h1 {
   overflow-wrap: anywhere;
 }
 
-.theme-meta {
+.topic-meta {
   border-block-start: 1px solid var(--line);
   display: grid;
   gap: 14px;
@@ -415,7 +415,7 @@ h1 {
   padding-block-start: 18px;
 }
 
-.theme-meta dt {
+.topic-meta dt {
   color: var(--muted);
   font-size: 12px;
   font-weight: 800;
@@ -423,7 +423,7 @@ h1 {
   text-transform: uppercase;
 }
 
-.theme-meta dd {
+.topic-meta dd {
   font-weight: 800;
   margin: 0;
 }
@@ -673,7 +673,7 @@ h1 {
     align-items: center;
   }
 
-  .theme-card {
+  .topic-card {
     grid-template-columns: 1fr;
   }
 }
