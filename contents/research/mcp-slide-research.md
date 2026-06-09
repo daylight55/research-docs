@@ -249,6 +249,9 @@ MCPはこの問題を「AIアプリと外部システムをつなぐ標準プロ
 
 公式定義では、MCPはLLM applicationと外部data source/toolの統合を標準化するopen protocol。JSON-RPC 2.0、stateful session、capability negotiationを使う。
 
+> 出典抜粋: "open-source standard for connecting AI applications to external systems"  
+> Source: [Model Context Protocol introduction](https://modelcontextprotocol.io/docs/getting-started/intro)
+
 基本アーキテクチャ用語:
 
 - Host: Claude Desktop、ChatGPT、Codex、VS Code、CursorなどのAI application/container。
@@ -327,6 +330,9 @@ Client側primitive:
 | Prompt | `review_pr`、`summarize_incident` | 作業の型を呼び出す |
 
 Toolは特に強力で、外部API実行、ファイル変更、ブラウザ操作、クラウド操作、決済操作まで可能になる。だからToolは「便利な関数」ではなく「権限を持った操作」として扱う。説明文、入力schema、出力schema、承認UI、監査ログが重要になる。
+
+> 出典抜粋: "model-controlled" / "human in the loop"  
+> Source: [MCP tools specification](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
 
 ### 7. Capability negotiationとは何か
 
@@ -578,6 +584,9 @@ Tool execution error:
 
 MCPのmessageはJSON-RPC 2.0で表現される。そのmessageをどの経路で運ぶかがtransportである。
 
+> 出典抜粋: "MCP uses JSON-RPC to encode messages" / "two standard transport mechanisms"  
+> Source: [MCP transports specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
+
 stdio:
 
 - clientがserverプロセスをローカルで起動する。
@@ -736,6 +745,9 @@ Mermaid source: [`mcp-tool-call-generation-flow.mmd`](../slides/diagrams/mcp-too
 ### 15. Authorization: なぜOAuth 2.1とaudienceが重要か
 
 Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。
+
+> 出典抜粋: "Authorization is OPTIONAL" / "HTTP-based transport SHOULD conform"  
+> Source: [MCP authorization specification](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization)
 
 ![Remote MCP OAuth connection flow](../slides/diagrams/mcp-remote-auth-flow.svg)
 
@@ -1044,6 +1056,9 @@ MCPがproviderにとって特に有効な場合:
 - providerがauth、policy、audit boundaryを保ちたい。
 - agent-driven screen scrapingや脆いbrowser automationを減らしたい。
 - providerがraw CRUDだけでなく、`summarize_incident`、`create_release_note`、`get_customer_health_snapshot`のようなhigher-level toolを公開できる。
+
+> 出典抜粋: "Pick official servers hosted by the service providers themselves"  
+> Source: [OpenAI MCP and Connectors guide](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
 
 #### コンテキスト効率を意識したMCP server設計
 

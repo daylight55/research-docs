@@ -26,7 +26,7 @@ const hasDocumentIndex = headings.length > 0;
   description={entry.data.description}
   sidebarDefaultState={sidebarDefaultState}
 >
-  <article class:list={["document", { "document-with-index": hasDocumentIndex }]}>
+  <article class:list={["document", `document-${entry.data.kind}`, { "document-with-index": hasDocumentIndex }]}>
     <div class="document-content">
       <header class="doc-header">
         <p class="eyebrow">{entry.data.kind}</p>

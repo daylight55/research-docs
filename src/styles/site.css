@@ -519,6 +519,14 @@ h1 {
   text-wrap: pretty;
 }
 
+.document-sources .markdown-body {
+  font-size: 1.09rem;
+}
+
+.document-sources .markdown-body li {
+  margin-block: 0.42rem;
+}
+
 .markdown-body :where(h2, h3) {
   margin-block-start: 1.6em;
 }
@@ -577,10 +585,20 @@ h1 {
 }
 
 .markdown-body blockquote {
+  background: #fff8f2;
   border-inline-start: 5px solid var(--accent-warm);
   color: var(--ink);
-  margin-inline: 0;
-  padding-inline-start: 18px;
+  font-size: 1.03em;
+  margin: 1.35rem 0;
+  padding: 16px 18px;
+}
+
+.markdown-body blockquote p {
+  margin-block: 0;
+}
+
+.markdown-body blockquote p + p {
+  margin-block-start: 0.55rem;
 }
 
 .document-toc {
