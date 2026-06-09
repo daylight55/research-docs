@@ -9,7 +9,7 @@ screenshots="$out_dir/screenshots/$name"
 
 mkdir -p "$out_dir" "$screenshots"
 
-npx marp "$deck" --html --theme contents/marp-themes/research.css --output "$html"
+npx marp "$deck" --html --theme src/styles/marp-themes/research.css --output "$html"
 node scripts/patch-marp-deck.mjs "$html"
 
 deck_dir="$(dirname "$deck")"
