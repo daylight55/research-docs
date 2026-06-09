@@ -964,6 +964,22 @@ MCP message自体はJSON-RPC。transportはその運び方。
 ---
 
 <!--
+_class: compact visual ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
+## 認証付きRemote MCPの全体構成
+
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/authenticated-remote-mcp-architecture.svg" alt="Authenticated Remote MCP architecture with host authorization server remote MCP server and backend API" />
+</div>
+
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
 _class: dense ch05
 -->
 
@@ -1201,21 +1217,11 @@ _class: compact ch06
 
 ## AWSでRemote MCPを構築する構成
 
-**A. AgentCore GatewayをRemote MCP入口にし、既存API/Lambda/MCP serverをtargetとして束ねる。**
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/aws-agentcore-remote-mcp-architecture.svg" alt="AWS AgentCore Remote MCP architecture with Gateway Identity targets and backend services" />
+</div>
 
-```text
-Claude / Codex / Agent
-  -> AgentCore Gateway (MCP endpoint)
-  -> targets: OpenAPI API / Lambda / MCP server / Smithy / API Gateway
-  -> backend: AWS services / SaaS / internal APIs
-```
-
-- Gatewayは単一MCP endpointとtool catalogを提供する
-- OpenAPIやLambdaをMCP-compatible toolsへ変換できる
-- 複数targetを統合したvirtual MCP serverとして見せられる
-- semantic tool searchで大きなtool catalogを扱いやすくする
-
-<p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
 <!--
