@@ -7,17 +7,19 @@ sequenceDiagram
   participant API as Backend API
 
   U->>H: Add Remote MCP URL
-  H->>R: GET/POST /mcp initialize
+  H->>R: ① initialize request
   R-->>H: 401 + protected resource metadata
   H->>AS: OAuth 2.1 + PKCE login
   AS-->>H: access token for MCP resource
-  H->>R: initialize / tools/list with token
+  H->>R: ① initialize with token
   R->>R: validate issuer, audience, scope, expiry
-  R-->>H: tool catalog
+  R-->>H: ② InitializeResult / session
+  H->>R: ③ tools/list
+  R-->>H: ③ tool catalog
   U->>H: approve sensitive tool call
-  H->>R: tools/call arguments
+  H->>R: ④ tools/call arguments
   R->>AS: token exchange / OBO if needed
   AS-->>R: downstream token
-  R->>API: call API with target-specific credential
+  R->>API: ⑤ call API with target-specific credential
   API-->>R: bounded result
-  R-->>H: structuredContent / error
+  R-->>H: ⑥ structuredContent / error
