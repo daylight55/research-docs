@@ -422,6 +422,21 @@ section.dense:has(> table) {
 
 section.compact:has(> table) > p:not(.chapter-label, .source-note),
 section.dense:has(> table) > p:not(.chapter-label, .source-note) {
+  font-size: 1.08em;
+  font-weight: 750;
+  line-height: 1.32;
+  margin-block-start: 10px;
+  margin-inline: auto;
+  max-inline-size: 100%;
+  text-align: center;
+}
+
+section.compact > .visual-hero + p:not(.source-note),
+section.dense > .visual-hero + p:not(.source-note) {
+  font-size: 1.08em;
+  font-weight: 750;
+  line-height: 1.32;
+  margin-block-start: 18px;
   margin-inline: auto;
   max-inline-size: 100%;
   text-align: center;

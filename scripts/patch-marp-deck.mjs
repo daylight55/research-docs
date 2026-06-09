@@ -23,50 +23,20 @@ const style = `<style id="${marker}-style">
   body,
   body[data-bespoke-view=""] .bespoke-marp-parent,
   body[data-bespoke-view="next"] .bespoke-marp-parent {
-    background: var(--deck-letterbox-bg, #ffffff) !important;
+    background: #000000 !important;
   }
 
   body[data-bespoke-view=""] svg.bespoke-marp-slide,
   body[data-bespoke-view="next"] svg.bespoke-marp-slide {
-    background: var(--deck-letterbox-bg, #ffffff);
+    background: #000000;
   }
 }
 </style>`;
 
-const script = `<script id="${marker}-script">
-(() => {
-  const fallback = "#ffffff";
-  const root = document.documentElement;
-
-  const syncLetterboxBackground = () => {
-    const section = document.querySelector("svg.bespoke-marp-slide.bespoke-marp-active foreignObject section");
-    const style = section ? getComputedStyle(section) : null;
-    root.style.setProperty("--deck-letterbox-bg", style?.background || style?.backgroundColor || fallback);
-  };
-
-  const scheduleSync = () => requestAnimationFrame(syncLetterboxBackground);
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", scheduleSync, { once: true });
-  } else {
-    scheduleSync();
-  }
-
-  window.addEventListener("hashchange", scheduleSync);
-
-  new MutationObserver(scheduleSync).observe(document.body, {
-    attributes: true,
-    attributeFilter: ["class", "data-bespoke-view"],
-    subtree: true
-  });
-})();
-</script>`;
-
-if (!html.includes("</head>") || !html.includes("</body>")) {
-  throw new Error(`Could not find </head> or </body> in ${resolvedPath}`);
+if (!html.includes("</head>")) {
+  throw new Error(`Could not find </head> in ${resolvedPath}`);
 }
 
 html = html.replace("</head>", `${style}</head>`);
-html = html.replace("</body>", `${script}</body>`);
 
 await fs.writeFile(resolvedPath, html);

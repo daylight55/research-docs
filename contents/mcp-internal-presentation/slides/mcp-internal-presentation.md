@@ -1589,6 +1589,27 @@ _class: compact ch08
 ---
 
 <!--
+_class: dense ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## 最後に残る争点
+
+| 争点 | 何を決め続けるか |
+|---|---|
+| server trust | trusted server / allowlist / registry審査をどう更新するか |
+| tool metadata | descriptionやhidden instructionをどう検査するか |
+| auth boundary | user / host / server / backendの権限をどう分離するか |
+| tool catalog | large catalog、UI / Apps、auditをどう運用に載せるか |
+
+未来の争点は、MCPを使うかどうかではなく、**信頼境界を更新し続けられるか**に集まる。
+
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
 _class: compact ch08
 -->
 
