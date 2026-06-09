@@ -5,7 +5,7 @@ paginate: true
 size: 16:9
 title: "MCP概論 : 開発現場でどう使うべきか"
 navTitle: MCP internal presentation
-description: 社内発表向けMCP解説、要所のQ&A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
+description: MCP解説、要所のQ&A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
 kind: slides
 topicId: mcp-internal-presentation
 order: 10
@@ -16,7 +16,7 @@ _class: lead
 
 # MCP概論 :<br />開発現場でどう使うべきか
 
-AI Agentが外部systemを安全に使うための接続面を、概念地図から順に理解する。
+AI Agentが外部systemを安全に使うための接続面を、実タスクから順に理解する。
 
 2026-06-09
 
@@ -25,80 +25,23 @@ AI Agentが外部systemを安全に使うための接続面を、概念地図か
 ---
 
 <!--
-_class: compact map ch00
+_class: compact ch00
 -->
 
 <p class="chapter-label">00 / 全体像</p>
 
-## MCPの全体地図
+## 判断できるようになること
 
-<img class="diagram concept-map" src="diagrams/mcp-concept-map.svg" alt="MCP concept map with host, client, server, primitives, transport, workflow, and governance" />
+AI Agentに外部systemを任せるとき、**どの接続面を標準化すべきか**を判断できるようにする。
 
-この図は暗記用ではない。まずは **User -> Host -> MCP Server -> Backend** の左から右の流れだけ見る。
-
-この発表のゴールは、周辺のピースを順番に埋めていくこと。
-
-<p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
-
----
-
-<!--
-_class: compact visual ch00
--->
-
-<p class="chapter-label">00 / 全体像</p>
-
-## LLMが外部systemへ出る入口
-
-<p class="lead">LLMはHostの境界内で判断し、外部systemにはMCPの契約を通じて届く。</p>
-
-<div class="visual-hero">
-  <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels" />
+<div class="grid two">
+  <div class="panel strong"><h3>どこで必要になるか</h3><p>GitHub、AWS、DB、SaaS、社内APIをagentが扱う場面。</p></div>
+  <div class="panel teal"><h3>何を標準化するか</h3><p>tool、resource、prompt、schema、transport、authの境界。</p></div>
+  <div class="panel amber"><h3>何と比べるか</h3><p>CLI、Browser、既存APIと比べて、MCPを選ぶ条件。</p></div>
+  <div class="panel"><h3>どう運用するか</h3><p>scope、approval、audit、quota、fallbackを設計する単位。</p></div>
 </div>
 
-<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
----
-
-<!--
-_class: compact ch00
--->
-
-<p class="chapter-label">00 / 全体像</p>
-
-## まず一文でいうと
-
-MCPは、ClaudeやCodexのようなAIアプリが、GitHubや社内DBのような外部システムを安全に使うための共通ルール。
-
-正式に言うと、AI applicationが外部システムのdata / action / workflowへ接続するための標準protocol。
-
-- Hostがuser、model、接続、承認を束ねる
-- MCP ClientがserverごとのsessionとJSON-RPC通信を持つ
-- MCP Serverがtool / resource / promptを宣言する
-- Backendは既存API、SaaS、DB、社内systemのまま活かす
-
-つまりMCPは、**LLMが外部世界へ出るときの接続契約**。
-
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
----
-
-<!--
-_class: compact ch00
--->
-
-<p class="chapter-label">00 / 全体像</p>
-
-## 今日の結論
-
-MCPは「便利な拡張」ではなく、AI Agentに外部systemを使わせるための接続設計。
-
-- 外部操作: UI推測ではなく、tool/resource/schemaで宣言する
-- 安全性: auth、scope、approval、audit、trusted serverを前提にする
-- 定型化: SkillにMCPの使い方を入れると反復業務が型になる
-- 制限: quota、rate limit、tool数、result sizeも設計対象になる
-
-この4点を軸に、既存API・開発tool・業務SaaSをAIが迷わず呼べる入口として見直す。
+最初に用語を暗記するのではなく、**外部操作をどこで安全に切り出すか**から見る。
 
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 
@@ -112,7 +55,7 @@ _class: dense ch00
 
 ## 例: 失敗CIを調べる
 
-この発表では、同じ例でMCPの意味を追う。
+この資料では、同じ例でMCPの意味を追う。
 
 ```text
 User:
@@ -126,9 +69,70 @@ AI Agent:
   5. 修正案と検証コマンドを返す
 ```
 
-MCPがあると、GitHubやcodebaseを「画面推測」ではなく、定義済みtoolとして扱える。
+この仕事は、推論だけでは終わらない。**現在の外部systemを読み、必要なら操作する入口**がいる。
 
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
+
+---
+
+<!--
+_class: compact visual ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## 外部systemへ出ると何が起きるか
+
+<p class="lead">LLMはHostの境界内で判断し、外部systemには何らかの接続面を通じて届く。</p>
+
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels" />
+</div>
+
+<p class="caption">CLIやBrowserでも外部へ出られる。MCPは、その入口をagent向けの契約として設計する。</p>
+
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
+_class: compact map ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## MCPの全体地図
+
+<img class="diagram concept-map" src="diagrams/mcp-concept-map.svg" alt="MCP concept map with host, client, server, primitives, transport, workflow, and governance" />
+
+失敗CIの例を地図に載せると、まずは **User -> Host -> MCP Server -> Backend** の左から右の流れになる。
+
+以降はこの地図のピースを、必要になった順に埋める。
+
+<p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
+
+---
+
+<!--
+_class: compact ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## MCPは接続契約
+
+MCPは、ClaudeやCodexのようなAIアプリが、GitHubや社内DBのような外部システムを安全に使うための共通ルール。
+
+正式には、AI applicationが外部システムのdata / action / workflowへ接続するための標準protocol。
+
+- Hostがuser、model、接続、承認を束ねる
+- MCP ClientがserverごとのsessionとJSON-RPC通信を持つ
+- MCP Serverがtool / resource / promptを宣言する
+- Backendは既存API、SaaS、DB、社内systemのまま活かす
+
+つまりMCPは、**LLMが外部世界へ出るときの接続契約**。
+
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
 
@@ -138,17 +142,17 @@ _class: dense ch00 table-narrow-first
 
 <p class="chapter-label">00 / 全体像</p>
 
-## 本日の流れ
+## 全体の流れ
 
-| 順番 | 埋めるピース | ここでわかること |
+| 順番 | 見るもの | ここでわかること |
 |---:|---|---|
-| 1 | Host / Client / Server | 誰が接続と承認を持つか |
-| 2 | Tool / Resource / Prompt | MCP serverが何を公開するか |
-| 3 | CLI / Browser / APIとの比較 | いつMCPを選ぶべきか |
-| 4 | MCP server構築 | 既存APIをどうadapter化するか |
-| 5 | Remote / Protocol / Auth | どう通信し、どう守るか |
-| 6 | Gateway / Workflow | チームでどう運用するか |
-| 7 | Governance | 何を信頼し、何を制限するか |
+| 1 | 課題と地図 | なぜ外部接続面が必要か |
+| 2 | Host / Client / Server | 誰が接続と承認を持つか |
+| 3 | Tool / Resource / Prompt | MCP serverが何を公開するか |
+| 4 | CLI / Browser / APIとの比較 | いつMCPを選ぶべきか |
+| 5 | MCP server構築 | 既存APIをどうadapter化するか |
+| 6 | Remote / Protocol / Auth | どう通信し、どう守るか |
+| 7 | Workflow / Governance | チームでどう運用するか |
 
 3つの問いに分けると追いやすい。**誰がつなぐか、何を公開するか、どう安全に運用するか。**
 
@@ -164,7 +168,7 @@ _class: section ch01
 
 # 基本概念
 
-MCPを構成する言葉と責務を揃える
+接続契約を構成する言葉と責務を揃える
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -178,7 +182,7 @@ _class: dense ch01
 
 ## まず押さえる用語
 
-| 用語 | 何を指すか | この発表での見方 |
+| 用語 | 何を指すか | この資料での見方 |
 |---|---|---|
 | Agent | LLMが手順を考え、toolを選び、結果を見て次へ進む実行主体 | 判断し、toolを選ぶ側 |
 | Host | Claude / Cursor / VS Codeなどの実行環境 | MCP接続と承認を管理する側 |
@@ -197,31 +201,30 @@ _class: dense ch01
 
 <p class="chapter-label">01 / 基本概念</p>
 
-## MCPとは？
+## MCPを3つの面で見る
 
 <div class="logo-split">
 <div class="logo-copy">
 
-Model Context Protocol。AI agentが外部のdata / action / workflowを使うための標準protocol。
+接続契約としてのMCPは、3つの面に分けると追いやすい。
 
-- 何を公開するか: tool、resource、prompt
-- どう説明するか: name、description、input schema、output schema
-- どう運ぶか: stdio、Streamable HTTPなどのtransport
-- どう守るか: auth、scope、approval、audit、rate limit
+- 公開面: tool、resource、prompt
+- 説明面: name、description、input schema、output schema
+- 通信/保護面: transport、auth、scope、approval、audit、rate limit
 
-MCPは「LLMを賢くする技術」ではなく、**LLMが安全に外部世界へ出るための接続契約**。
+個別要素を暗記するのではなく、**どの責務を支える部品か**として読む。
 
 </div>
 <div class="logo-panel">
   <div class="logo-hero">
     <img src="logos/model-context-protocol.svg" alt="Model Context Protocol logo" />
     <strong>Model Context Protocol</strong>
-    <span>agentが外部systemを扱うための共通I/O</span>
+    <span>agentが外部systemを扱うための接続契約</span>
   </div>
   <div class="concept-stack">
-    <div class="concept-card"><div class="concept-mark">1</div><div><strong>Catalog</strong><span>tool / resource / promptを列挙する</span></div></div>
-    <div class="concept-card"><div class="concept-mark">2</div><div><strong>Call</strong><span>schemaに沿って安全に実行する</span></div></div>
-    <div class="concept-card"><div class="concept-mark">3</div><div><strong>Audit</strong><span>auth、scope、approvalを境界に置く</span></div></div>
+    <div class="concept-card"><div class="concept-mark">1</div><div><strong>Catalog</strong><br /><span>tool / resource / promptを列挙する</span></div></div>
+    <div class="concept-card"><div class="concept-mark">2</div><div><strong>Call</strong><br /><span>schemaに沿って安全に実行する</span></div></div>
+    <div class="concept-card"><div class="concept-mark">3</div><div><strong>Audit</strong><br /><span>auth、scope、approvalを境界に置く</span></div></div>
   </div>
 </div>
 </div>
