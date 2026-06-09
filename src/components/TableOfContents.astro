@@ -51,6 +51,7 @@ function buildToc(headings: MarkdownHeading[]) {
 </nav>
 
 <script>
+  const tocContainer = document.querySelector(".document-toc");
   const tocLinks = Array.from(document.querySelectorAll("[data-toc-link]"));
   const linkedHeadings = tocLinks
     .map((link) => {
@@ -61,14 +62,46 @@ function buildToc(headings: MarkdownHeading[]) {
     })
     .filter((item) => item !== null);
 
+  let activeTocSlug = null;
+  let followTimeout = 0;
+
+  function followActiveTocLink(link, delay = 140) {
+    if (!(tocContainer instanceof HTMLElement)) return;
+
+    window.clearTimeout(followTimeout);
+    followTimeout = window.setTimeout(() => {
+      const containerRect = tocContainer.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const comfortTop = containerRect.top + containerRect.height * 0.28;
+      const comfortBottom = containerRect.bottom - containerRect.height * 0.28;
+
+      if (linkRect.top >= comfortTop && linkRect.bottom <= comfortBottom) return;
+
+      const currentTop = tocContainer.scrollTop;
+      const linkCenter = linkRect.top - containerRect.top + currentTop + linkRect.height / 2;
+      const targetTop = linkCenter - tocContainer.clientHeight / 2;
+      const maxTop = tocContainer.scrollHeight - tocContainer.clientHeight;
+      const clampedTop = Math.max(0, Math.min(targetTop, maxTop));
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      tocContainer.scrollTo({
+        top: clampedTop,
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+      });
+    }, delay);
+  }
+
   function setActiveTocLink(slug, shouldScroll = true) {
+    if (!slug || slug === activeTocSlug) return;
+    activeTocSlug = slug;
+
     for (const link of tocLinks) {
       const isActive = link.getAttribute("data-toc-link") === slug;
       link.classList.toggle("active", isActive);
       if (isActive) {
         link.setAttribute("aria-current", "location");
-        if (shouldScroll) {
-          link.scrollIntoView({ block: "center", inline: "nearest" });
+        if (shouldScroll && link instanceof HTMLAnchorElement) {
+          followActiveTocLink(link);
         }
       } else {
         link.removeAttribute("aria-current");
@@ -109,7 +142,7 @@ function buildToc(headings: MarkdownHeading[]) {
   for (const link of tocLinks) {
     link.addEventListener("click", () => {
       const slug = link.getAttribute("data-toc-link");
-      if (slug) setActiveTocLink(slug);
+      if (slug) setActiveTocLink(slug, false);
     });
   }
 </script>
