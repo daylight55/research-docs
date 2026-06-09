@@ -127,6 +127,16 @@ order: 30
 - [MCP build server guide](https://modelcontextprotocol.io/docs/develop/build-server)
 - [MCP build client guide](https://modelcontextprotocol.io/docs/develop/build-client)
 
+## Claude, OpenAI, and Tool Call Generation
+
+- [Anthropic: Tool use with Claude](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
+- [Anthropic: Define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
+- [Anthropic: Fine-grained tool streaming](https://platform.claude.com/docs/en/agents-and-tools/tool-use/fine-grained-tool-streaming)
+- [OpenAI: Function calling](https://developers.openai.com/api/docs/guides/function-calling)
+- [OpenAI: MCP and Connectors](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
+- [OpenAI Codex manual](https://developers.openai.com/codex/codex-manual.md)
+- [OpenAI Codex config reference](https://developers.openai.com/codex/config-reference)
+
 ## Claude and Remote MCP
 
 - [Claude Code MCP docs](https://code.claude.com/docs/en/mcp)
@@ -175,6 +185,14 @@ order: 30
 - [AWS Labs MCP](https://github.com/awslabs/mcp)
 - [Sentry MCP](https://github.com/getsentry/sentry-mcp)
 - [Supabase MCP](https://github.com/supabase-community/supabase-mcp)
+
+## Slide Image Generation and Prompting
+
+- [OpenAI Image generation docs: limitations](https://developers.openai.com/api/docs/guides/image-generation#limitations)
+- [OpenAI Cookbook: GPT Image Generation Models Prompting Guide](https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide)
+- [Google Cloud: Gemini image generation best practices](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/gemini-image-generation-best-practices)
+- [Adobe Firefly: Writing effective text prompts](https://helpx.adobe.com/firefly/web/generate-images-with-text-to-image/generate-images-using-text-prompts/writing-effective-text-prompts.html)
+- [Microsoft Copilot: Image prompting 101](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/do-more-with-ai/ai-art-prompting-guide/image-prompting-101)
 
 ## Site and Presentation Tooling
 
