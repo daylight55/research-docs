@@ -357,7 +357,7 @@ _class: section ch02
 
 # 比較と判断軸
 
-CLI、Browser、API、MCPを使い分ける
+MCPを使う場面と使わない場面を分ける
 
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -369,15 +369,17 @@ _class: compact ch02
 
 <p class="chapter-label">02 / 比較と判断軸</p>
 
-## なぜMCPが必要なのか
+## どの入口を選ぶべきか
 
-AIエージェントが外部システムを安全に使うための標準インターフェースを作る。
+ここでは「MCPが便利か」ではなく、**どの入口を選ぶべきか**を見る。
 
-- 外部システム: GitHub、AWS、Sentry、DB、社内API、ブラウザ、Docs
-- できること: context取得、tool実行、workflowの再利用
-- 重要点: tool名、description、schema、auth、transport、approvalをプロトコルで扱う
+<div class="grid three">
+  <div class="panel strong"><h3>CLI</h3><p>local実行や一度きりの調査に強い。</p></div>
+  <div class="panel amber"><h3>Browser</h3><p>UIの見た目、console、network、実ブラウザ再現に強い。</p></div>
+  <div class="panel teal"><h3>MCP</h3><p>反復するservice/data/action境界をagent向け契約にできる。</p></div>
+</div>
 
-MCPは「AIに便利ツールを足す」ではなく、**AIが迷わず呼べるAPI境界**。
+この章の結論は、**MCPを選ぶ条件と、選ばない条件を分けること**。
 
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -569,6 +571,28 @@ _class: section ch03
 # MCP server構築
 
 既存APIをagent向けadapterにする
+
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
+_class: compact ch03
+-->
+
+<p class="chapter-label">03 / MCP server構築</p>
+
+## 構築章で見る境界
+
+比較章では、MCPを選ぶ条件を見た。ここからは、選んだ後に**何をserverとして公開するか**を見る。
+
+<div class="grid three">
+  <div class="panel strong"><h3>既存API</h3><p>business logic、validation、audit、authのsource of truth。</p></div>
+  <div class="panel teal"><h3>MCP adapter</h3><p>agentに見せるtool/resource、schema、descriptionを整える層。</p></div>
+  <div class="panel amber"><h3>route policy</h3><p>公開してよい操作、除外する操作、副作用の扱いを決める。</p></div>
+</div>
+
+コード例はFastAPI/FastMCPの暗記ではなく、**既存APIを壊さず公開面を絞る例**として読む。
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -932,9 +956,31 @@ _class: section ch05
 
 # Protocol / Auth / JSON-RPC
 
-接続フローとtool callの中身を見る
+Remote MCPを動かす通信、認証、tool callの中身を見る
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
+_class: compact ch05
+-->
+
+<p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+
+## この章で見る3層
+
+Remote MCPの話は、transport、auth、message、model-side tool callが混ざると分かりにくい。先に層を分ける。
+
+<div class="grid three">
+  <div class="panel strong"><h3>Transport</h3><p>stdioかHTTPか。messageをどう運ぶか。</p></div>
+  <div class="panel amber"><h3>Auth</h3><p>誰のtokenで、どのscopeを、どのserverへ渡すか。</p></div>
+  <div class="panel teal"><h3>JSON-RPC</h3><p>`initialize`、`tools/list`、`tools/call`をどう包むか。</p></div>
+</div>
+
+最後に、LLMが直接MCPを叩くのではなく、**Hostがtool callをMCP requestへ変換する**ことを確認する。
+
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
 
@@ -1291,9 +1337,9 @@ _class: compact ch07
 
 <p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 
-## 具体MCPは3分類で見る
+## 作業面で分類する
 
-ここからはtool名の暗記ではなく、**どの作業面をagentに渡すか**で分類する。
+ここからは固有tool名の暗記ではなく、**どの作業面をagentに渡すか**で分類する。
 
 | 作業面 | 見たいもの | 代表例 |
 |---|---|---|
