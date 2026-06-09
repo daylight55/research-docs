@@ -4,7 +4,7 @@
 ## Site structure
 
 サイト構成は「調査テーマ」を親にして、その配下に slide / research / source links / research task などを置く。
-既存の `contents/{themes,slides,research,sources,tasks}/**` Markdown ページは、FrontMatter の `kind` と `themeId` によってテーマ単位に束ねられる。
+`contents/<topic-id>/{themes,slides,research,sources,tasks}/**` Markdown ページは、FrontMatter の `kind` と `themeId` によってテーマ単位に束ねられる。
 
 ```text
 research theme
@@ -39,19 +39,32 @@ research theme
 
 ## Contents
 
-配布・再利用する成果物は `contents/` に集約する。Astro のルーティング対象は `contents/` 直下に `themes` / `slides` / `research` / `sources` / `tasks` として置き、Marp の例など配信対象ではない再利用素材は `contents/templates/` に置く。
+配布・再利用する成果物は `contents/` に集約する。調査テーマごとの成果物は `contents/<topic-id>/` を親にし、その下に `themes` / `slides` / `research` / `sources` / `tasks` を置く。同じトピックの調査メモ、スライド、出典、タスクを1つのディレクトリに集約する。
+
+Marp の例など配信対象ではない再利用素材は `contents/templates/` に置く。共通CSSは複数トピックから参照するため `contents/themes/` に残す。
 
 ```text
 contents
+├── mcp-internal-presentation
+│   ├── research
+│   │   ├── mcp-late-slide-diagrams.md
+│   │   └── mcp-slide-research.md
+│   ├── slides
+│   │   ├── diagrams
+│   │   ├── generated
+│   │   ├── logos
+│   │   ├── screenshots
+│   │   └── mcp-internal-presentation.md
+│   ├── sources
+│   │   └── mcp-source-links.md
+│   ├── tasks
+│   │   └── research-tasks.md
+│   └── themes
+│       └── mcp-internal-presentation.md
 ├── templates
 │   └── slides
 │       └── example.md
-├── research
-├── slides
-├── sources
-├── tasks
 └── themes
-    ├── mcp-internal-presentation.md
     ├── mcp-modern.css
     └── research.css
 ```
@@ -83,17 +96,17 @@ npm run slide:verify
 npm run template:topic
 ```
 
-このコマンドは `contents/themes/`、`contents/slides/`、`contents/research/`、`contents/sources/`、`contents/tasks/` に同じ `themeId` の Markdown を作る。
+このコマンドは `contents/<themeId>/themes/`、`contents/<themeId>/slides/`、`contents/<themeId>/research/`、`contents/<themeId>/sources/`、`contents/<themeId>/tasks/` に同じ `themeId` の Markdown を作る。
 
 ## MCP internal presentation
 
 - Live site: https://daylight55.github.io/research-docs/ (`gh-pages` branch, root)
 - Pull request previews: `https://daylight55.github.io/research-docs/pr-preview/pr-<PR_NUMBER>/`
-- [Marp slide deck source](./contents/slides/mcp-internal-presentation.md)
+- [Marp slide deck source](./contents/mcp-internal-presentation/slides/mcp-internal-presentation.md)
 - [Marp custom theme](./contents/themes/research.css)
-- [Detailed research notes](./contents/research/mcp-slide-research.md)
-- [Source links](./contents/sources/mcp-source-links.md)
-- [Research task checklist](./contents/tasks/research-tasks.md)
+- [Detailed research notes](./contents/mcp-internal-presentation/research/mcp-slide-research.md)
+- [Source links](./contents/mcp-internal-presentation/sources/mcp-source-links.md)
+- [Research task checklist](./contents/mcp-internal-presentation/tasks/research-tasks.md)
 
 Generate the site:
 
@@ -101,7 +114,7 @@ Generate the site:
 scripts/build-pages-site.sh site
 ```
 
-The Astro site renders every Markdown file under `contents/{themes,slides,research,sources,tasks}/**` into a page using its file path. FrontMatter controls the displayed title, description, type, and navigation order. The Marp presentation HTML is also generated at `/slides/mcp-internal-presentation/deck/`.
+The Astro site renders every Markdown file under `contents/<topic-id>/{themes,slides,research,sources,tasks}/**` into a page. Public URLs preserve the artifact-type-first shape such as `/slides/mcp-internal-presentation/` and `/research/mcp-slide-research/`, while source files are grouped by topic on disk. FrontMatter controls the displayed title, description, type, and navigation order. The Marp presentation HTML is also generated at `/slides/mcp-internal-presentation/deck/`.
 
 The Pages build also copies each source Markdown file to the same public path with its `.md` extension and emits `/llms.txt` for crawl discovery.
 

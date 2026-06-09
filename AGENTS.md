@@ -12,11 +12,12 @@ This repository is a research-documentation site. The README defines the site st
 
 The current content architecture is theme-centered:
 
-- `contents/themes/`: parent theme pages and theme-level CSS
-- `contents/slides/`: Marp slide decks and local slide assets
-- `contents/research/`: detailed research notes
-- `contents/sources/`: source link collections
-- `contents/tasks/`: research task checklists
+- `contents/<topic-id>/themes/`: parent theme pages
+- `contents/<topic-id>/slides/`: Marp slide decks and local slide assets
+- `contents/<topic-id>/research/`: detailed research notes
+- `contents/<topic-id>/sources/`: source link collections
+- `contents/<topic-id>/tasks/`: research task checklists
+- `contents/themes/`: shared theme CSS
 - `contents/templates/`: reusable templates that are not direct site pages
 - `docs/`: workflow and style guidance for contributors and agents
 
@@ -26,11 +27,11 @@ The README states that rendered document pages also have raw Markdown counterpar
 
 The active MCP deck lives at:
 
-- Slide source: `contents/slides/mcp-internal-presentation.md`
-- Research notes: `contents/research/mcp-slide-research.md`
-- Source links: `contents/sources/mcp-source-links.md`
-- Task checklist: `contents/tasks/research-tasks.md`
-- Slide assets: `contents/slides/diagrams/`, `contents/slides/logos/`, `contents/slides/screenshots/`
+- Slide source: `contents/mcp-internal-presentation/slides/mcp-internal-presentation.md`
+- Research notes: `contents/mcp-internal-presentation/research/mcp-slide-research.md`
+- Source links: `contents/mcp-internal-presentation/sources/mcp-source-links.md`
+- Task checklist: `contents/mcp-internal-presentation/tasks/research-tasks.md`
+- Slide assets: `contents/mcp-internal-presentation/slides/diagrams/`, `contents/mcp-internal-presentation/slides/logos/`, `contents/mcp-internal-presentation/slides/screenshots/`, `contents/mcp-internal-presentation/slides/generated/`
 
 The README says the Marp presentation HTML is generated at `/slides/mcp-internal-presentation/deck/` in the Pages site.
 
@@ -78,7 +79,7 @@ npm run slide:mcp:verify
 For a specific deck:
 
 ```sh
-bash scripts/verify-slides.sh contents/slides/mcp-internal-presentation.md
+bash scripts/verify-slides.sh contents/mcp-internal-presentation/slides/mcp-internal-presentation.md
 ```
 
 The slide workflow says screenshot verification is required because Markdown correctness does not guarantee visual correctness. Inspect `dist/screenshots/` after substantial slide edits.

@@ -5,7 +5,19 @@ import { z } from "astro/zod";
 const docs = defineCollection({
   loader: glob({
     base: "./contents",
-    pattern: "{themes,slides,research,sources,tasks}/**/*.{md,mdx}",
+    pattern: [
+      "{themes,slides,research,sources,tasks}/**/*.{md,mdx}",
+      "*/{themes,slides,research,sources,tasks}/**/*.{md,mdx}",
+      "!templates/**",
+    ],
+    generateId: ({ entry }) => {
+      const parts = entry.split("/");
+      if (parts.length >= 3 && ["themes", "slides", "research", "sources", "tasks"].includes(parts[1])) {
+        return parts.slice(1).join("/").replace(/\.(md|mdx)$/, "");
+      }
+
+      return entry.replace(/\.(md|mdx)$/, "");
+    },
   }),
   schema: z
     .object({
