@@ -600,6 +600,12 @@ table {
   width: 100%;
 }
 
+section.table-narrow-first th:first-child,
+section.table-narrow-first td:first-child {
+  inline-size: 96px;
+  width: 96px;
+}
+
 th {
   background: var(--rd-panel-strong);
   color: var(--rd-ink);

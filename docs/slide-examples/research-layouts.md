@@ -101,6 +101,22 @@ paginate: true
 
 ---
 
+<!-- _class: table-narrow-first -->
+
+<div class="eyebrow">pattern 05b</div>
+
+# 番号列を細くする表
+
+<p class="lead">`順番` や `step` だけの列は、スライド class で小さくする。</p>
+
+| step | 作業 | 見ること |
+|---:|---|---|
+| 1 | 構成を決める | 1スライド1メッセージか |
+| 2 | パターンを選ぶ | 近いレイアウトを使えているか |
+| 3 | 検証する | 余白、重なり、切れがないか |
+
+---
+
 <div class="eyebrow">pattern 06</div>
 
 # ステップタイムライン
