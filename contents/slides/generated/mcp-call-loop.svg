@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="864" viewBox="0 0 1536 864" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="700" viewBox="0 100 1536 700" role="img" aria-labelledby="title desc">
   <title id="title">MCP call loop</title>
   <desc id="desc">Host connects to an MCP server, imports tools, receives a model tool call, asks for approval if needed, calls the tool, and returns a structured result.</desc>
   <defs>
@@ -9,8 +9,6 @@
       text{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans JP','Hiragino Sans',sans-serif;fill:#172033} .small{font-size:24px}.label{font-size:29px;font-weight:700}.num{font-size:24px;font-weight:800;fill:#fff}.muted{fill:#546277}.box{fill:#fff;stroke:#cbd5e1;stroke-width:2}.host{fill:#eaf5f4;stroke:#2f9c95}.server{fill:#fff4df;stroke:#c98220}.model{fill:#eef4fb;stroke:#1b4565}.approval{fill:#f6f8fb;stroke:#94a3b8;stroke-dasharray:8 8}
     </style>
   </defs>
-  <rect width="1536" height="864" fill="#f6f8fb"/>
-  <text x="88" y="84" font-size="40" font-weight="800">MCPの1回の呼び出し</text>
   <text x="88" y="124" class="small muted">LLMは外部APIを直接叩かず、Hostが接続・承認・実行を仲介する</text>
 
   <rect class="box host" x="80" y="210" width="300" height="155" rx="14"/>

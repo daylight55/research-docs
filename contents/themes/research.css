@@ -656,12 +656,14 @@ img.diagram {
 }
 
 .generated-visual {
-  background: var(--rd-white);
-  border: 1px solid rgba(23, 32, 51, 0.12);
-  border-radius: 8px;
-  box-shadow: var(--rd-shadow);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
   display: block;
-  inline-size: 100%;
+  block-size: auto;
+  inline-size: auto;
+  max-inline-size: 100%;
   object-fit: contain;
 }
 
@@ -672,6 +674,7 @@ section.visual .generated-visual {
 .visual-hero {
   display: grid;
   gap: 12px;
+  justify-items: center;
 }
 
 section.compact:not(.visual) .visual-hero,
@@ -681,7 +684,7 @@ section.dense:not(.visual) .visual-hero {
 
 section.compact:not(.visual) .visual-hero .generated-visual,
 section.dense:not(.visual) .visual-hero .generated-visual {
-  inline-size: min(100%, 1000px);
+  max-inline-size: min(100%, 1000px);
   max-block-size: 560px;
 }
 
