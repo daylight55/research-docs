@@ -3,20 +3,20 @@ name: "research-topic"
 root: "."
 output: "."
 questions:
-  themeId: "Theme ID in kebab-case, used for filenames and URLs."
-  title: "Research theme title."
-  description: "One-sentence theme description."
+  topicId: "Topic ID in kebab-case, used for filenames and URLs."
+  title: "Research topic title."
+  description: "One-sentence topic description."
   owner: "Owner name."
 ---
 
-# `contents/{{ inputs.themeId | kebab }}/themes/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.topicId | kebab }}/overview/{{ inputs.topicId | kebab }}.md`
 
 ```markdown
 ---
 title: {{ inputs.title }}
 description: {{ inputs.description }}
-kind: theme
-themeId: {{ inputs.themeId | kebab }}
+kind: topic
+topicId: {{ inputs.topicId | kebab }}
 status: active
 owner: {{ inputs.owner }}
 updatedAt: {{ date "YYYY-MM-DD" }}
@@ -29,13 +29,13 @@ order: 0
 
 ## Artifacts
 
-- Slide deck: [`../slides/{{ inputs.themeId | kebab }}.md`](../slides/{{ inputs.themeId | kebab }}.md)
-- Research notes: [`../research/{{ inputs.themeId | kebab }}.md`](../research/{{ inputs.themeId | kebab }}.md)
-- Source links: [`../sources/{{ inputs.themeId | kebab }}.md`](../sources/{{ inputs.themeId | kebab }}.md)
-- Research tasks: [`../tasks/{{ inputs.themeId | kebab }}.md`](../tasks/{{ inputs.themeId | kebab }}.md)
+- Slide deck: [`../slides/{{ inputs.topicId | kebab }}.md`](../slides/{{ inputs.topicId | kebab }}.md)
+- Research notes: [`../research/{{ inputs.topicId | kebab }}.md`](../research/{{ inputs.topicId | kebab }}.md)
+- Source links: [`../sources/{{ inputs.topicId | kebab }}.md`](../sources/{{ inputs.topicId | kebab }}.md)
+- Research tasks: [`../tasks/{{ inputs.topicId | kebab }}.md`](../tasks/{{ inputs.topicId | kebab }}.md)
 ```
 
-# `contents/{{ inputs.themeId | kebab }}/slides/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.topicId | kebab }}/slides/{{ inputs.topicId | kebab }}.md`
 
 ```markdown
 ---
@@ -47,7 +47,7 @@ title: {{ inputs.title }}
 navTitle: {{ inputs.title }}
 description: {{ inputs.description }}
 kind: slides
-themeId: {{ inputs.themeId | kebab }}
+topicId: {{ inputs.topicId | kebab }}
 order: 10
 footer: "{{ inputs.title }}"
 ---
@@ -70,17 +70,17 @@ footer: "{{ inputs.title }}"
 
 # Key question
 
-<p class="lead">このテーマで明らかにする問いを1文で置く。</p>
+<p class="lead">このトピックで明らかにする問いを1文で置く。</p>
 ```
 
-# `contents/{{ inputs.themeId | kebab }}/research/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.topicId | kebab }}/research/{{ inputs.topicId | kebab }}.md`
 
 ```markdown
 ---
 title: {{ inputs.title }} research notes
 description: {{ inputs.description }}
 kind: research
-themeId: {{ inputs.themeId | kebab }}
+topicId: {{ inputs.topicId | kebab }}
 order: 20
 ---
 
@@ -95,14 +95,14 @@ order: 20
 -
 ```
 
-# `contents/{{ inputs.themeId | kebab }}/sources/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.topicId | kebab }}/sources/{{ inputs.topicId | kebab }}.md`
 
 ```markdown
 ---
 title: {{ inputs.title }} source links
 description: Source links for {{ inputs.title }}.
 kind: sources
-themeId: {{ inputs.themeId | kebab }}
+topicId: {{ inputs.topicId | kebab }}
 order: 30
 ---
 
@@ -113,14 +113,14 @@ order: 30
 -
 ```
 
-# `contents/{{ inputs.themeId | kebab }}/tasks/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.topicId | kebab }}/tasks/{{ inputs.topicId | kebab }}.md`
 
 ```markdown
 ---
 title: {{ inputs.title }} research tasks
 description: Research task checklist for {{ inputs.title }}.
 kind: task
-themeId: {{ inputs.themeId | kebab }}
+topicId: {{ inputs.topicId | kebab }}
 order: 40
 ---
 

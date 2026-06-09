@@ -1,6 +1,6 @@
 ---
 import "../styles/site.css";
-import { deckHref, getDocSummaries, getThemeSummaries } from "../lib/docs";
+import { deckHref, getDocSummaries, getTopicSummaries } from "../lib/docs";
 
 type Props = {
   description?: string;
@@ -10,7 +10,7 @@ type Props = {
 
 const { description, sidebarDefaultState = "open", title } = Astro.props;
 const docs = await getDocSummaries();
-const themes = getThemeSummaries(docs);
+const topics = getTopicSummaries(docs);
 const currentPath = Astro.url.pathname;
 const deckUrl = deckHref();
 const researchLog = docs.find((doc) => doc.entry.data.kind === "research");
@@ -20,8 +20,8 @@ function isActive(href: string) {
   return currentPath.endsWith(new URL(href, Astro.url).pathname);
 }
 
-function isThemeActive(theme: (typeof themes)[number]) {
-  return isActive(theme.href) || theme.children.some((item) => isActive(item.href));
+function isTopicActive(topic: (typeof topics)[number]) {
+  return isActive(topic.href) || topic.children.some((item) => isActive(item.href));
 }
 ---
 
@@ -39,22 +39,22 @@ function isThemeActive(theme: (typeof themes)[number]) {
         <button
           class="sidebar-toggle"
           type="button"
-          aria-controls="theme-sidebar"
+          aria-controls="topic-sidebar"
           aria-expanded={sidebarDefaultState === "open" ? "true" : "false"}
           data-sidebar-toggle
         >
           <span class="sidebar-toggle-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">調査テーマ一覧を開閉する</span>
+          <span class="visually-hidden">調査トピック一覧を開閉する</span>
         </button>
         <a class="brand" href={import.meta.env.BASE_URL}>
           <span class="brand-mark">RD</span>
           <span>
             <strong>research-docs</strong>
-            <small>Research themes and reports</small>
+            <small>Research topics and reports</small>
           </span>
         </a>
         <nav class="top-actions" aria-label="Primary">
-          <a href={`${import.meta.env.BASE_URL}#research-themes`}>Themes</a>
+          <a href={`${import.meta.env.BASE_URL}#research-topics`}>Topics</a>
           <a href={deckUrl}>Slide deck</a>
           {researchLog && <a href={researchLog.href}>Research log</a>}
           <a href={llmsHref}>llms.txt</a>
@@ -62,12 +62,12 @@ function isThemeActive(theme: (typeof themes)[number]) {
       </header>
 
       <div class="content-grid">
-        <aside id="theme-sidebar" class="sidebar" aria-label="Research theme navigation">
-          <div class="sidebar-title">Research themes</div>
+        <aside id="topic-sidebar" class="sidebar" aria-label="Research topic navigation">
+          <div class="sidebar-title">Research topics</div>
           {
-            themes.map((theme) => (
-              <section class="nav-section" aria-label={theme.title}>
-                <h2><a class:list={[{ active: isThemeActive(theme) }]} href={theme.href}>{theme.title}</a></h2>
+            topics.map((topic) => (
+              <section class="nav-section" aria-label={topic.title}>
+                <h2><a class:list={[{ active: isTopicActive(topic) }]} href={topic.href}>{topic.title}</a></h2>
               </section>
             ))
           }
@@ -81,7 +81,7 @@ function isThemeActive(theme: (typeof themes)[number]) {
     <script>
       const shell = document.querySelector(".site-shell");
       const toggle = document.querySelector("[data-sidebar-toggle]");
-      const sidebar = document.querySelector("#theme-sidebar");
+      const sidebar = document.querySelector("#topic-sidebar");
       const defaultState = shell?.getAttribute("data-sidebar-default") ?? "open";
       const responsiveState = window.matchMedia("(max-width: 900px)").matches ? "closed" : "open";
       const preferredState = responsiveState === "closed" ? "closed" : defaultState;

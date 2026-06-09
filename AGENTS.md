@@ -8,16 +8,16 @@ You have Co-Researcher skills. RIGHT NOW run: `~/.codex/co-researcher/.codex/co-
 
 ## Repository Overview
 
-This repository is a research-documentation site. The README defines the site structure as a research theme with child artifacts: "overview", "slides", "research notes", "source links", "research tasks", and "derived artifacts".
+This repository is a research-documentation site. The README defines the site structure as a research topic with child artifacts: "overview", "slides", "research notes", "source links", "research tasks", and "derived artifacts".
 
-The current content architecture is theme-centered:
+The current content architecture is topic-centered:
 
-- `contents/<topic-id>/themes/`: parent theme pages
+- `contents/<topic-id>/overview/`: parent topic overview pages
 - `contents/<topic-id>/slides/`: Marp slide decks and local slide assets
 - `contents/<topic-id>/research/`: detailed research notes
 - `contents/<topic-id>/sources/`: source link collections
 - `contents/<topic-id>/tasks/`: research task checklists
-- `contents/themes/`: shared theme CSS
+- `contents/marp-themes/`: shared Marp custom theme CSS
 - `contents/templates/`: reusable templates that are not direct site pages
 - `docs/`: workflow and style guidance for contributors and agents
 
@@ -42,11 +42,13 @@ Before editing slides, read:
 - `docs/slide-style-guide.md`
 - `docs/slide-workflow.md`
 - `contents/templates/slides/example.md`
-- `contents/themes/research.css`
+- `contents/marp-themes/research.css`
 
 The style guide's core rule is: "1スライド1メッセージに絞る". It also says to keep research density while prioritizing structure, and to finish only after rendered visual verification.
 
-Use existing classes and patterns from the theme. Do not invent one-off inline colors, spacing systems, or decorative layouts. If a slide feels cramped, the style guide says to reduce gaps, convert long lists to grids, move source details to captions, or split the slide.
+Use existing classes and patterns from the Marp theme CSS. Do not invent one-off inline colors, spacing systems, or decorative layouts. If a slide feels cramped, the style guide says to reduce gaps, convert long lists to grids, move source details to captions, or split the slide.
+
+Do not use `contents/themes/` for research topic pages or shared CSS. Research topic parent pages belong under `contents/<topic-id>/overview/`; Marp custom themes belong under `contents/marp-themes/`.
 
 ## Slide Image Generation Workflow
 

@@ -19,10 +19,10 @@ This workflow adapts the Marp practices from the Qiita reference article for thi
 
 ## New Deck Checklist
 
-1. Run `npm run template:topic` when the deck belongs to a new research theme.
+1. Run `npm run template:topic` when the deck belongs to a new research topic.
 2. Copy a nearby pattern from `contents/templates/slides/example.md`.
 3. Keep the slide title to one claim.
-4. Use panels, grids, and captions from `contents/themes/research.css`.
+4. Use panels, grids, and captions from `contents/marp-themes/research.css`.
 5. Add source notes as `.caption`.
 6. Run `npm run slide:verify`.
 7. Inspect `dist/screenshots/` before considering the deck done.

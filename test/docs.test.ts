@@ -3,7 +3,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const contentRoot = join(process.cwd(), "contents");
-const contentSections = ["research", "slides", "sources", "tasks", "themes"];
+const contentSections = ["overview", "research", "slides", "sources", "tasks", "themes"];
 const topicIds = ["mcp-internal-presentation"];
 
 function markdownFiles(dir = contentRoot): string[] {
@@ -23,8 +23,10 @@ describe("documentation content", () => {
     const root = process.cwd();
 
     expect(existsSync(join(root, "contents/templates/slides/example.md"))).toBe(true);
-    expect(existsSync(join(root, "contents/themes/research.css"))).toBe(true);
-    expect(existsSync(join(root, "contents/themes/mcp-modern.css"))).toBe(true);
+    expect(existsSync(join(root, "contents/marp-themes/research.css"))).toBe(true);
+    expect(existsSync(join(root, "contents/marp-themes/mcp-modern.css"))).toBe(true);
+    expect(existsSync(join(root, "contents/themes"))).toBe(false);
+    expect(existsSync(join(root, "contents/mcp-internal-presentation/themes"))).toBe(false);
     expect(existsSync(join(root, "slides"))).toBe(false);
     expect(existsSync(join(root, "theme"))).toBe(false);
     expect(existsSync(join(root, "themes"))).toBe(false);
@@ -35,12 +37,12 @@ describe("documentation content", () => {
     const files = distributedMarkdownFiles().map((file) => relative(contentRoot, file));
 
     expect(files).toEqual([
+      "mcp-internal-presentation/overview/mcp-internal-presentation.md",
       "mcp-internal-presentation/research/mcp-late-slide-diagrams.md",
       "mcp-internal-presentation/research/mcp-slide-research.md",
       "mcp-internal-presentation/slides/mcp-internal-presentation.md",
       "mcp-internal-presentation/sources/mcp-source-links.md",
       "mcp-internal-presentation/tasks/research-tasks.md",
-      "mcp-internal-presentation/themes/mcp-internal-presentation.md",
     ]);
 
     for (const section of contentSections) {
