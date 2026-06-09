@@ -133,7 +133,7 @@ MCPがあると、GitHubやcodebaseを「画面推測」ではなく、定義済
 ---
 
 <!--
-_class: dense ch00
+_class: dense ch00 table-narrow-first
 -->
 
 <p class="chapter-label">00 / 全体像</p>
@@ -1011,7 +1011,7 @@ _class: compact visual ch05
 ---
 
 <!--
-_class: dense ch05
+_class: dense ch05 table-narrow-first
 -->
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
@@ -1281,7 +1281,7 @@ _class: compact visual ch06
 ---
 
 <!--
-_class: dense ch06
+_class: dense ch06 table-narrow-first
 -->
 
 <p class="chapter-label">06 / AWSケーススタディ</p>
