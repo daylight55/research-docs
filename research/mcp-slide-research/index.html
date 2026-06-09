@@ -490,7 +490,7 @@
 
 <table><thead><tr><th>Requirement</th><th>Evidence</th><th>Status</th></tr></thead><tbody><tr><td>初学者が順番に理解できる</td><td>前半で概念図、一文定義、結論、通し例、流れを提示。基礎理解章で基本用語、1回の呼び出し、Skill/MCPの違いを説明。</td><td>Proved by current memo structure</td></tr><tr><td>抽象語や前提が説明されている</td><td><code>agent</code>, <code>Host</code>, <code>Client</code>, <code>Server</code>, <code>Tool</code>, <code>Resource</code>, <code>Prompt</code>, <code>Protocol</code>, <code>Transport</code>, <code>Auth</code>を基礎理解章で定義。レビュー表で抽象語の言い換えを記録。</td><td>Proved by 本文とレビュー記録</td></tr><tr><td>中級者にも骨太な理解がある</td><td>設計章でMCP server設計、アンチパターン、route policy、description設計を扱う。Protocol/Auth章でtransport/auth/JSON-RPC/tool-call境界を扱う。運用ルール章でtrust boundary、server設計ルール、context効率を扱う。</td><td>Proved by coverage in current memo</td></tr><tr><td>冒頭の概念図からピースを埋める流れ</td><td>概念図と、流れを整理するピース表。各章がHost/Client/Server、Tool/Resource/Prompt、Transport/Auth、Workflow/Governanceへ対応。</td><td>Proved by memo sequence</td></tr><tr><td>冗長・変動しやすい情報が整理されている</td><td>GitHub stars、Figma rate limit具体値、MCP Apps/Tasks詳細、長いCLI設定例を中心説明から削除し、レビュー記録にcut candidatesを明記。</td><td>Proved by review notes</td></tr><tr><td>調査情報が追跡できる</td><td>Current specification確認、source links、research memoを保持。</td><td>Proved by research memo and source links</td></tr><tr><td>レビュー観点が再利用可能</td><td><code>.agents/skills/beginner-slide-reviewer/SKILL.md</code>を追加し、初学者視点のレビュー軸と出力形式を定義。</td><td>Proved by skill file</td></tr><tr><td>future agentがrepo構成を把握できる</td><td><code>AGENTS.md</code>にREADME/docs由来の概要、content architecture、commands、local skillsを集約。</td><td>Proved by AGENTS.md</td></tr><tr><td>レンダリング品質</td><td>関連するHTMLとMarkdownの生成確認を維持。</td><td>Proved by command output</td></tr><tr><td>repo validation</td><td><code>npm test</code> passes 4 tests. <code>npm run build:site</code> builds 6 pages and generated HTML.</td><td>Proved by command output</td></tr></tbody></table>
 <h3 id="全体構成レビューと締めの再設計"><a href="#全体構成レビューと締めの再設計">全体構成レビューと締めの再設計</a></h3>
-<p>今回の追加レビューでは、Referencesを除く本編73ページを対象に、各ページの内容抜粋と前後の流れを確認した。問題は前半の概念順ではなく、後半が「開発向けMCPの具体例」から「今後の争点」へ移るときに、何を最終判断として回収するのかが見えにくい点だった。</p>
+<p>今回の追加レビューでは、Referencesを除く本編74ページを対象に、各ページの内容抜粋と前後の流れを確認した。問題は前半の概念順ではなく、後半が「開発向けMCPの具体例」から「今後の争点」へ移るときに、何を最終判断として回収するのかが見えにくい点だった。</p>
 <h4 id="ページ別抜粋レビュー"><a href="#ページ別抜粋レビュー">ページ別抜粋レビュー</a></h4>
 
 
@@ -1102,6 +1102,87 @@
 <li><strong>Modification</strong>: 終盤を「導入前に決める判断 -> server設計で守ること -> context効率 -> 導入の進め方 -> 残る争点 -> 判断としてのまとめ」に再編した。</li>
 <li><strong>Verdict</strong>: Modified. 具体例を列挙して終わる構成から、導入判断へ収束する構成へ改善した。</li>
 </ul>
+<h4 id="ゼロベース読み手レビュー"><a href="#ゼロベース読み手レビュー">ゼロベース読み手レビュー</a></h4>
+<p>「MCPを初めて聞くが、LLMやAPIはある程度知っている」読者として、前置きなしに細かい固有ツールへ入っていないかを再確認した。前回のレビューは終盤の締めに寄りすぎていたため、今回は章間の接続と、具体ツールの説明に入る必然性を重点的に見た。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="right">Page</th><th>Issue</th><th>Why it blocks beginners</th><th>Change</th></tr></thead><tbody><tr><td align="right">27 -> 28</td><td>構築章は比較章から自然に入れるが、code例へ行く前に「なぜ実装を見るか」が弱い</td><td>読者がFastAPI/FastMCPの話をMCP全体の必須知識と誤解しやすい</td><td>P28-P30で「既存APIをagent向けadapterにする」流れを先に置き、codeは実装例として読む構成を維持</td></tr><tr><td align="right">36 -> 37</td><td>旧構成ではClaude接続コマンドから入り、Remote MCPの意味より手順暗記に見えた</td><td>Remote MCPがなぜ出てきたのか分からないまま、特定clientの設定に入る</td><td>P36 subtitleを「チームで共有する接続面へ進む」に変更し、P37をlocal stdioとRemote MCPの比較に差し替え</td></tr><tr><td align="right">38 -> 40</td><td>OAuth、project/user/org、client差分が続く</td><td>初学者には「設定ファイルの差分」ではなく「共有能力と個人認証を分ける話」だと先に知る必要がある</td><td>P37でremote化の意味を先に置き、P38以降は権限・設定分離の細部として読む</td></tr><tr><td align="right">41 -> 52</td><td>Protocol/Auth/JSON-RPCが細かい</td><td>仕様詳細に急に入ったように見える可能性がある</td><td>Remote章の後に置き、「Remoteを安全に動かす中身を見る章」として維持。P43-P46で構成図とstepを先に置く</td></tr><tr><td align="right">53 -> 54</td><td>旧構成ではAWS MCP / AgentCoreの説明が急に始まった</td><td>読者が「なぜAWSの製品紹介が始まったのか」と感じる</td><td>P53 subtitleとP54を差し替え、AWSは製品紹介ではなくRemote MCPの運用責務を具体化するケースと明記</td></tr><tr><td align="right">55 -> 57</td><td>Gateway / Identity / target / authが続く</td><td>AWS用語を知らない読者には、どの概念の写像か分かりにくい</td><td>P54でGateway=入口、Identity=credential境界、Target=接続先、Operation=監査/権限と前置きした</td></tr><tr><td align="right">58 -> 60</td><td>旧構成ではWebMCPから入り、Figma、Browser、Serenaへ続いて個別ツール紹介に見えた</td><td>「なぜこのツール群がMCP概論に必要か」が分からない</td><td>P58 subtitleを「開発タスクごとの接続面として見る」に変更し、P59にbackend/service、live browser/frontend、design/code contextの分類表を追加</td></tr><tr><td align="right">60 -> 67</td><td>WebMCP、Playwright、Figma、Serenaが連続する</td><td>固有名詞の列挙に見え、各ツールの価値がMCPのどの理解に対応するか見失う</td><td>P59の分類に対応させ、WebMCP=live browser、Browser MCP=検証、Figma=design context、Serena=code contextとして読む</td></tr><tr><td align="right">68 -> 74</td><td>具体例からガバナンスへ戻る</td><td>具体ツールの後に急に統制論へ飛ぶように見える</td><td>P69で「導入前に決める5つの判断」に戻し、具体ツール選定を対象業務/公開面/権限/信頼/運用予算へ回収する</td></tr></tbody></table>
+<h4 id="revised-narrative"><a href="#revised-narrative">Revised narrative</a></h4>
+<p>現行スライドは、次の読み順になるよう調整した。</p>
+<ol>
+<li><strong>概念地図</strong>: MCPの部品を暗記せず、User -> Host -> Server -> Backendの流れを見る。</li>
+<li><strong>基本概念</strong>: Host/Client/Server、公開面、通信面、Skillとの違いを揃える。</li>
+<li><strong>判断軸</strong>: CLI、Browser、MCPを同じCI調査例で比較し、MCPを選ぶ条件を作る。</li>
+<li><strong>構築例</strong>: 既存APIをadapter化する。FastAPI/FastMCPは必須知識ではなく、1つの具体例。</li>
+<li><strong>Remote化</strong>: local toolからteam shared serviceへ広がると、認証、scope、project/user/org設定が必要になる。</li>
+<li><strong>Protocol/Auth詳細</strong>: Remote MCPを安全に動かすため、transport、auth、JSON-RPC、tool catalogの中身を見る。</li>
+<li><strong>AWSケース</strong>: AWSを製品紹介としてではなく、Gateway/Identity/target/operationへ責務分解する例として見る。</li>
+<li><strong>開発workflow例</strong>: 個別ツール名ではなく、backend/service、live browser/frontend、design/code contextの接続面として分類する。</li>
+<li><strong>導入判断</strong>: 具体例を、何を任せるか、何を見せるか、どこで守るか、どう運用するかへ回収する。</li>
+</ol>
 <h2 id="mcpの基礎理解"><a href="#mcpの基礎理解">MCPの基礎理解</a></h2>
 <h3 id="1-mcpが解こうとしている問題"><a href="#1-mcpが解こうとしている問題">1. MCPが解こうとしている問題</a></h3>
 <p>LLMは文章を読む・書く・推論する能力を持つが、そのままでは社内システム、GitHub、AWS、ブラウザ、DB、SaaSの「現在の状態」を知らない。モデルの学習時点より後に生まれたAPIや社内仕様も知らない。人間が毎回ログ、Issue、API仕様、画面状態をコピーして貼ると、遅い、漏れる、権限管理が曖昧になる、再現性が低い。</p>
