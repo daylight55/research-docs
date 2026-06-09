@@ -22,57 +22,31 @@
     background: #000000;
   }
 }
-</style></head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="overview" tabindex="-1" title="Toggle overview view (o)">Toggle overview view</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-class="lead" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--class:lead;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9">
+</style></head><body><div class="bespoke-marp-osc"><button data-bespoke-marp-osc="prev" tabindex="-1" title="Previous slide">Previous slide</button><span data-bespoke-marp-osc="page"></span><button data-bespoke-marp-osc="next" tabindex="-1" title="Next slide">Next slide</button><button data-bespoke-marp-osc="fullscreen" tabindex="-1" title="Toggle fullscreen (f)">Toggle fullscreen</button><button data-bespoke-marp-osc="overview" tabindex="-1" title="Toggle overview view (o)">Toggle overview view</button><button data-bespoke-marp-osc="presenter" tabindex="-1" title="Open presenter view (p)">Open presenter view</button></div><div id=":$p"><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="1" data-paginate="true" data-class="lead" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="lead" data-marpit-pagination="1" style="--paginate:true;--class:lead;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9">
 <h1 id="mcp%E6%A6%82%E8%AB%96-br-%E9%96%8B%E7%99%BA%E7%8F%BE%E5%A0%B4%E3%81%A7%E3%81%A9%E3%81%86%E4%BD%BF%E3%81%86%E3%81%B9%E3%81%8D%E3%81%8B">MCP概論 :<br />開発現場でどう使うべきか</h1>
-<p>AI Agentが外部systemを安全に使うための接続面を、実タスクから順に理解する。</p>
+<p>AI Agentが外部systemを安全に使うための接続面を、全体地図から順に理解する。</p>
 <p>2026-06-09</p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="compact ch00" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch00" data-marpit-pagination="2" style="--paginate:true;--class:compact ch00;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
-<h2 id="%E5%88%A4%E6%96%AD%E3%81%A7%E3%81%8D%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%AA%E3%82%8B%E3%81%93%E3%81%A8">判断できるようになること</h2>
-<p>AI Agentに外部systemを任せるとき、<strong>どの接続面を標準化すべきか</strong>を判断できるようにする。</p>
-<div class="grid two">
-  <div class="panel strong"><h3>どこで必要になるか</h3><p>GitHub、AWS、DB、SaaS、社内APIをagentが扱う場面。</p></div>
-  <div class="panel teal"><h3>何を標準化するか</h3><p>tool、resource、prompt、schema、transport、authの境界。</p></div>
-  <div class="panel amber"><h3>何と比べるか</h3><p>CLI、Browser、既存APIと比べて、MCPを選ぶ条件。</p></div>
-  <div class="panel"><h3>どう運用するか</h3><p>scope、approval、audit、quota、fallbackを設計する単位。</p></div>
-</div>
-<p>最初に用語を暗記するのではなく、<strong>外部操作をどこで安全に切り出すか</strong>から見る。</p>
-<p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="dense ch00" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch00" data-marpit-pagination="3" style="--paginate:true;--class:dense ch00;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
-<h2 id="%E4%BE%8B-%E5%A4%B1%E6%95%97ci%E3%82%92%E8%AA%BF%E3%81%B9%E3%82%8B">例: 失敗CIを調べる</h2>
-<p>この資料では、同じ例でMCPの意味を追う。</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-text">User:
-  PR #123のCIが落ちている。原因を調べて、修正方針を出して。
-
-AI Agent:
-  1. GitHubのPR状態を読む
-  2. 失敗したcheck runを特定する
-  3. 失敗ログを必要な範囲だけ読む
-  4. repositoryの該当箇所を調べる
-  5. 修正案と検証コマンドを返す
-</code></pre>
-<p>この仕事は、推論だけでは終わらない。<strong>現在の外部systemを読み、必要なら操作する入口</strong>がいる。</p>
-<p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-class="compact visual ch00" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch00" data-marpit-pagination="4" style="--paginate:true;--class:compact visual ch00;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
-<h2 id="%E5%A4%96%E9%83%A8system%E3%81%B8%E5%87%BA%E3%82%8B%E3%81%A8%E4%BD%95%E3%81%8C%E8%B5%B7%E3%81%8D%E3%82%8B%E3%81%8B">外部systemへ出ると何が起きるか</h2>
-<p class="lead">LLMはHostの境界内で判断し、外部systemには何らかの接続面を通じて届く。</p>
-<div class="visual-hero">
-  <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels" />
-</div>
-<p class="caption">CLIやBrowserでも外部へ出られる。MCPは、その入口をagent向けの契約として設計する。</p>
-<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-</section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-class="compact map ch00" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact map ch00" data-marpit-pagination="5" style="--paginate:true;--class:compact map ch00;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-class="compact map ch00" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact map ch00" data-marpit-pagination="2" style="--paginate:true;--class:compact map ch00;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
 <h2 id="mcp%E3%81%AE%E5%85%A8%E4%BD%93%E5%9C%B0%E5%9B%B3">MCPの全体地図</h2>
 <img class="diagram concept-map" src="diagrams/mcp-concept-map.svg" alt="MCP concept map with host, client, server, primitives, transport, workflow, and governance" />
-<p>失敗CIの例を地図に載せると、まずは <strong>User -&gt; Host -&gt; MCP Server -&gt; Backend</strong> の左から右の流れになる。</p>
-<p>以降はこの地図のピースを、必要になった順に埋める。</p>
+<p>最初は細部を読まない。まず <strong>User -&gt; Host -&gt; MCP Server -&gt; Backend</strong> の左から右の流れだけを見る。</p>
+<p>この資料は、この地図のピースを順番に埋める。</p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-class="compact ch00" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch00" data-marpit-pagination="6" style="--paginate:true;--class:compact ch00;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-class="compact ch00" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch00" data-marpit-pagination="3" style="--paginate:true;--class:compact ch00;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
+<h2 id="%E5%9C%B0%E5%9B%B3%E3%81%AE%E4%B8%BB%E7%B7%9A">地図の主線</h2>
+<p>MCPは、model単体ではなく <strong>Hostの中の接続機構</strong> と <strong>外部system側のserver</strong> の話。</p>
+<div class="grid three">
+  <div class="panel strong"><h3>1. Host</h3><p>user、model、接続、承認を束ねる実行環境。</p></div>
+  <div class="panel teal"><h3>2. MCP Server</h3><p>外部systemのdata/actionをagent向けに公開する入口。</p></div>
+  <div class="panel amber"><h3>3. Backend</h3><p>既存API、SaaS、DB、repositoryなどの実体。</p></div>
+</div>
+<p>まず押さえるのは、<strong>MCP Serverはbackendそのものではなく、agentに見せる接続面</strong>だということ。</p>
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-class="compact ch00" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch00" data-marpit-pagination="4" style="--paginate:true;--class:compact ch00;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
 <h2 id="mcp%E3%81%AF%E6%8E%A5%E7%B6%9A%E5%A5%91%E7%B4%84">MCPは接続契約</h2>
 <p>MCPは、ClaudeやCodexのようなAIアプリが、GitHubや社内DBのような外部システムを安全に使うための共通ルール。</p>
 <p>正式には、AI applicationが外部システムのdata / action / workflowへ接続するための標準protocol。</p>
@@ -85,7 +59,16 @@ AI Agent:
 <p>つまりMCPは、<strong>LLMが外部世界へ出るときの接続契約</strong>。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-class="dense ch00 table-narrow-first" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch00 table-narrow-first" data-marpit-pagination="7" style="--paginate:true;--class:dense ch00 table-narrow-first;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-class="compact visual ch00" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch00" data-marpit-pagination="5" style="--paginate:true;--class:compact visual ch00;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
+<h2 id="%E5%A4%96%E9%83%A8system%E3%81%B8%E5%87%BA%E3%82%8B%E5%85%A5%E5%8F%A3">外部systemへ出る入口</h2>
+<p class="lead">LLMはHostの境界内で判断し、外部systemには接続面を通じて届く。</p>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels" />
+</div>
+<p class="caption">CLIやBrowserでも外部へ出られる。MCPは、その入口をagent向けの契約として設計する。</p>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-class="dense ch00 table-narrow-first" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch00 table-narrow-first" data-marpit-pagination="6" style="--paginate:true;--class:dense ch00 table-narrow-first;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">00 / 全体像</p>
 <h2 id="%E5%85%A8%E4%BD%93%E3%81%AE%E6%B5%81%E3%82%8C">全体の流れ</h2>
 <table>
 <thead>
@@ -98,8 +81,8 @@ AI Agent:
 <tbody>
 <tr>
 <td style="text-align:right">1</td>
-<td>課題と地図</td>
-<td>なぜ外部接続面が必要か</td>
+<td>全体地図</td>
+<td>MCPがどの境界にあるか</td>
 </tr>
 <tr>
 <td style="text-align:right">2</td>
@@ -136,12 +119,12 @@ AI Agent:
 <p>3つの問いに分けると追いやすい。<strong>誰がつなぐか、何を公開するか、どう安全に運用するか。</strong></p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-class="section ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch01" data-marpit-pagination="8" style="--paginate:true;--class:section ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 01</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-class="section ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch01" data-marpit-pagination="7" style="--paginate:true;--class:section ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 01</p>
 <h1 id="%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">基本概念</h1>
 <p>接続契約を構成する言葉と責務を揃える</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-class="dense ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch01" data-marpit-pagination="9" style="--paginate:true;--class:dense ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-class="dense ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch01" data-marpit-pagination="8" style="--paginate:true;--class:dense ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="%E3%81%BE%E3%81%9A%E6%8A%BC%E3%81%95%E3%81%88%E3%82%8B%E7%94%A8%E8%AA%9E">まず押さえる用語</h2>
 <table>
 <thead>
@@ -177,7 +160,7 @@ AI Agent:
 <p>最初に分けるべきは「賢いmodel」ではなく、<strong>modelを囲む実行境界</strong>。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-class="dense ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch01" data-marpit-pagination="10" style="--paginate:true;--class:dense ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-class="dense ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch01" data-marpit-pagination="9" style="--paginate:true;--class:dense ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="mcp%E3%82%923%E3%81%A4%E3%81%AE%E9%9D%A2%E3%81%A7%E8%A6%8B%E3%82%8B">MCPを3つの面で見る</h2>
 <div class="logo-split">
 <div class="logo-copy">
@@ -204,7 +187,7 @@ AI Agent:
 </div>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-class="compact ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch01" data-marpit-pagination="11" style="--paginate:true;--class:compact ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-class="compact ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch01" data-marpit-pagination="10" style="--paginate:true;--class:compact ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="host--client--server%E3%81%A8%E3%81%AF">Host / Client / Serverとは？</h2>
 <p class="lead">Host、MCP Client、MCP Server、Backendは同じものではなく、責務の境界が違う。</p>
 <div class="visual-hero">
@@ -212,7 +195,7 @@ AI Agent:
 </div>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-class="compact visual ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch01" data-marpit-pagination="12" style="--paginate:true;--class:compact visual ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-class="compact visual ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch01" data-marpit-pagination="11" style="--paginate:true;--class:compact visual ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="mcp%E3%81%AE%E5%85%AC%E9%96%8B%E9%9D%A2%E3%81%A8%E9%80%9A%E4%BF%A1%E9%9D%A2">MCPの公開面と通信面</h2>
 <p class="lead">Tool、Resource、Promptはserverが公開する面に、Protocol、Transportはclient/serverが会話する面に出てくる。</p>
 <div class="visual-hero">
@@ -221,7 +204,7 @@ AI Agent:
 <p class="caption">MCPは「serverが何を公開するか」と「client/serverがどう会話するか」を分けて見ると追いやすい。</p>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">MCP lifecycle</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-class="compact ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch01" data-marpit-pagination="13" style="--paginate:true;--class:compact ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-class="compact ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch01" data-marpit-pagination="12" style="--paginate:true;--class:compact ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="tool--resource--prompt%E3%81%A8%E3%81%AF">Tool / Resource / Promptとは？</h2>
 <p>ここでは、MCP ServerがHostへ見せる<strong>公開面の細部</strong>を見る。</p>
 <div class="logo-split">
@@ -266,7 +249,7 @@ AI Agent:
 </div>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-class="compact ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch01" data-marpit-pagination="14" style="--paginate:true;--class:compact ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-class="compact ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch01" data-marpit-pagination="13" style="--paginate:true;--class:compact ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="protocol--transport%E3%81%A8%E3%81%AF">Protocol / Transportとは？</h2>
 <p>ここでは、MCP ClientとServerが会話する<strong>通信面の細部</strong>を見る。</p>
 <ul>
@@ -286,7 +269,7 @@ Transport
 <p class="caption">郵便で言えば、protocolは封筒の書式と手続き、transportは郵便・宅配・手渡しのような運び方。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-class="dense ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch01" data-marpit-pagination="15" style="--paginate:true;--class:dense ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-class="dense ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch01" data-marpit-pagination="14" style="--paginate:true;--class:dense ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="mcp%E3%81%AE1%E5%9B%9E%E3%81%AE%E5%91%BC%E3%81%B3%E5%87%BA%E3%81%97">MCPの1回の呼び出し</h2>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/mcp-call-loop.svg" alt="MCP call loop from host connection to structured result" />
@@ -294,7 +277,7 @@ Transport
 <p>ポイントは、LLMが勝手に外部APIを叩くのではなく、<strong>Hostが接続・承認・実行を仲介する</strong>こと。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">MCP lifecycle</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-class="dense ch01" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch01" data-marpit-pagination="16" style="--paginate:true;--class:dense ch01;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-class="dense ch01" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch01" data-marpit-pagination="15" style="--paginate:true;--class:dense ch01;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">01 / 基本概念</p>
 <h2 id="skills%E3%81%A8mcp%E3%81%AE%E9%81%95%E3%81%84">SkillsとMCPの違い</h2>
 <p class="lead">Skillはagentの進め方を固定し、MCPは外部data/actionへの入口を渡す。</p>
 <div class="visual-hero">
@@ -302,12 +285,12 @@ Transport
 </div>
 <p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-class="section ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch02" data-marpit-pagination="17" style="--paginate:true;--class:section ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 02</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-class="section ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch02" data-marpit-pagination="16" style="--paginate:true;--class:section ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 02</p>
 <h1 id="%E6%AF%94%E8%BC%83%E3%81%A8%E5%88%A4%E6%96%AD%E8%BB%B8">比較と判断軸</h1>
 <p>CLI、Browser、API、MCPを使い分ける</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-class="compact ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch02" data-marpit-pagination="18" style="--paginate:true;--class:compact ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-class="compact ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch02" data-marpit-pagination="17" style="--paginate:true;--class:compact ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="%E3%81%AA%E3%81%9Cmcp%E3%81%8C%E5%BF%85%E8%A6%81%E3%81%AA%E3%81%AE%E3%81%8B">なぜMCPが必要なのか</h2>
 <p>AIエージェントが外部システムを安全に使うための標準インターフェースを作る。</p>
 <ul>
@@ -318,7 +301,7 @@ Transport
 <p>MCPは「AIに便利ツールを足す」ではなく、<strong>AIが迷わず呼べるAPI境界</strong>。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-class="compact ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch02" data-marpit-pagination="19" style="--paginate:true;--class:compact ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-class="compact ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch02" data-marpit-pagination="18" style="--paginate:true;--class:compact ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="cli--browser--mcp%E3%81%AE%E9%81%95%E3%81%84">CLI / Browser / MCPの違い</h2>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/interface-choice-map.svg" alt="Comparison of CLI Browser and MCP interfaces for agents" />
@@ -326,7 +309,7 @@ Transport
 <p>判断軸は「人間向けインターフェースか、agent向け契約か」。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-class="compact ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch02" data-marpit-pagination="20" style="--paginate:true;--class:compact ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-class="compact ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch02" data-marpit-pagination="19" style="--paginate:true;--class:compact ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="q-cli%E3%81%A7%E5%8F%A9%E3%81%91%E3%81%B0%E3%82%88%E3%81%8F%E3%81%AA%E3%81%84">Q. CLIで叩けばよくない？</h2>
 <p><strong>A. CLIは今でも強い。ただしagentには余計な推測と出力が多い。</strong></p>
 <ul>
@@ -338,7 +321,7 @@ Transport
 <p>CLIはlocal executionに最適。外部サービスの反復操作はMCPの方が安定しやすい。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-class="compact ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch02" data-marpit-pagination="21" style="--paginate:true;--class:compact ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-class="compact ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch02" data-marpit-pagination="20" style="--paginate:true;--class:compact ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="q-%E3%83%96%E3%83%A9%E3%82%A6%E3%82%B6%E6%93%8D%E4%BD%9C%E3%81%A7%E5%8D%81%E5%88%86%E3%81%A7%E3%81%AF">Q. ブラウザ操作で十分では？</h2>
 <p><strong>A. UIそのものを見るなら必須。データ取得や操作の主経路にすると不安定。</strong></p>
 <ul>
@@ -350,7 +333,7 @@ Transport
 <p>ブラウザ操作は「UIの検証」、MCPは「宣言された機能の実行」と分ける。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-class="dense graph ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense graph ch02" data-marpit-pagination="22" style="--paginate:true;--class:dense graph ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-class="dense graph ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense graph ch02" data-marpit-pagination="21" style="--paginate:true;--class:dense graph ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="token%E4%BD%BF%E7%94%A8%E9%87%8F%E3%81%AE%E6%AF%94%E8%BC%83%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8">Token使用量の比較イメージ</h2>
 <div class="token-bars" aria-label="Token usage comparison">
   <div class="bar-row"><span>MCP: focused tool + bounded result</span><div class="bar"><b style="width: 18%">0.5-5k</b></div></div>
@@ -365,7 +348,7 @@ Transport
 </ul>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-class="compact ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch02" data-marpit-pagination="23" style="--paginate:true;--class:compact ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-class="compact ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch02" data-marpit-pagination="22" style="--paginate:true;--class:compact ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="mcp%E3%81%8C%E3%83%95%E3%83%AD%E3%83%BC%E3%82%92%E5%AE%89%E5%AE%9A%E3%81%95%E3%81%9B%E3%82%8B%E7%90%86%E7%94%B1">MCPがフローを安定させる理由</h2>
 <p>agentが低レベル操作を推測せず、宣言済みcapabilityを呼べるから。</p>
 <ul>
@@ -378,7 +361,7 @@ Transport
 <p>「画面を見て推測」や「CLI flagsを思い出す」から「定義済みtoolを呼ぶ」へ移る。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-class="dense ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch02" data-marpit-pagination="24" style="--paginate:true;--class:dense ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-class="dense ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch02" data-marpit-pagination="23" style="--paginate:true;--class:dense ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="ci%E8%AA%BF%E6%9F%BB%E3%81%A7%E8%A6%8B%E3%82%8B%E5%88%A9%E7%94%A8%E3%83%95%E3%83%AD%E3%83%BC">CI調査で見る利用フロー</h2>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-text">CLI:
   gh pr view --json statusCheckRollup
@@ -398,7 +381,7 @@ MCP:
 <p>MCPの価値は、サービス側が「agentに必要な粒度」でtoolを切れること。</p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-class="compact ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch02" data-marpit-pagination="25" style="--paginate:true;--class:compact ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-class="compact ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch02" data-marpit-pagination="24" style="--paginate:true;--class:compact ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="q-mcp%E3%81%8C%E5%90%91%E3%81%8B%E3%81%AA%E3%81%84%E5%A0%B4%E9%9D%A2%E3%81%AF">Q. MCPが向かない場面は？</h2>
 <ul>
 <li>local build/test、package scripts、任意shell調査</li>
@@ -410,7 +393,7 @@ MCP:
 <p>MCPは万能ではない。<strong>反復的なservice/data/action境界</strong>を標準化するもの。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-class="dense ch02" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch02" data-marpit-pagination="26" style="--paginate:true;--class:dense ch02;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-class="dense ch02" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch02" data-marpit-pagination="25" style="--paginate:true;--class:dense ch02;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">02 / 比較と判断軸</p>
 <h2 id="%E6%8F%90%E4%BE%9B%E8%80%85%E3%81%8B%E3%82%89%E8%A6%8B%E3%81%9Fmcp">提供者から見たMCP</h2>
 <table>
 <thead>
@@ -451,12 +434,12 @@ MCP:
 <p>提供者視点では、MCPは <strong>AI向けの安全な入口</strong> を作る選択肢。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-class="section ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch03" data-marpit-pagination="27" style="--paginate:true;--class:section ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 03</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-class="section ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch03" data-marpit-pagination="26" style="--paginate:true;--class:section ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 03</p>
 <h1 id="mcp-server%E6%A7%8B%E7%AF%89">MCP server構築</h1>
 <p>既存APIをagent向けadapterにする</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-class="compact ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch03" data-marpit-pagination="28" style="--paginate:true;--class:compact ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="27" data-paginate="true" data-class="compact ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch03" data-marpit-pagination="27" style="--paginate:true;--class:compact ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="%E6%97%A2%E5%AD%98api%E3%82%92mcp%E5%8C%96%E3%81%99%E3%82%8B%E5%9F%BA%E6%9C%AC%E8%A8%AD%E8%A8%88">既存APIをMCP化する基本設計</h2>
 <div class="logo-split">
 <div class="logo-copy">
@@ -488,13 +471,13 @@ MCP:
 </div>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-class="compact ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch03" data-marpit-pagination="29" style="--paginate:true;--class:compact ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="28" data-paginate="true" data-class="compact ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch03" data-marpit-pagination="28" style="--paginate:true;--class:compact ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="%E6%97%A2%E5%AD%98api%E3%82%92mcp%E5%8C%96%E3%81%99%E3%82%8B%E6%B5%81%E3%82%8C">既存APIをMCP化する流れ</h2>
 <img class="diagram diagram-wide-flow" src="diagrams/mcp-api-adapter-flow.svg" alt="Existing API to MCP adapter flow" />
 <p>既存APIをsource of truthにし、MCP serverは公開範囲、description、schema、出力制限を担うadapterにする。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-class="dense ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch03" data-marpit-pagination="30" style="--paginate:true;--class:dense ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="29" data-paginate="true" data-class="dense ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch03" data-marpit-pagination="29" style="--paginate:true;--class:dense ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="%E9%81%BF%E3%81%91%E3%81%9F%E3%81%84mcp-server%E8%A8%AD%E8%A8%88">避けたいMCP server設計</h2>
 <p>MCP化は「既存APIを全部toolにする」ことではない。</p>
 <table>
@@ -536,7 +519,7 @@ MCP:
 <p>良いMCP serverはtool数が多いserverではなく、<strong>agentが迷わず安全に次の一手へ進めるserver</strong>。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-paginate="true" data-class="dense ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch03" data-marpit-pagination="31" style="--paginate:true;--class:dense ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="30" data-paginate="true" data-class="dense ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch03" data-marpit-pagination="30" style="--paginate:true;--class:dense ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="fastapi--openapi%E3%81%AE%E5%AE%9F%E8%A3%85%E4%BE%8B-%E5%A5%91%E7%B4%84%E3%81%A8client">FastAPI + OpenAPIの実装例: 契約とclient</h2>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-python"><span class="hljs-comment"># app/mcp/server.py</span>
 <span class="hljs-keyword">import</span> httpx
@@ -555,7 +538,7 @@ api_client = httpx.AsyncClient(
 <p>handlerを直接importせず、既存APIの境界を保つ。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-paginate="true" data-class="dense ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch03" data-marpit-pagination="32" style="--paginate:true;--class:dense ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="31" data-paginate="true" data-class="dense ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch03" data-marpit-pagination="31" style="--paginate:true;--class:dense ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="fastmcp%E3%81%A7toolresource%E3%81%A8%E3%81%97%E3%81%A6%E5%85%AC%E9%96%8B%E3%81%99%E3%82%8B">FastMCPでtool/resourceとして公開する</h2>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-python"><span class="hljs-keyword">from</span> fastmcp <span class="hljs-keyword">import</span> FastMCP
 <span class="hljs-keyword">from</span> app.mcp.route_policy <span class="hljs-keyword">import</span> route_map_fn  <span class="hljs-comment"># 公開範囲のpolicy</span>
@@ -571,7 +554,7 @@ mcp = FastMCP.from_openapi(
 </code></pre>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-paginate="true" data-class="dense ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch03" data-marpit-pagination="33" style="--paginate:true;--class:dense ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="32" data-paginate="true" data-class="dense ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch03" data-marpit-pagination="32" style="--paginate:true;--class:dense ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="q-openapi%E3%82%92%E3%81%9D%E3%81%AE%E3%81%BE%E3%81%BE%E5%87%BA%E3%81%97%E3%81%A6%E3%82%88%E3%81%84">Q. OpenAPIをそのまま出してよい？</h2>
 <p><strong>A. 原則は出し過ぎない。route policyでagent-safeな面だけ公開する。</strong></p>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-python"><span class="hljs-keyword">from</span> fastmcp.server.providers.openapi <span class="hljs-keyword">import</span> MCPType
@@ -600,7 +583,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </code></pre>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-paginate="true" data-class="compact ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch03" data-marpit-pagination="34" style="--paginate:true;--class:compact ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="33" data-paginate="true" data-class="compact ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch03" data-marpit-pagination="33" style="--paginate:true;--class:compact ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="q-description%E3%81%AF%E4%BD%95%E3%82%92%E6%9B%B8%E3%81%8F%E3%81%B9%E3%81%8D">Q. descriptionは何を書くべき？</h2>
 <p><strong>A. agentが誤用しないための実行契約を書く。</strong></p>
 <ul>
@@ -614,7 +597,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>良いdescriptionは説明文ではなく、<strong>agentの行動制約</strong>。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-paginate="true" data-class="dense ch03" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch03" data-marpit-pagination="35" style="--paginate:true;--class:dense ch03;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="34" data-paginate="true" data-class="dense ch03" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch03" data-marpit-pagination="34" style="--paginate:true;--class:dense ch03;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">03 / MCP server構築</p>
 <h2 id="q-%E8%89%AF%E3%81%84description%E3%81%AE%E4%BE%8B%E3%81%AF">Q. 良いdescriptionの例は？</h2>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-python"><span class="hljs-meta">@router.post(<span class="hljs-params">
     <span class="hljs-string">&quot;/{item_id}/reserve&quot;</span>,
@@ -641,12 +624,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>critical ruleは先頭に置く。長すぎる説明はclient側で切られる可能性がある。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://gofastmcp.com/servers/openapi">FastMCP</a>; <a href="https://fastapi.tiangolo.com/how-to/extending-openapi/">FastAPI OpenAPI</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="36" data-paginate="true" data-class="section ch04" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch04" data-marpit-pagination="36" style="--paginate:true;--class:section ch04;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 04</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="35" data-paginate="true" data-class="section ch04" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch04" data-marpit-pagination="35" style="--paginate:true;--class:section ch04;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 04</p>
 <h1 id="remote-mcp%E3%81%A8%E8%A4%87%E6%95%B0agent%E8%A8%AD%E5%AE%9A">Remote MCPと複数Agent設定</h1>
 <p>localの便利ツールから、チームで共有する接続面へ進む</p>
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="37" data-paginate="true" data-class="compact ch04" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch04" data-marpit-pagination="37" style="--paginate:true;--class:compact ch04;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="36" data-paginate="true" data-class="compact ch04" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch04" data-marpit-pagination="36" style="--paginate:true;--class:compact ch04;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="remote-mcp%E3%81%A7%E4%BD%95%E3%81%8C%E5%A4%89%E3%82%8F%E3%82%8B">Remote MCPで何が変わる？</h2>
 <p>local MCPは「手元のtoolをagentに渡す」形。Remote MCPは「共有serviceを認証付きでagentに渡す」形。</p>
 <table>
@@ -683,7 +666,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>ここから見るべきものは接続コマンドではなく、<strong>誰の権限で共有serviceへ入るか</strong>。</p>
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="38" data-paginate="true" data-class="dense ch04" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch04" data-marpit-pagination="38" style="--paginate:true;--class:dense ch04;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="37" data-paginate="true" data-class="dense ch04" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch04" data-marpit-pagination="37" style="--paginate:true;--class:dense ch04;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="oauth%E4%BB%98%E3%81%8Dremote-mcp%E3%81%A7%E8%B5%B7%E3%81%8D%E3%82%8B%E3%81%93%E3%81%A8">OAuth付きRemote MCPで起きること</h2>
 <p>OAuthは「AIアプリにpasswordを渡さず、必要なscopeのtokenだけ渡す」ための仕組み。</p>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-text">1. HostがRemote MCP serverへ接続する
@@ -695,7 +678,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>覚える点はコマンドではなく、<strong>誰の権限で、どのserverに、どの範囲で入るか</strong>。</p>
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="39" data-paginate="true" data-class="dense ch04" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch04" data-marpit-pagination="39" style="--paginate:true;--class:dense ch04;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="38" data-paginate="true" data-class="dense ch04" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch04" data-marpit-pagination="38" style="--paginate:true;--class:dense ch04;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="%E8%A4%87%E6%95%B0agent%E3%81%A7%E4%BD%BF%E3%81%86%E8%A8%AD%E5%AE%9A%E8%A8%AD%E8%A8%88">複数Agentで使う設定設計</h2>
 <p>設定を1つのJSONとして考えない。<strong>共有する能力</strong>と<strong>個人の認証</strong>を分ける。</p>
 <table>
@@ -727,7 +710,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>共有serviceはRemote MCP。local file/Git/browserなど手元依存は<code>stdio</code>。</p>
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="40" data-paginate="true" data-class="dense ch04" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch04" data-marpit-pagination="40" style="--paginate:true;--class:dense ch04;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="39" data-paginate="true" data-class="dense ch04" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch04" data-marpit-pagination="39" style="--paginate:true;--class:dense ch04;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 <h2 id="q-client%E3%81%94%E3%81%A8%E3%81%AE%E8%A8%AD%E5%AE%9A%E5%BD%A2%E5%BC%8F%E3%81%AF%E5%90%8C%E3%81%98">Q. clientごとの設定形式は同じ？</h2>
 <p>同じではない。ここが複数Agent運用の落とし穴。</p>
 <table>
@@ -775,12 +758,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>同名serverの上書き・precedenceもclientごとに確認する。</p>
 <p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="41" data-paginate="true" data-class="section ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch05" data-marpit-pagination="41" style="--paginate:true;--class:section ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 05</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="40" data-paginate="true" data-class="section ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch05" data-marpit-pagination="40" style="--paginate:true;--class:section ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 05</p>
 <h1 id="protocol--auth--json-rpc">Protocol / Auth / JSON-RPC</h1>
 <p>接続フローとtool callの中身を見る</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="42" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="42" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="41" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="41" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="%E6%8E%A5%E7%B6%9Aprotocol%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9">接続protocolの選び方</h2>
 <table>
 <thead>
@@ -816,7 +799,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>MCP message自体はJSON-RPC。transportはその運び方。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="43" data-paginate="true" data-class="compact visual ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch05" data-marpit-pagination="43" style="--paginate:true;--class:compact visual ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="42" data-paginate="true" data-class="compact visual ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch05" data-marpit-pagination="42" style="--paginate:true;--class:compact visual ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="%E8%AA%8D%E8%A8%BC%E4%BB%98%E3%81%8Dremote-mcp%E3%81%AE%E5%85%A8%E4%BD%93%E6%A7%8B%E6%88%90">認証付きRemote MCPの全体構成</h2>
 <p class="lead">OAuth tokenでRemote MCP serverへ入り、backend APIは別の実行境界として扱う。</p>
 <div class="visual-hero">
@@ -824,12 +807,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="44" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="44" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="43" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="43" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="remote-mcp%E3%81%AE%E6%8E%A5%E7%B6%9A%E3%83%95%E3%83%AD%E3%83%BC">Remote MCPの接続フロー</h2>
 <img class="diagram diagram-sequence" src="diagrams/mcp-remote-auth-flow.svg" alt="Remote MCP OAuth connection flow" />
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="45" data-paginate="true" data-class="dense ch05 table-narrow-first" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05 table-narrow-first" data-marpit-pagination="45" style="--paginate:true;--class:dense ch05 table-narrow-first;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="44" data-paginate="true" data-class="dense ch05 table-narrow-first" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05 table-narrow-first" data-marpit-pagination="44" style="--paginate:true;--class:dense ch05 table-narrow-first;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="remote-mcp%E3%81%AE%E5%AE%9F%E8%A3%85%E6%99%82%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF">Remote MCPの実装時チェック</h2>
 <table>
 <thead>
@@ -875,7 +858,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>Streamable HTTPではsession、protocol version header、Origin validation、authが運用上の要点。</p>
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="46" data-paginate="true" data-class="compact visual ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch05" data-marpit-pagination="46" style="--paginate:true;--class:compact visual ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="45" data-paginate="true" data-class="compact visual ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch05" data-marpit-pagination="45" style="--paginate:true;--class:compact visual ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="remote-auth%E3%81%A7%E8%A6%9A%E3%81%88%E3%82%8B3%E7%82%B9">Remote authで覚える3点</h2>
 <p class="lead">難所はJSON-RPCではなく、権限の持ち主、scope、tokenの宛先を壊さないこと。</p>
 <div class="visual-hero">
@@ -883,7 +866,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="47" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="47" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="46" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="46" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="json-rpc%E3%81%A7%E6%B5%81%E3%82%8C%E3%82%8Bmessage">JSON-RPCで流れるmessage</h2>
 <p>MCP messageはJSON-RPC 2.0 envelopeで流れる。</p>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-jsonc"><span class="hljs-comment">// 1. protocol versionとclient capabilityを交渉する。</span>
@@ -904,7 +887,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>LLMが直接APIを叩くのではなく、hostがtool callをMCP JSON-RPCへ変換する。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="48" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="48" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="47" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="47" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="toolslist%E3%81%8C%E4%BD%9C%E3%82%8Bmodel%E5%90%91%E3%81%91%E6%96%87%E8%84%88"><code>tools/list</code>が作るmodel向け文脈</h2>
 <pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-jsonc"><span class="hljs-punctuation">{</span>
   <span class="hljs-comment">// modelが選択する安定ID。operation_id由来にすると追跡しやすい。</span>
@@ -931,13 +914,13 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>descriptionはドキュメントではなく、<strong>model input token</strong>。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="49" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="49" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="48" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="48" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="llm%E3%81%AFmcp%E3%82%92%E7%9B%B4%E6%8E%A5%E5%8F%A9%E3%81%84%E3%81%A6%E3%81%84%E3%81%AA%E3%81%84">LLMはMCPを直接叩いていない</h2>
 <img class="diagram" src="diagrams/mcp-tool-call-generation-flow.svg" alt="MCP tool call generation flow" />
 <p>MCPはLLMの出力形式ではなく、hostがtool catalogと実行を安定して扱うための接続protocol。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="50" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="50" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="49" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="49" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="q-tool-call%E3%81%AE%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E3%81%AF%E3%81%A9%E3%81%86%E7%94%9F%E6%88%90%E3%81%95%E3%82%8C%E3%82%8B">Q. tool callのテキストはどう生成される？</h2>
 <p class="lead">tool callは自然文ではなく、modelが生成した構造化出力をHostが解釈して実行する。</p>
 <div class="visual-hero">
@@ -945,7 +928,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">Anthropic tool use</a>; <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools">Anthropic define tools</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp">OpenAI MCP</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="51" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="51" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="50" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="50" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="%E3%81%AA%E3%81%9Cname--arguments%E3%82%92%E5%87%BA%E3%81%9B%E3%82%8B%E3%81%AE%E3%81%8B">なぜ<code>name + arguments</code>を出せるのか</h2>
 <table>
 <thead>
@@ -976,7 +959,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>MCP固有の魔法ではなく、tool calling能力 + host adapter + protocol実装の組み合わせ。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="52" data-paginate="true" data-class="dense ch05" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch05" data-marpit-pagination="52" style="--paginate:true;--class:dense ch05;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="51" data-paginate="true" data-class="dense ch05" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch05" data-marpit-pagination="51" style="--paginate:true;--class:dense ch05;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="q-mcp%E7%94%A8%E3%81%ABllm%E3%82%92fine-tuning%E3%81%99%E3%82%8B%E5%BF%85%E8%A6%81%E3%81%8C%E3%81%82%E3%82%8B">Q. MCP用にLLMをfine-tuningする必要がある？</h2>
 <p><strong>A. 通常は不要。最初に直すべきものはmodelではなくtool surface。</strong></p>
 <ul>
@@ -989,12 +972,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>大量・類似・複雑なtoolで精度が足りない場合に、tool-use evalやfine-tuningを検討する。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="53" data-paginate="true" data-class="section ch06" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch06" data-marpit-pagination="53" style="--paginate:true;--class:section ch06;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 06</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="52" data-paginate="true" data-class="section ch06" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch06" data-marpit-pagination="52" style="--paginate:true;--class:section ch06;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 06</p>
 <h1 id="aws%E3%82%B1%E3%83%BC%E3%82%B9%E3%82%B9%E3%82%BF%E3%83%87%E3%82%A3">AWSケーススタディ</h1>
 <p>Remote MCPの運用責務を、Gateway/Identityで具体化する</p>
 <p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="54" data-paginate="true" data-class="compact ch06" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch06" data-marpit-pagination="54" style="--paginate:true;--class:compact ch06;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="53" data-paginate="true" data-class="compact ch06" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch06" data-marpit-pagination="53" style="--paginate:true;--class:compact ch06;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="%E3%81%AA%E3%81%9Caws%E3%82%92%E4%BE%8B%E3%81%AB%E8%A6%8B%E3%82%8B%E3%81%AE%E3%81%8B">なぜAWSを例に見るのか</h2>
 <p>ここはAWS製品紹介ではなく、Remote MCPをproductionで使うと増える責務を見る章。</p>
 <ul>
@@ -1006,7 +989,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>AWSの例で覚えることは、特定サービス名ではなく、<strong>Remote MCPを運用単位へ分解する見方</strong>。</p>
 <p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="55" data-paginate="true" data-class="compact ch06" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch06" data-marpit-pagination="55" style="--paginate:true;--class:compact ch06;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="54" data-paginate="true" data-class="compact ch06" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch06" data-marpit-pagination="54" style="--paginate:true;--class:compact ch06;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="aws%E3%81%A7remote-mcp%E3%82%92%E6%A7%8B%E7%AF%89%E3%81%99%E3%82%8B%E6%A7%8B%E6%88%90">AWSでRemote MCPを構築する構成</h2>
 <p class="lead">AgentCore GatewayをRemote MCP入口にし、Identityで委任tokenとcredential境界を扱う。</p>
 <div class="visual-hero">
@@ -1014,7 +997,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="56" data-paginate="true" data-class="compact visual ch06" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch06" data-marpit-pagination="56" style="--paginate:true;--class:compact visual ch06;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="55" data-paginate="true" data-class="compact visual ch06" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch06" data-marpit-pagination="55" style="--paginate:true;--class:compact visual ch06;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="gateway%E3%81%A8identity%E3%81%8C%E8%A3%9C%E3%81%86%E3%82%82%E3%81%AE">GatewayとIdentityが補うもの</h2>
 <p class="lead">GatewayはMCPとして見せる入口、Identityはdownstreamへ渡すcredentialを補う。</p>
 <div class="visual-hero">
@@ -1022,7 +1005,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="57" data-paginate="true" data-class="dense ch06 table-narrow-first" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch06 table-narrow-first" data-marpit-pagination="57" style="--paginate:true;--class:dense ch06 table-narrow-first;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="56" data-paginate="true" data-class="dense ch06 table-narrow-first" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch06 table-narrow-first" data-marpit-pagination="56" style="--paginate:true;--class:dense ch06 table-narrow-first;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="agentcore-gateway%E3%81%A7%E3%81%AE%E6%A7%8B%E7%AF%89%E3%83%95%E3%83%AD%E3%83%BC">AgentCore Gatewayでの構築フロー</h2>
 <table>
 <thead>
@@ -1073,12 +1056,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>既存FastAPIならOpenAPI target、独自処理ならLambda target、既存MCPならMCP server targetが自然。</p>
 <p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="58" data-paginate="true" data-class="section ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch07" data-marpit-pagination="58" style="--paginate:true;--class:section ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 07</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="57" data-paginate="true" data-class="section ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch07" data-marpit-pagination="57" style="--paginate:true;--class:section ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 07</p>
 <h1 id="%E9%96%8B%E7%99%BA%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%95%E3%83%AD%E3%83%BC%E3%81%A7%E4%BD%BF%E3%81%86mcp">開発ワークフローで使うMCP</h1>
 <p>具体ツール名ではなく、開発タスクごとの接続面として見る</p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="59" data-paginate="true" data-class="compact ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch07" data-marpit-pagination="59" style="--paginate:true;--class:compact ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="58" data-paginate="true" data-class="compact ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch07" data-marpit-pagination="58" style="--paginate:true;--class:compact ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="%E5%85%B7%E4%BD%93mcp%E3%81%AF3%E5%88%86%E9%A1%9E%E3%81%A7%E8%A6%8B%E3%82%8B">具体MCPは3分類で見る</h2>
 <p>ここからはtool名の暗記ではなく、<strong>どの作業面をagentに渡すか</strong>で分類する。</p>
 <table>
@@ -1110,7 +1093,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>細かいMCPは、分類してから必要なものだけ選ぶ。</p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="60" data-paginate="true" data-class="compact ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch07" data-marpit-pagination="60" style="--paginate:true;--class:compact ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="59" data-paginate="true" data-class="compact ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch07" data-marpit-pagination="59" style="--paginate:true;--class:compact ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="q-webmcp%E3%81%AFmcp%E3%81%AE%E4%BB%A3%E3%82%8F%E3%82%8A">Q. WebMCPはMCPの代わり？</h2>
 <p><strong>A. 代替ではない。frontend/live tab向けの補完。</strong></p>
 <ul>
@@ -1121,7 +1104,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>設計としては、<strong>backendはMCP、frontendはWebMCP、検証はbrowser MCP</strong>が整理しやすい。</p>
 <p class="source-note">出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="61" data-paginate="true" data-class="compact visual ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch07" data-marpit-pagination="61" style="--paginate:true;--class:compact visual ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="60" data-paginate="true" data-class="compact visual ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch07" data-marpit-pagination="60" style="--paginate:true;--class:compact visual ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="webmcp%E3%81%A8%E3%81%AF%E4%BD%95%E3%82%92%E8%AA%AD%E3%82%80%E4%BB%95%E7%B5%84%E3%81%BF%E3%81%8B">WebMCPとは何を読む仕組みか</h2>
 <p class="lead">Backend MCPではなく、いま開いているWeb UIのDOMやsessionをagent-readableにする接続面。</p>
 <div class="visual-hero">
@@ -1129,7 +1112,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="62" data-paginate="true" data-class="compact ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch07" data-marpit-pagination="62" style="--paginate:true;--class:compact ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="61" data-paginate="true" data-class="compact ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch07" data-marpit-pagination="61" style="--paginate:true;--class:compact ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="frontend%E6%93%8D%E4%BD%9C%E3%81%AB%E5%8A%B9%E3%81%8Fmcp">Frontend操作に効くMCP</h2>
 <ul>
 <li>Playwright MCP
@@ -1149,7 +1132,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>どちらも「ブラウザ操作をMCP tool化する」ので、通常の手動UI操作より再現性を上げやすい。</p>
 <p class="source-note">出典: <a href="https://github.com/microsoft/playwright-mcp">Playwright MCP</a>; <a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools MCP</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="63" data-paginate="true" data-class="compact ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch07" data-marpit-pagination="63" style="--paginate:true;--class:compact ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="62" data-paginate="true" data-class="compact ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch07" data-marpit-pagination="62" style="--paginate:true;--class:compact ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="figma-mcp%E3%81%AF%E4%BD%95%E3%81%AB%E5%8A%B9%E3%81%8F">Figma MCPは何に効く？</h2>
 <p>Figma MCPは、agentにdesign contextを渡し、必要に応じてcanvasへ書き戻すための接続面。</p>
 <ul>
@@ -1161,7 +1144,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>Figmaの例は、MCPが「データ取得」だけでなく<strong>設計成果物を往復させる操作面</strong>になり得ることを示す。</p>
 <p class="source-note">出典: <a href="https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server">Figma MCP</a>; <a href="https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/">Figma rate limits</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="64" data-paginate="true" data-class="dense ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch07" data-marpit-pagination="64" style="--paginate:true;--class:dense ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="63" data-paginate="true" data-class="dense ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch07" data-marpit-pagination="63" style="--paginate:true;--class:dense ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="figma-mcp%E3%81%AE%E5%88%B6%E9%99%90">Figma MCPの制限</h2>
 <p>Figma MCPは、plan、seat、権限、rate limitの影響を受ける。呼び出し予算を無視すると、作業途中で止まる。</p>
 <table>
@@ -1193,7 +1176,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>制限値は変わり得る。スライドで覚えるべきことは、<strong>MCPにも呼び出し予算がある</strong>という点。</p>
 <p class="source-note">出典: <a href="https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server">Figma MCP</a>; <a href="https://developers.figma.com/docs/figma-mcp-server/rate-limits-access/">Figma rate limits</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="65" data-paginate="true" data-class="compact ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch07" data-marpit-pagination="65" style="--paginate:true;--class:compact ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="64" data-paginate="true" data-class="compact ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch07" data-marpit-pagination="64" style="--paginate:true;--class:compact ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="%E5%88%B6%E9%99%90%E3%81%8C%E3%81%82%E3%82%8Bmcp%E3%82%92%E3%81%A9%E3%81%86%E4%BD%BF%E3%81%86%E3%81%8B">制限があるMCPをどう使うか</h2>
 <p>Figma MCPのようなquota付きMCPは、agent任せに連続探索させない。</p>
 <ol>
@@ -1206,7 +1189,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>MCPは無限に叩くものではない。<strong>tool callを予算化したworkflow</strong>にする。</p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="66" data-paginate="true" data-class="dense rank ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense rank ch07" data-marpit-pagination="66" style="--paginate:true;--class:dense rank ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="65" data-paginate="true" data-class="dense rank ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense rank ch07" data-marpit-pagination="65" style="--paginate:true;--class:dense rank ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="%E9%96%8B%E7%99%BA%E5%90%91%E3%81%91mcp%E3%81%AE%E9%81%B8%E3%81%B3%E6%96%B9">開発向けMCPの選び方</h2>
 <p>starsではなく、作業のボトルネックから選ぶ。</p>
 <table>
@@ -1253,7 +1236,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>導入判断は、official性、権限、保守状況、出力の粒度、チームの監査要件で決める。</p>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="67" data-paginate="true" data-class="compact ch07" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch07" data-marpit-pagination="67" style="--paginate:true;--class:compact ch07;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="66" data-paginate="true" data-class="compact ch07" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch07" data-marpit-pagination="66" style="--paginate:true;--class:compact ch07;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="q-serena-mcp%E3%81%AF%E3%81%AA%E3%81%9C%E5%8A%B9%E3%81%8F">Q. Serena MCPはなぜ効く？</h2>
 <p><strong>A. コードを全部読ませず、symbol単位で探索・編集できるから。</strong></p>
 <ul>
@@ -1266,12 +1249,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>MCPの価値は外部APIだけではない。local code understandingにも効く。</p>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a>; GitHub repository metadata snapshot</p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="68" data-paginate="true" data-class="section ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch08" data-marpit-pagination="68" style="--paginate:true;--class:section ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 08</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="67" data-paginate="true" data-class="section ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch08" data-marpit-pagination="67" style="--paginate:true;--class:section ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 08</p>
 <h1 id="%E3%82%AC%E3%83%90%E3%83%8A%E3%83%B3%E3%82%B9%E3%81%A8%E5%B0%8E%E5%85%A5">ガバナンスと導入</h1>
 <p>ここまでの概念を、導入判断と運用設計へ回収する</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="69" data-paginate="true" data-class="compact ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch08" data-marpit-pagination="69" style="--paginate:true;--class:compact ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="68" data-paginate="true" data-class="compact ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch08" data-marpit-pagination="68" style="--paginate:true;--class:compact ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="%E5%B0%8E%E5%85%A5%E5%89%8D%E3%81%AB%E6%B1%BA%E3%82%81%E3%82%8B5%E3%81%A4%E3%81%AE%E5%88%A4%E6%96%AD">導入前に決める5つの判断</h2>
 <p class="lead">ここまでの話は「MCPを入れるか」ではなく、「agentにどこまで任せるか」を決める話に収束する。</p>
 <div class="grid two">
@@ -1283,7 +1266,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p><strong>5. 運用予算:</strong> quota、rate limit、timeout、fallbackをworkflowとして設計する。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="70" data-paginate="true" data-class="compact ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch08" data-marpit-pagination="70" style="--paginate:true;--class:compact ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="69" data-paginate="true" data-class="compact ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch08" data-marpit-pagination="69" style="--paginate:true;--class:compact ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="mcp-server%E8%A8%AD%E8%A8%88%E3%81%A7%E5%AE%88%E3%82%8B%E3%81%93%E3%81%A8">MCP server設計で守ること</h2>
 <div class="grid two">
   <div class="panel strong"><h3>公開する前に絞る</h3><p>admin/debug/internal endpointは出さない。read/writeを分け、writeは承認を要求する。</p></div>
@@ -1294,7 +1277,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>最重要は「便利にする」より、<strong>誤用しにくい接続面にする</strong>こと。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="71" data-paginate="true" data-class="compact visual ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact visual ch08" data-marpit-pagination="71" style="--paginate:true;--class:compact visual ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="70" data-paginate="true" data-class="compact visual ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact visual ch08" data-marpit-pagination="70" style="--paginate:true;--class:compact visual ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="%E3%82%B3%E3%83%B3%E3%83%86%E3%82%AD%E3%82%B9%E3%83%88%E5%8A%B9%E7%8E%87%E3%82%92%E6%84%8F%E8%AD%98%E3%81%97%E3%81%9Fmcp%E8%A8%AD%E8%A8%88">コンテキスト効率を意識したMCP設計</h2>
 <p class="lead">agentに必要なのは全データではなく、次の判断に十分な最小context。</p>
 <div class="visual-hero">
@@ -1302,7 +1285,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </div>
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="72" data-paginate="true" data-class="compact ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch08" data-marpit-pagination="72" style="--paginate:true;--class:compact ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="71" data-paginate="true" data-class="compact ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch08" data-marpit-pagination="71" style="--paginate:true;--class:compact ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="%E5%B0%8E%E5%85%A5%E3%81%AE%E9%80%B2%E3%82%81%E6%96%B9">導入の進め方</h2>
 <ol>
 <li>まずread-only MCPを作る</li>
@@ -1317,7 +1300,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>最初から巨大serverを作らず、1つの業務フローを安定化させる。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="73" data-paginate="true" data-class="dense ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch08" data-marpit-pagination="73" style="--paginate:true;--class:dense ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="72" data-paginate="true" data-class="dense ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch08" data-marpit-pagination="72" style="--paginate:true;--class:dense ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="%E6%9C%80%E5%BE%8C%E3%81%AB%E6%AE%8B%E3%82%8B%E4%BA%89%E7%82%B9">最後に残る争点</h2>
 <table>
 <thead>
@@ -1348,7 +1331,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p>未来の争点は、MCPを使うかどうかではなく、<strong>信頼境界を更新し続けられるか</strong>に集まる。</p>
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="74" data-paginate="true" data-class="compact ch08" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="compact ch08" data-marpit-pagination="74" style="--paginate:true;--class:compact ch08;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="73" data-paginate="true" data-class="compact ch08" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="compact ch08" data-marpit-pagination="73" style="--paginate:true;--class:compact ch08;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="%E3%81%BE%E3%81%A8%E3%82%81-mcp%E3%81%A7%E5%88%A4%E6%96%AD%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8">まとめ: MCPで判断すること</h2>
 <div class="grid two">
   <div class="panel strong"><h3>1. 何を任せるか</h3><p>反復するdata/action/workflowだけをMCPの対象にする。</p></div>
@@ -1359,12 +1342,12 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 <p><strong>MCPは、AI向けの安全な接続メニューを作り、運用できる単位に切り出す標準。</strong></p>
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="75" data-paginate="true" data-class="section ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="section ch09" data-marpit-pagination="75" style="--paginate:true;--class:section ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="kicker">Chapter 09</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="74" data-paginate="true" data-class="section ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="section ch09" data-marpit-pagination="74" style="--paginate:true;--class:section ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="kicker">Chapter 09</p>
 <h1 id="references">References</h1>
 <p>仕様、実装、セキュリティ、運用の参照元</p>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="76" data-paginate="true" data-class="dense ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch09" data-marpit-pagination="76" style="--paginate:true;--class:dense ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">09 / References</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="75" data-paginate="true" data-class="dense ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch09" data-marpit-pagination="75" style="--paginate:true;--class:dense ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">09 / References</p>
 <h2 id="%E4%B8%BB%E3%81%AA%E5%8F%82%E7%85%A7-1">主な参照 1</h2>
 <ul>
 <li>Model Context Protocol specification: <a href="https://modelcontextprotocol.io/specification/2025-11-25">https://modelcontextprotocol.io/specification/2025-11-25</a></li>
@@ -1380,7 +1363,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </ul>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="77" data-paginate="true" data-class="dense ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch09" data-marpit-pagination="77" style="--paginate:true;--class:dense ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">09 / References</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="76" data-paginate="true" data-class="dense ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch09" data-marpit-pagination="76" style="--paginate:true;--class:dense ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">09 / References</p>
 <h2 id="%E4%B8%BB%E3%81%AA%E5%8F%82%E7%85%A7-2">主な参照 2</h2>
 <ul>
 <li>AWS MCP Server GA: <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/</a></li>
@@ -1395,7 +1378,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </ul>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="78" data-paginate="true" data-class="dense ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch09" data-marpit-pagination="78" style="--paginate:true;--class:dense ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">09 / References</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="77" data-paginate="true" data-class="dense ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch09" data-marpit-pagination="77" style="--paginate:true;--class:dense ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">09 / References</p>
 <h2 id="%E4%B8%BB%E3%81%AA%E5%8F%82%E7%85%A7-3">主な参照 3</h2>
 <ul>
 <li>JSON-RPC 2.0 specification: <a href="https://www.jsonrpc.org/specification">https://www.jsonrpc.org/specification</a></li>
@@ -1413,7 +1396,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </ul>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="79" data-paginate="true" data-class="dense ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch09" data-marpit-pagination="79" style="--paginate:true;--class:dense ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">09 / References</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="78" data-paginate="true" data-class="dense ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch09" data-marpit-pagination="78" style="--paginate:true;--class:dense ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">09 / References</p>
 <h2 id="%E4%B8%BB%E3%81%AA%E5%8F%82%E7%85%A7-4">主な参照 4</h2>
 <ul>
 <li>OpenAI function calling: <a href="https://developers.openai.com/api/docs/guides/function-calling">https://developers.openai.com/api/docs/guides/function-calling</a></li>
@@ -1433,7 +1416,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </ul>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="80" data-paginate="true" data-class="dense ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch09" data-marpit-pagination="80" style="--paginate:true;--class:dense ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">09 / References</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="79" data-paginate="true" data-class="dense ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch09" data-marpit-pagination="79" style="--paginate:true;--class:dense ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">09 / References</p>
 <h2 id="%E4%B8%BB%E3%81%AA%E5%8F%82%E7%85%A7-5">主な参照 5</h2>
 <ul>
 <li>NSA MCP security guidance: <a href="https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf">https://www.nsa.gov/Portals/75/documents/Cybersecurity/CSI_MCP_SECURITY.pdf</a></li>
@@ -1445,7 +1428,7 @@ WRITE_METHODS = {<span class="hljs-string">&quot;POST&quot;</span>, <span class=
 </ul>
 <p class="source-note">出典: <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="81" data-paginate="true" data-class="dense ch09" data-theme="w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de" lang="C" class="dense ch09" data-marpit-pagination="81" style="--paginate:true;--class:dense ch09;--theme:w9ctbv59h3a2zglkq8xauip2n29m4b0pwwqzfxld1de;" data-marpit-pagination-total="81" data-size="16:9"><p class="chapter-label">09 / References</p>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="80" data-paginate="true" data-class="dense ch09" data-theme="7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub" lang="C" class="dense ch09" data-marpit-pagination="80" style="--paginate:true;--class:dense ch09;--theme:7hg6u3fbc3bb6j3v503ig4y33ds9di4lecf48jl52ub;" data-marpit-pagination-total="80" data-size="16:9"><p class="chapter-label">09 / References</p>
 <h2 id="%E4%B8%BB%E3%81%AA%E5%8F%82%E7%85%A7-6">主な参照 6</h2>
 <ul>
 <li>MCP Apps stable specification: <a href="https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx">https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx</a></li>

@@ -97,22 +97,21 @@
 <li>2026 roadmap: <a href="https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/">https://blog.modelcontextprotocol.io/posts/2026-mcp-roadmap/</a></li>
 </ul>
 <h4 id="技術スライド構成の外部確認"><a href="#技術スライド構成の外部確認">技術スライド構成の外部確認</a></h4>
-<p>外部の技術プレゼンテーション資料を確認した結果、今回のMCP資料は「定義から始める」よりも「問題と具体例から始め、必要になったところで定義する」方が自然だと判断した。</p>
+<p>外部の技術プレゼンテーション資料を確認した結果、今回のMCP資料は「定義から始める」よりも「全体地図を先に置き、その地図の読み方を固定してから細部へ進む」方が自然だと判断した。MCPはHost、Client、Server、tool、transport、authなどの用語が多いため、個別用語より先に全体配置を見せる価値が高い。一方で、地図直後に具体例へ飛ぶと、読者はまだ地図を読めないため、例は後段の比較章で扱う。</p>
 <ul>
-<li>MIT Communication Labは、技術発表の成功基準として、研究の動機になる問題と、なぜそれを提示するのかから始めることを挙げている。また、すべてのスライドはその動機づけ問題に関係し、必要以上の情報を載せないべきだとしている。</li>
-<li>Michael Ernstの技術発表ガイドは、タイトル直後にoutlineから入らず、解いている問題の例など動機づけから始めることを勧めている。これは、今回の冒頭で全体地図やMCP定義を先に置く構成への反証になる。</li>
+<li>MIT Communication Labは、技術発表の成功基準として、研究の動機になる問題と、なぜそれを提示するのかから始めることを挙げている。また、すべてのスライドはその動機づけ問題に関係し、必要以上の情報を載せないべきだとしている。今回の資料では、動機を長い例で出すより、MCPが置かれる全体地図を先に置く方が、後続の用語の受け皿になる。</li>
+<li>Michael Ernstの技術発表ガイドは、タイトル直後にoutlineから入らず、解いている問題の例など動機づけから始めることを勧めている。ここから、冒頭で単なる目次表から入らないこと、また地図を出す場合も「何を見る地図か」を明確にする必要があると解釈した。</li>
 <li>Google Technical Writing Oneは、対象読者、学習目標、読者が何を知っていて何を学ぶ必要があるかを明確にすることを重視している。MCP資料では「読者がMCP用語を知らない」ことだけでなく、「外部systemをagentに任せる判断軸をまだ持っていない」ことを前提にする必要がある。</li>
 </ul>
 <p>この確認に基づき、冒頭は次の順に再編した。</p>
 <ol>
-<li><strong>判断できるようになること</strong>: MCP用語ではなく、agentに外部systemを任せるときの判断軸を先に置く。</li>
-<li><strong>失敗CIの通し例</strong>: 読者が実務上の困りごととして外部接続を捉えられるようにする。</li>
-<li><strong>外部systemへ出る入口</strong>: LLM単体では現在のGitHub、DB、SaaS、AWSを扱えないことを示す。</li>
-<li><strong>MCPの全体地図</strong>: 具体例を地図に載せ、User -> Host -> MCP Server -> Backendの主線を見る。</li>
-<li><strong>MCPは接続契約</strong>: 問題と地図を見た後で、MCPの定義を置く。</li>
-<li><strong>全体の流れ</strong>: 章立てをoutlineではなく、判断軸を作る順番として示す。</li>
+<li><strong>MCPの全体地図</strong>: 細部を読ませず、User -> Host -> MCP Server -> Backendの主線だけを見る。</li>
+<li><strong>地図の主線</strong>: Host、MCP Server、Backendの責務境界を先に固定する。</li>
+<li><strong>MCPは接続契約</strong>: 地図上のどの境界を標準化するのかを定義する。</li>
+<li><strong>外部systemへ出る入口</strong>: LLMがHostの中で判断し、外部systemには接続面を通じて届くことを図で補強する。</li>
+<li><strong>全体の流れ</strong>: 地図のピースをどの順番で埋めるかを示す。</li>
 </ol>
-<p>この並びにより、初学者は「MCPとは何か」を暗記する前に、「なぜMCPという接続契約が必要になるのか」を理解できる。</p>
+<p>この並びにより、初学者は「MCPとは何か」を暗記する前に、まずMCPが置かれる場所を理解できる。具体例はこの段階では出さず、比較章でCLI / Browser / MCPを比べるタイミングに回す。</p>
 <h4 id="初学者レビュー表"><a href="#初学者レビュー表">初学者レビュー表</a></h4>
 
 
@@ -221,13 +220,7 @@
 
 
 
-
-
-
-
-
-
-<table><thead><tr><th align="right">対象箇所</th><th>Issue</th><th>Why it blocks beginners</th><th>Suggested fix / reflected change</th></tr></thead><tbody><tr><td align="right">2</td><td>旧構成では全体地図が早すぎる</td><td>何の困りごとを解く地図なのか分からず、部品名の暗記に見える</td><td><code>判断できるようになること</code>を追加し、最初に判断軸を置く</td></tr><tr><td align="right">3</td><td>旧構成ではMCP定義が早すぎる</td><td>問題例を持たないまま「接続契約」と言われても必要性が弱い</td><td><code>失敗CIを調べる</code>例を先に置き、外部systemへ出る必要を具体化する</td></tr><tr><td align="right">4</td><td>外部接続の前提が弱い</td><td>LLMがなぜGitHub、AWS、DBを直接扱えないのかが曖昧</td><td><code>外部systemへ出ると何が起きるか</code>でHost境界と接続面を図示する</td></tr><tr><td align="right">5</td><td>地図が暗記用に見える</td><td>User -> Host -> Server -> Backendの主線より、周辺ピースに目が行く</td><td>CI例を地図に載せ、左から右の流れだけを先に見るよう説明する</td></tr><tr><td align="right">6</td><td>一文定義がスローガン化する</td><td>「共通ルール」だけでは何を標準化するか分からない</td><td><code>MCPは接続契約</code>として、Host、Client、Server、Backendの役割へ分解する</td></tr><tr><td align="right">4</td><td><code>agent-native</code>が抽象的</td><td>初学者には「何がnativeなのか」が分からない</td><td>「AIが迷わず呼べる入口」と言い換え、難語は必要な箇所だけ残す</td></tr><tr><td align="right">6</td><td>章立てが情報の列挙になっていた</td><td>読者が各章で何を得るかを予測できない</td><td>流れを「埋めるピース」と「ここでわかること」の表へ変更</td></tr><tr><td align="right">8</td><td>Agentの定義が薄い</td><td>Agentがmodelそのものなのか、実行主体なのか混同する</td><td>「LLMが手順を考え、toolを選び、結果を見て次へ進む実行主体」と明記</td></tr><tr><td align="right">11</td><td>Promptがuser promptと混同される</td><td>MCP Promptを通常の入力文と誤解しやすい</td><td>「serverが公開する再利用template」と注記を追加</td></tr><tr><td align="right">12</td><td>ProtocolとTransportの違いが抽象的</td><td>どちらも通信の話に見え、JSON-RPC/Auth章で迷う</td><td>郵便のたとえを追加し、Protocol=書式と手続き、Transport=運び方と説明</td></tr><tr><td align="right">13</td><td>MCP呼び出しの時間順が見えない</td><td>tools/list、LLM tool call、tools/callの関係が後半まで分からない</td><td><code>MCPの1回の呼び出し</code>を追加し、Hostが接続・承認・実行を仲介することを先に説明</td></tr><tr><td align="right">14</td><td>SkillsがMCPの一部に見える</td><td>SkillとMCPの責務境界が曖昧になる</td><td>Skills説明を冒頭から基本概念後へ移動し、<code>Skill = how to proceed / MCP = what to access or execute</code>を明記</td></tr><tr><td align="right">20</td><td>Token効率の表とグラフが重複</td><td>数値の多さで主張がぼやける</td><td>詳細表を削除し、グラフと公開例に絞って「MCPでもtool catalog設計を誤ると重い」を残す</td></tr><tr><td align="right">34-37</td><td>Remote MCP設定がコマンド集に寄る</td><td>登録手順の暗記になり、Remote MCPの意味が薄れる</td><td>CLI設定例、APM、VS Code詳細、組織設定詳細を削り、Remoteの全体像、OAuth、設定レイヤー、client差分に絞る</td></tr><tr><td align="right">39-49</td><td>Protocol/Auth/JSON-RPCが深い</td><td>先に実装例を見ていないと、抽象protocolの話が重い</td><td>章位置は構築/Remote後に残し、基本用語は前段で軽く説明する構成にした</td></tr><tr><td align="right">56-63</td><td>WebMCP、Figma、Serenaなどが広がりすぎる</td><td>MCP理解の本筋から「便利tool紹介」へ逸れやすい</td><td>WebMCP実装コードを削除し、MCPとの違い・開発workflowでの位置づけに限定</td></tr><tr><td align="right">64以降</td><td>最新仕様、Apps、Tasks、ロードマップが情報過多</td><td>初学者にはMCPの核と将来拡張が混ざる</td><td>Apps/UI/Tasks/roadmap詳細を削り、trust boundary、設計ルール、社内導入、まとめに絞る</td></tr></tbody></table>
+<table><thead><tr><th align="right">対象箇所</th><th>Issue</th><th>Why it blocks beginners</th><th>Suggested fix / reflected change</th></tr></thead><tbody><tr><td align="right">2</td><td>全体地図の前に判断軸を置くと抽象的</td><td>まだ地図を見ていないため、何を判断する話なのか分からない</td><td>冒頭を<code>MCPの全体地図</code>に戻し、主線だけを見る説明にする</td></tr><tr><td align="right">3</td><td>具体例が早すぎる</td><td>MCPの配置を理解する前にCI調査が出るため、何の例なのか分からない</td><td>00章から失敗CI例を外し、比較章の利用フローへ寄せる</td></tr><tr><td align="right">4</td><td>地図が暗記用に見える</td><td>User -> Host -> Server -> Backendの主線より、周辺ピースに目が行く</td><td><code>地図の主線</code>を追加し、Host / MCP Server / Backendだけを先に説明する</td></tr><tr><td align="right">5</td><td>一文定義がスローガン化する</td><td>「共通ルール」だけでは何を標準化するか分からない</td><td><code>MCPは接続契約</code>として、Host、Client、Server、Backendの役割へ分解する</td></tr><tr><td align="right">4</td><td><code>agent-native</code>が抽象的</td><td>初学者には「何がnativeなのか」が分からない</td><td>「AIが迷わず呼べる入口」と言い換え、難語は必要な箇所だけ残す</td></tr><tr><td align="right">6</td><td>章立てが情報の列挙になっていた</td><td>読者が各章で何を得るかを予測できない</td><td>流れを「埋めるピース」と「ここでわかること」の表へ変更</td></tr><tr><td align="right">8</td><td>Agentの定義が薄い</td><td>Agentがmodelそのものなのか、実行主体なのか混同する</td><td>「LLMが手順を考え、toolを選び、結果を見て次へ進む実行主体」と明記</td></tr><tr><td align="right">11</td><td>Promptがuser promptと混同される</td><td>MCP Promptを通常の入力文と誤解しやすい</td><td>「serverが公開する再利用template」と注記を追加</td></tr><tr><td align="right">12</td><td>ProtocolとTransportの違いが抽象的</td><td>どちらも通信の話に見え、JSON-RPC/Auth章で迷う</td><td>郵便のたとえを追加し、Protocol=書式と手続き、Transport=運び方と説明</td></tr><tr><td align="right">13</td><td>MCP呼び出しの時間順が見えない</td><td>tools/list、LLM tool call、tools/callの関係が後半まで分からない</td><td><code>MCPの1回の呼び出し</code>を追加し、Hostが接続・承認・実行を仲介することを先に説明</td></tr><tr><td align="right">14</td><td>SkillsがMCPの一部に見える</td><td>SkillとMCPの責務境界が曖昧になる</td><td>Skills説明を冒頭から基本概念後へ移動し、<code>Skill = how to proceed / MCP = what to access or execute</code>を明記</td></tr><tr><td align="right">20</td><td>Token効率の表とグラフが重複</td><td>数値の多さで主張がぼやける</td><td>詳細表を削除し、グラフと公開例に絞って「MCPでもtool catalog設計を誤ると重い」を残す</td></tr><tr><td align="right">34-37</td><td>Remote MCP設定がコマンド集に寄る</td><td>登録手順の暗記になり、Remote MCPの意味が薄れる</td><td>CLI設定例、APM、VS Code詳細、組織設定詳細を削り、Remoteの全体像、OAuth、設定レイヤー、client差分に絞る</td></tr><tr><td align="right">39-49</td><td>Protocol/Auth/JSON-RPCが深い</td><td>先に実装例を見ていないと、抽象protocolの話が重い</td><td>章位置は構築/Remote後に残し、基本用語は前段で軽く説明する構成にした</td></tr><tr><td align="right">56-63</td><td>WebMCP、Figma、Serenaなどが広がりすぎる</td><td>MCP理解の本筋から「便利tool紹介」へ逸れやすい</td><td>WebMCP実装コードを削除し、MCPとの違い・開発workflowでの位置づけに限定</td></tr><tr><td align="right">64以降</td><td>最新仕様、Apps、Tasks、ロードマップが情報過多</td><td>初学者にはMCPの核と将来拡張が混ざる</td><td>Apps/UI/Tasks/roadmap詳細を削り、trust boundary、設計ルール、社内導入、まとめに絞る</td></tr></tbody></table>
 <h4 id="推奨フロー"><a href="#推奨フロー">推奨フロー</a></h4>
 <p>今回のデッキは次の理解順に合わせる。</p>
 <ol>
