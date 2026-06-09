@@ -74,6 +74,7 @@ Use these local skills when applicable:
 - `.agents/skills/slide-style-research-docs/SKILL.md`: style and structure guidance for Marp decks
 - `.agents/skills/slide-layout-fix/SKILL.md`: render and screenshot verification workflow
 - `.agents/skills/beginner-slide-reviewer/SKILL.md`: beginner-audience review for slide order, missing premises, abstract wording, and information overload
+- `.agents/skills/slide-image-prompting/SKILL.md`: slide-native image prompt guidance, including how to avoid generic AI-looking visuals and how to place exact text inside final image assets
 
 For MCP presentation work, keep this framing explicit:
 

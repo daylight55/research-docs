@@ -642,6 +642,102 @@ img.diagram {
   max-inline-size: 100%;
 }
 
+.generated-visual {
+  background: var(--rd-white);
+  border: 1px solid rgba(23, 32, 51, 0.12);
+  border-radius: 8px;
+  box-shadow: var(--rd-shadow);
+  display: block;
+  inline-size: 100%;
+  object-fit: contain;
+}
+
+section.visual .generated-visual {
+  max-block-size: 442px;
+}
+
+.visual-hero {
+  display: grid;
+  gap: 12px;
+}
+
+.visual-note-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.visual-note-grid > div {
+  background: var(--rd-panel);
+  border: 1px solid var(--rd-soft);
+  border-radius: 8px;
+  padding: 0.46em 0.56em;
+}
+
+.visual-note-grid strong {
+  color: var(--rd-blue);
+  display: block;
+  font-size: 0.72em;
+  line-height: 1.12;
+  margin-block-end: 0.16em;
+}
+
+.visual-note-grid span {
+  color: var(--rd-muted);
+  display: block;
+  font-size: 0.58em;
+  line-height: 1.28;
+}
+
+.visual-split {
+  align-items: start;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 0.72fr) minmax(520px, 1fr);
+}
+
+.visual-split.skill {
+  grid-template-columns: minmax(0, 0.78fr) minmax(500px, 1fr);
+}
+
+.visual-split .stack {
+  gap: 0.5em;
+}
+
+.visual-split .panel {
+  padding: 0.54em 0.66em;
+}
+
+.visual-split .panel h3 {
+  font-size: 0.9em;
+}
+
+.visual-split .panel p {
+  font-size: 0.78em;
+  line-height: 1.32;
+}
+
+.visual-split .callout {
+  font-size: 0.72em;
+  line-height: 1.32;
+  padding: 0.56em 0.68em;
+}
+
+.visual-frame {
+  margin: 0;
+}
+
+.visual-frame .generated-visual {
+  max-block-size: 390px;
+}
+
+.visual-frame figcaption {
+  color: var(--rd-muted);
+  font-size: 0.52em;
+  line-height: 1.24;
+  margin-block-start: 0.5em;
+}
+
 .app-shot-split {
   align-items: start;
   display: grid;

@@ -10,6 +10,7 @@ screenshots="$out_dir/screenshots/$name"
 mkdir -p "$out_dir" "$screenshots"
 
 npx marp "$deck" --html --theme contents/themes/research.css --output "$html"
+node scripts/patch-marp-deck.mjs "$html"
 
 deck_dir="$(dirname "$deck")"
 if [ -d "$deck_dir/diagrams" ]; then
@@ -20,6 +21,11 @@ fi
 if [ -d "$deck_dir/logos" ]; then
   rm -rf "$out_dir/logos"
   cp -R "$deck_dir/logos" "$out_dir/logos"
+fi
+
+if [ -d "$deck_dir/generated" ]; then
+  rm -rf "$out_dir/generated"
+  cp -R "$deck_dir/generated" "$out_dir/generated"
 fi
 
 if [ -d "$deck_dir/screenshots" ]; then
