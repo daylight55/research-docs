@@ -283,6 +283,16 @@ MCPの構成はHost、Client、Serverに分かれる。公式仕様では、Host
 
 この分離により、GitHub MCP serverはSlack MCP serverのデータを勝手に読めない。各serverは「自分に渡された入力」と「自分が持つ権限」の範囲でだけ動く。これは実装上の都合ではなく、MCPのセキュリティ境界である。
 
+#### 用語が登場する場所
+
+初学者には、Tool / Resource / PromptやProtocol / Transportを個別定義で並べる前に、それらがMCP接続のどこに出るかを見せる必要がある。用語の位置関係は次のように整理できる。
+
+- Tool / Resource / Prompt: MCP ServerがHost/Clientへ公開するcapability catalog。何ができるか、何を読めるか、どの手順を再利用できるかを表す。
+- Protocol: ClientとServerがやり取りするmessageの形と順序。`initialize`、`tools/list`、`tools/call`などがここに入る。
+- Transport: そのProtocol messageを実際に運ぶ経路。localならstdio、remoteならStreamable HTTPが代表例。
+
+この順番で見せると、「serverが何を公開するか」と「client/serverがどう会話するか」を混同しにくい。
+
 ### 5. 主要概念
 
 Server側primitive:
