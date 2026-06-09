@@ -20,6 +20,8 @@ npx marp \
   --html \
   --output "$out_dir/slides/mcp-internal-presentation/deck/index.html"
 
+node scripts/patch-marp-deck.mjs "$out_dir/slides/mcp-internal-presentation/deck/index.html"
+
 copy_slide_diagrams() {
   local dest="$1"
   mkdir -p "$dest"

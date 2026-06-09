@@ -10,6 +10,7 @@ screenshots="$out_dir/screenshots/$name"
 mkdir -p "$out_dir" "$screenshots"
 
 npx marp "$deck" --html --theme contents/themes/research.css --output "$html"
+node scripts/patch-marp-deck.mjs "$html"
 
 deck_dir="$(dirname "$deck")"
 if [ -d "$deck_dir/diagrams" ]; then
