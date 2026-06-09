@@ -999,27 +999,19 @@ Streamable HTTPではsession、protocol version header、Origin validation、aut
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
-
 <!--
-_class: dense ch05
+_class: compact visual ch05
 -->
 
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 
 ## Remote authで覚える3点
 
-| 観点 | 意味 | 失敗すると |
-|---|---|---|
-| 誰の権限か | user / agent / service accountを区別する | agentが過剰権限で動く |
-| どのscopeか | read/write、対象project、操作範囲を絞る | 予期しないwriteや漏えいが起きる |
-| tokenの宛先 | tokenが使えるMCP server / backendを固定する | 別serverへのtoken再利用が起きる |
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/remote-auth-boundary.svg" alt="Remote MCP authorization boundary with authority scope and token audience" />
+</div>
 
-Remote MCPの難所はJSON-RPCではなく、**tokenの宛先・scope・委任境界を壊さないこと**。
-
-<p class="caption">Protected Resource Metadata、OIDC Discovery、PKCE、Dynamic Client Registrationは、この3点を実装で支える仕組み。</p>
-
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 ---
 
 <!--
@@ -1226,27 +1218,19 @@ Claude / Codex / Agent
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
-
 <!--
-_class: dense ch06
+_class: compact visual ch06
 -->
 
 <p class="chapter-label">06 / AWSケーススタディ</p>
 
 ## GatewayとIdentityが補うもの
 
-| 要素 | 役割 | MCPとの関係 |
-|---|---|---|
-| AgentCore Gateway | MCP endpoint、tool aggregation、target routing | `tools/list` / `tools/call`の入口 |
-| Gateway inbound auth | agent/clientがGatewayへ入る認証 | OAuth JWT、IAM SigV4、authenticate-onlyなど |
-| Gateway outbound auth | Gatewayがtargetへ出る認証 | IAM、OAuth、API key、token passthroughなど |
-| AgentCore Identity | OAuth provider、token vault、workload identity | 2LO/3LO/OBO tokenを管理 |
-| OBO token exchange | inbound user tokenをdownstream向けtokenへ交換 | user + agent identityを維持した委任 |
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/agentcore-gateway-identity-map.svg" alt="AgentCore Gateway and Identity responsibility map" />
+</div>
 
-GatewayはMCP transportだけでなく、認証・認可・credential管理の運用面を補う。
-
-<p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 ---
 
 <!--
@@ -1306,28 +1290,19 @@ _class: compact ch07
 <p class="source-note">出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 
 ---
-
 <!--
-_class: dense ch07
+_class: compact visual ch07
 -->
 
 <p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 
 ## WebMCPとは何を読む仕組みか
 
-WebMCPは、web page自身が「この画面でagentに使わせたい機能」をbrowser agentへ宣言するproposed web standard。
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/webmcp-surface-map.svg" alt="WebMCP surface map compared with backend MCP and Browser MCP" />
+</div>
 
-| 誰が | 何を実装/読む | 結果 |
-|---|---|---|
-| Web app | `document.modelContext.registerTool()` またはform属性 | tool名、説明、JSON Schema、実行関数を登録 |
-| Browser | live tab内のtool catalog、DOM、session/cookie、権限 | pageにいる時だけagentへ能力を見せる |
-| Browser agent | tool一覧とschema | click推測ではなく、明示された関数/フォームとして呼ぶ |
-| User | visible UIと確認dialog | 何が実行されたかを画面上で確認できる |
-
-MCPがbackend/serviceをどこからでも使える接続面なら、WebMCPは**いま開いているWeb UIをagent-readableにする接続面**。
-
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 ---
 
 <!--
@@ -1526,42 +1501,19 @@ _class: compact ch08
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
-
 <!--
-_class: dense ch08
+_class: compact visual ch08
 -->
 
 <p class="chapter-label">08 / ガバナンスと導入</p>
 
 ## コンテキスト効率を意識したMCP設計
 
-「Token-aware」とは、**agentに読ませる情報量を意識すること**。
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/context-efficiency-pipeline.svg" alt="Context efficient MCP design pipeline from search to detail to summary" />
+</div>
 
-MCPでは、tool一覧、description、schema、実行結果、error、logもmodel contextに入る。
-
-つまり、全部見せるMCPは **遅い / 高い / 誤選択が増える**。
-
-設計ルール:
-
-- tool catalog: 似たtoolを増やしすぎない
-- tool result: raw JSON/log全量ではなく、summary + stable IDを返す
-- large context: actionはtool、読み物や大きな文書はresourceに分ける
-- write action: read/writeを分け、危険操作はconfirmationを要求する
-
-```text
-避けたい: call_api(method, path, body) -> raw JSON / raw logを全部返す
-```
-
-```text
-search_incidents(query, severity, limit) -> summary + incident_id
-get_incident_detail(incident_id, fields) -> bounded structured detail
-summarize_incident(incident_id) -> agent-ready summary
-```
-
-要点: agentに必要なのは「全データ」ではなく、**次の判断に十分な最小context**。
-
-<p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="https://www.atlassian.com/blog/atlassian-engineering/mcp-compression-saving-tokens-in-sre-agent-systems">Atlassian MCP compression</a>; <a href="https://arxiv.org/abs/2603.20313">Semantic Tool Discovery</a>; <a href="https://arxiv.org/abs/2505.03275">RAG-MCP</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 ---
 
 <!--

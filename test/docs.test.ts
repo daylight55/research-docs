@@ -34,6 +34,7 @@ describe("documentation content", () => {
     const files = distributedMarkdownFiles().map((file) => relative(contentRoot, file));
 
     expect(files).toEqual([
+      "research/mcp-late-slide-diagrams.md",
       "research/mcp-slide-research.md",
       "slides/mcp-internal-presentation.md",
       "sources/mcp-source-links.md",
