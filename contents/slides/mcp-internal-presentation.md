@@ -3,19 +3,18 @@ marp: true
 theme: research
 paginate: true
 size: 16:9
-title: MCPを開発現場でどう使うべきか
+title: "MCP概論 : 開発現場でどう使うべきか"
 navTitle: MCP internal presentation
 description: 社内発表向けMCP解説、要所のQ&A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
 kind: slides
 themeId: mcp-internal-presentation
 order: 10
-footer: "MCP internal presentation"
 ---
 <!--
 _class: lead
 -->
 
-# MCPを開発現場でどう使うべきか
+# MCP概論 :<br />開発現場でどう使うべきか
 
 AI Agentが外部systemを安全に使うための接続面を、概念地図から順に理解する。
 
