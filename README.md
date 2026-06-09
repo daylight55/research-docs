@@ -41,29 +41,31 @@ research topic
 
 配布・再利用する成果物は `contents/` に集約する。調査トピックごとの成果物は `contents/<topic-id>/` を親にし、その下に `overview` / `slides` / `research` / `sources` / `tasks` を置く。同じトピックの調査メモ、スライド、出典、タスクを1つのディレクトリに集約する。
 
-Marp の例など配信対象ではない再利用素材は `contents/templates/` に置く。Marp カスタムテーマCSSは、Astro/Marp の実装スタイル資産として `src/styles/marp-themes/` に置く。
+新しい調査トピック一式を作るテンプレートは `.scaffdog/` に置く。Marp のレイアウト例はドキュメントとして `docs/slide-examples/` に置き、Marp カスタムテーマCSSは Astro/Marp の実装スタイル資産として `src/styles/marp-themes/` に置く。
 
 ```text
 contents
-├── mcp-internal-presentation
-│   ├── overview
-│   │   └── mcp-internal-presentation.md
-│   ├── research
-│   │   ├── mcp-late-slide-diagrams.md
-│   │   └── mcp-slide-research.md
-│   ├── slides
-│   │   ├── diagrams
-│   │   ├── generated
-│   │   ├── logos
-│   │   ├── screenshots
-│   │   └── mcp-internal-presentation.md
-│   ├── sources
-│   │   └── mcp-source-links.md
-│   └── tasks
-│       └── research-tasks.md
-├── templates
-│   └── slides
-│       └── example.md
+└── mcp-internal-presentation
+    ├── overview
+    │   └── mcp-internal-presentation.md
+    ├── research
+    │   ├── mcp-late-slide-diagrams.md
+    │   └── mcp-slide-research.md
+    ├── slides
+    │   ├── diagrams
+    │   ├── generated
+    │   ├── logos
+    │   ├── screenshots
+    │   └── mcp-internal-presentation.md
+    ├── sources
+    │   └── mcp-source-links.md
+    └── tasks
+        └── research-tasks.md
+
+docs
+└── slide-examples
+    └── research-layouts.md
+
 src
 └── styles
     ├── site.css
@@ -72,14 +74,14 @@ src
         └── research.css
 ```
 
-## Slide templates
+## Slide scaffolding and examples
 
-Qiita 記事「AIエージェントと協働してmarpでスライドを作る2026」を参考に、調査結果を Marp スライドとして共有するための標準テンプレートを追加しています。
+Qiita 記事「AIエージェントと協働してmarpでスライドを作る2026」を参考に、調査結果を Marp スライドとして共有するための scaffdog テンプレートとレイアウト例を追加しています。
 
 - `.scaffdog/research-topic.md`: 新しい調査トピック一式を生成する scaffdog テンプレート
 - `docs/slide-style-guide.md`: research-docs 向けの色、余白、文体、レイアウト原則
 - `docs/slide-workflow.md`: スライド作成、検証、運用の流れ
-- `contents/templates/slides/example.md`: すぐ再利用できる Marp レイアウトパターン集
+- `docs/slide-examples/research-layouts.md`: すぐ再利用できる Marp レイアウトパターン集
 - `src/styles/marp-themes/research.css`: パネル、グリッド、統計表示などの共通テーマ
 - `.agents/skills/slide-style-research-docs/SKILL.md`: スライド整形時に参照するエージェント用手順
 - `.agents/skills/slide-layout-fix/SKILL.md`: レンダリング後の見た目検証手順

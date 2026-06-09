@@ -18,7 +18,7 @@ The current content architecture is topic-centered:
 - `contents/<topic-id>/sources/`: source link collections
 - `contents/<topic-id>/tasks/`: research task checklists
 - `src/styles/marp-themes/`: shared Marp custom theme CSS
-- `contents/templates/`: reusable templates that are not direct site pages
+- `.scaffdog/`: reusable templates that are not direct site pages
 - `docs/`: workflow and style guidance for contributors and agents
 
 The README states that rendered document pages also have raw Markdown counterparts by removing the trailing slash and appending `.md`. The site also emits `/llms.txt` for crawler discovery.
@@ -41,7 +41,7 @@ Before editing slides, read:
 
 - `docs/slide-style-guide.md`
 - `docs/slide-workflow.md`
-- `contents/templates/slides/example.md`
+- `docs/slide-examples/research-layouts.md`
 - `src/styles/marp-themes/research.css`
 
 The style guide's core rule is: "1スライド1メッセージに絞る". It also says to keep research density while prioritizing structure, and to finish only after rendered visual verification.

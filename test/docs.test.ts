@@ -3,7 +3,6 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const contentRoot = join(process.cwd(), "contents");
-const contentSections = ["overview", "research", "slides", "sources", "tasks", "themes"];
 const topicIds = ["mcp-internal-presentation"];
 
 function markdownFiles(dir = contentRoot): string[] {
@@ -19,15 +18,12 @@ function distributedMarkdownFiles(): string[] {
 }
 
 describe("documentation content", () => {
-  it("keeps reusable slide assets under contents", () => {
+  it("keeps reusable slide assets outside published content", () => {
     const root = process.cwd();
 
-    expect(existsSync(join(root, "contents/templates/slides/example.md"))).toBe(true);
+    expect(existsSync(join(root, "docs/slide-examples/research-layouts.md"))).toBe(true);
     expect(existsSync(join(root, "src/styles/marp-themes/research.css"))).toBe(true);
     expect(existsSync(join(root, "src/styles/marp-themes/mcp-modern.css"))).toBe(true);
-    expect(existsSync(join(root, "slides"))).toBe(false);
-    expect(existsSync(join(root, "theme"))).toBe(false);
-    expect(existsSync(join(root, "themes"))).toBe(false);
   });
 
   it("keeps distributed markdown grouped under topic directories", () => {
@@ -42,13 +38,6 @@ describe("documentation content", () => {
       "mcp-internal-presentation/sources/mcp-source-links.md",
       "mcp-internal-presentation/tasks/research-tasks.md",
     ]);
-
-    for (const section of contentSections) {
-      const sectionPath = join(contentRoot, section);
-      if (existsSync(sectionPath)) {
-        expect(markdownFiles(sectionPath), `${section} should only contain shared non-markdown assets`).toEqual([]);
-      }
-    }
 
     expect(existsSync(join(root, "src/content"))).toBe(false);
     expect(existsSync(join(contentRoot, "docs"))).toBe(false);

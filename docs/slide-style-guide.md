@@ -43,7 +43,7 @@ Rules:
 
 ## Layout Patterns
 
-Use `contents/templates/slides/example.md` before inventing a new layout. The baseline patterns are:
+Use `docs/slide-examples/research-layouts.md` before inventing a new layout. The baseline patterns are:
 
 1. Title slide
 2. Section divider
