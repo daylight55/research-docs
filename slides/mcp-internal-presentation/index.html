@@ -21,6 +21,7 @@ _class: compact visual ch00
 -->
 <p class="chapter-label">00 / 全体像</p>
 <h2 id="llmが外部systemへ出る入口"><a href="#llmが外部systemへ出る入口">LLMが外部systemへ出る入口</a></h2>
+<p class="lead">LLMはHostの境界内で判断し、外部systemにはMCPの契約を通じて届く。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels">
 </div>
@@ -212,6 +213,7 @@ _class: compact ch01
 -->
 <p class="chapter-label">01 / 基本概念</p>
 <h2 id="host--client--serverとは"><a href="#host--client--serverとは">Host / Client / Serverとは？</a></h2>
+<p class="lead">Host、MCP Client、MCP Server、Backendは同じものではなく、責務の境界が違う。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/mcp-boundary-zones.svg" alt="User, Host, MCP Client, MCP Server, and Backend responsibilities with Japanese labels">
 </div>
@@ -222,6 +224,7 @@ _class: compact visual ch01
 -->
 <p class="chapter-label">01 / 基本概念</p>
 <h2 id="mcpの公開面と通信面"><a href="#mcpの公開面と通信面">MCPの公開面と通信面</a></h2>
+<p class="lead">Tool、Resource、Promptはserverが公開する面に、Protocol、Transportはclient/serverが会話する面に出てくる。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/mcp-concepts-appear-map.svg" alt="MCP has a server publication surface and a client server communication surface">
 </div>
@@ -314,6 +317,7 @@ _class: dense ch01
 -->
 <p class="chapter-label">01 / 基本概念</p>
 <h2 id="skillsとmcpの違い"><a href="#skillsとmcpの違い">SkillsとMCPの違い</a></h2>
+<p class="lead">Skillはagentの進め方を固定し、MCPは外部data/actionへの入口を渡す。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/skill-mcp-layers.svg" alt="Agent Skill as how to proceed and MCP Server as what to access or execute">
 </div>
@@ -889,6 +893,7 @@ _class: compact visual ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="認証付きremote-mcpの全体構成"><a href="#認証付きremote-mcpの全体構成">認証付きRemote MCPの全体構成</a></h2>
+<p class="lead">OAuth tokenでRemote MCP serverへ入り、backend APIは別の実行境界として扱う。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/authenticated-remote-mcp-architecture.svg" alt="Authenticated Remote MCP architecture with host authorization server remote MCP server and backend API">
 </div>
@@ -956,6 +961,7 @@ _class: compact visual ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="remote-authで覚える3点"><a href="#remote-authで覚える3点">Remote authで覚える3点</a></h2>
+<p class="lead">難所はJSON-RPCではなく、権限の持ち主、scope、tokenの宛先を壊さないこと。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/remote-auth-boundary.svg" alt="Remote MCP authorization boundary with authority scope and token audience">
 </div>
@@ -1027,6 +1033,7 @@ _class: dense ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="q-tool-callのテキストはどう生成される"><a href="#q-tool-callのテキストはどう生成される">Q. tool callのテキストはどう生成される？</a></h2>
+<p class="lead">tool callは自然文ではなく、modelが生成した構造化出力をHostが解釈して実行する。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/tool-call-text-generation.svg" alt="Tool call is generated as structured model output then executed by host">
 </div>
@@ -1110,6 +1117,7 @@ _class: compact ch06
 -->
 <p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="awsでremote-mcpを構築する構成"><a href="#awsでremote-mcpを構築する構成">AWSでRemote MCPを構築する構成</a></h2>
+<p class="lead">AgentCore GatewayをRemote MCP入口にし、Identityで委任tokenとcredential境界を扱う。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/aws-agentcore-remote-mcp-architecture.svg" alt="AWS AgentCore Remote MCP architecture with Gateway Identity targets and backend services">
 </div>
@@ -1120,6 +1128,7 @@ _class: compact visual ch06
 -->
 <p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="gatewayとidentityが補うもの"><a href="#gatewayとidentityが補うもの">GatewayとIdentityが補うもの</a></h2>
+<p class="lead">GatewayはMCPとして見せる入口、Identityはdownstreamへ渡すcredentialを補う。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/agentcore-gateway-identity-map.svg" alt="AgentCore Gateway and Identity responsibility map">
 </div>
@@ -1206,6 +1215,7 @@ _class: compact visual ch07
 -->
 <p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="webmcpとは何を読む仕組みか"><a href="#webmcpとは何を読む仕組みか">WebMCPとは何を読む仕組みか</a></h2>
+<p class="lead">Backend MCPではなく、いま開いているWeb UIのDOMやsessionをagent-readableにする接続面。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/webmcp-surface-map.svg" alt="WebMCP surface map compared with backend MCP and Browser MCP">
 </div>
@@ -1447,6 +1457,7 @@ _class: compact visual ch08
 -->
 <p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="コンテキスト効率を意識したmcp設計"><a href="#コンテキスト効率を意識したmcp設計">コンテキスト効率を意識したMCP設計</a></h2>
+<p class="lead">agentに必要なのは全データではなく、次の判断に十分な最小context。</p>
 <div class="visual-hero">
   <img class="generated-visual" src="generated/context-efficiency-pipeline.svg" alt="Context efficient MCP design pipeline from search to detail to summary">
 </div>
