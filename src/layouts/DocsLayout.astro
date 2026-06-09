@@ -4,10 +4,11 @@ import { deckHref, getDocSummaries, getThemeSummaries } from "../lib/docs";
 
 type Props = {
   description?: string;
+  sidebarDefaultState?: "open" | "closed";
   title: string;
 };
 
-const { description, title } = Astro.props;
+const { description, sidebarDefaultState = "open", title } = Astro.props;
 const docs = await getDocSummaries();
 const themes = getThemeSummaries(docs);
 const currentPath = Astro.url.pathname;
@@ -33,13 +34,13 @@ function isThemeActive(theme: (typeof themes)[number]) {
     <title>{title} | research-docs</title>
   </head>
   <body>
-    <div class="site-shell" data-sidebar="open">
+    <div class="site-shell" data-sidebar={sidebarDefaultState} data-sidebar-default={sidebarDefaultState}>
       <header class="topbar">
         <button
           class="sidebar-toggle"
           type="button"
           aria-controls="theme-sidebar"
-          aria-expanded="true"
+          aria-expanded={sidebarDefaultState === "open" ? "true" : "false"}
           data-sidebar-toggle
         >
           <span class="sidebar-toggle-icon" aria-hidden="true"></span>
@@ -81,8 +82,10 @@ function isThemeActive(theme: (typeof themes)[number]) {
       const shell = document.querySelector(".site-shell");
       const toggle = document.querySelector("[data-sidebar-toggle]");
       const sidebar = document.querySelector("#theme-sidebar");
+      const defaultState = shell?.getAttribute("data-sidebar-default") ?? "open";
       const storedState = window.localStorage.getItem("researchDocsSidebar");
-      const preferredState = storedState ?? (window.matchMedia("(max-width: 900px)").matches ? "closed" : "open");
+      const responsiveState = window.matchMedia("(max-width: 900px)").matches ? "closed" : "open";
+      const preferredState = defaultState === "closed" ? defaultState : (storedState ?? responsiveState);
 
       function setSidebarState(state) {
         shell?.setAttribute("data-sidebar", state);
