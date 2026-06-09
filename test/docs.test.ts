@@ -4,6 +4,7 @@ import { join, relative } from "node:path";
 
 const contentRoot = join(process.cwd(), "contents");
 const contentSections = ["research", "slides", "sources", "tasks", "themes"];
+const topicIds = ["mcp-internal-presentation"];
 
 function markdownFiles(dir = contentRoot): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -14,7 +15,7 @@ function markdownFiles(dir = contentRoot): string[] {
 }
 
 function distributedMarkdownFiles(): string[] {
-  return contentSections.flatMap((section) => markdownFiles(join(contentRoot, section)));
+  return topicIds.flatMap((topicId) => markdownFiles(join(contentRoot, topicId)));
 }
 
 describe("documentation content", () => {
@@ -29,18 +30,25 @@ describe("documentation content", () => {
     expect(existsSync(join(root, "themes"))).toBe(false);
   });
 
-  it("keeps all distributed markdown under top-level contents sections", () => {
+  it("keeps distributed markdown grouped under topic directories", () => {
     const root = process.cwd();
     const files = distributedMarkdownFiles().map((file) => relative(contentRoot, file));
 
     expect(files).toEqual([
-      "research/mcp-late-slide-diagrams.md",
-      "research/mcp-slide-research.md",
-      "slides/mcp-internal-presentation.md",
-      "sources/mcp-source-links.md",
-      "tasks/research-tasks.md",
-      "themes/mcp-internal-presentation.md",
+      "mcp-internal-presentation/research/mcp-late-slide-diagrams.md",
+      "mcp-internal-presentation/research/mcp-slide-research.md",
+      "mcp-internal-presentation/slides/mcp-internal-presentation.md",
+      "mcp-internal-presentation/sources/mcp-source-links.md",
+      "mcp-internal-presentation/tasks/research-tasks.md",
+      "mcp-internal-presentation/themes/mcp-internal-presentation.md",
     ]);
+
+    for (const section of contentSections) {
+      const sectionPath = join(contentRoot, section);
+      if (existsSync(sectionPath)) {
+        expect(markdownFiles(sectionPath), `${section} should only contain shared non-markdown assets`).toEqual([]);
+      }
+    }
 
     expect(existsSync(join(root, "src/content"))).toBe(false);
     expect(existsSync(join(contentRoot, "docs"))).toBe(false);

@@ -9,7 +9,7 @@ questions:
   owner: "Owner name."
 ---
 
-# `contents/themes/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.themeId | kebab }}/themes/{{ inputs.themeId | kebab }}.md`
 
 ```markdown
 ---
@@ -29,13 +29,13 @@ order: 0
 
 ## Artifacts
 
-- Slide deck: [`slides/{{ inputs.themeId | kebab }}.md`](../slides/{{ inputs.themeId | kebab }}.md)
-- Research notes: [`research/{{ inputs.themeId | kebab }}.md`](../research/{{ inputs.themeId | kebab }}.md)
-- Source links: [`sources/{{ inputs.themeId | kebab }}.md`](../sources/{{ inputs.themeId | kebab }}.md)
-- Research tasks: [`tasks/{{ inputs.themeId | kebab }}.md`](../tasks/{{ inputs.themeId | kebab }}.md)
+- Slide deck: [`../slides/{{ inputs.themeId | kebab }}.md`](../slides/{{ inputs.themeId | kebab }}.md)
+- Research notes: [`../research/{{ inputs.themeId | kebab }}.md`](../research/{{ inputs.themeId | kebab }}.md)
+- Source links: [`../sources/{{ inputs.themeId | kebab }}.md`](../sources/{{ inputs.themeId | kebab }}.md)
+- Research tasks: [`../tasks/{{ inputs.themeId | kebab }}.md`](../tasks/{{ inputs.themeId | kebab }}.md)
 ```
 
-# `contents/slides/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.themeId | kebab }}/slides/{{ inputs.themeId | kebab }}.md`
 
 ```markdown
 ---
@@ -73,7 +73,7 @@ footer: "{{ inputs.title }}"
 <p class="lead">このテーマで明らかにする問いを1文で置く。</p>
 ```
 
-# `contents/research/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.themeId | kebab }}/research/{{ inputs.themeId | kebab }}.md`
 
 ```markdown
 ---
@@ -95,7 +95,7 @@ order: 20
 -
 ```
 
-# `contents/sources/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.themeId | kebab }}/sources/{{ inputs.themeId | kebab }}.md`
 
 ```markdown
 ---
@@ -113,7 +113,7 @@ order: 30
 -
 ```
 
-# `contents/tasks/{{ inputs.themeId | kebab }}.md`
+# `contents/{{ inputs.themeId | kebab }}/tasks/{{ inputs.themeId | kebab }}.md`
 
 ```markdown
 ---
