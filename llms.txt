@@ -1,14 +1,14 @@
 # research-docs
 
-> Source-backed research documents, slide decks, source links, and task checklists grouped by research theme.
+> Source-backed research documents, slide decks, source links, and task checklists grouped by research topic.
 
 - Site index: https://daylight55.github.io/research-docs/
 - Slide deck HTML: https://daylight55.github.io/research-docs/slides/mcp-internal-presentation/deck/
 
-## Research Themes
+## Research Topics
 
-- [MCP internal presentation](https://daylight55.github.io/research-docs/themes/mcp-internal-presentation/): MCP社内発表向けのスライド、調査メモ、参照元、タスク記録をまとめる調査テーマ。
-  - Raw Markdown: https://daylight55.github.io/research-docs/themes/mcp-internal-presentation.md
+- [MCP internal presentation](https://daylight55.github.io/research-docs/topics/mcp-internal-presentation/): MCP社内発表向けのスライド、調査メモ、参照元、タスク記録をまとめる調査トピック。
+  - Raw Markdown: https://daylight55.github.io/research-docs/topics/mcp-internal-presentation.md
   - [Slide: MCP internal presentation](https://daylight55.github.io/research-docs/slides/mcp-internal-presentation/): 社内発表向けMCP解説、要所のQ&A、JSON-RPC payload、CLI/ブラウザ比較、MCPサーバー構築、Remote MCP、開発向けMCP調査
     - Raw Markdown: https://daylight55.github.io/research-docs/slides/mcp-internal-presentation.md
   - [Research note: 調査メモ](https://daylight55.github.io/research-docs/research/mcp-slide-research/): MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。
@@ -23,5 +23,5 @@
 ## Crawling Notes
 
 - Every rendered document page has a matching raw Markdown URL by appending `.md` to the page URL without its trailing slash.
-- The Markdown files preserve FrontMatter with `kind`, `themeId`, and `order` fields for machine-readable grouping.
+- The Markdown files preserve FrontMatter with `kind`, `topicId`, and `order` fields for machine-readable grouping.
 - Prefer the raw Markdown URLs for crawling source text and the HTML URLs for rendered navigation context.

@@ -3,7 +3,7 @@ title: 後半スライド図解メモ
 navTitle: 後半図解メモ
 description: MCP発表資料の後半で追加した概念図の意図、読み方、対応スライドをまとめる説明ページ。
 kind: research
-themeId: mcp-internal-presentation
+topicId: mcp-internal-presentation
 order: 21
 ---
 
