@@ -1,7 +1,7 @@
 ---
 title: MCP source links
 navTitle: Source links
-description: MCP社内発表資料で参照した一次情報、公式ドキュメント、主要リポジトリ、AWS AgentCore関連情報のリンク集。
+description: MCP資料で参照した一次情報、公式ドキュメント、主要リポジトリ、AWS AgentCore関連情報のリンク集。
 kind: sources
 topicId: mcp-internal-presentation
 order: 30
@@ -9,7 +9,7 @@ order: 30
 
 # MCP source links
 
-このページは、発表スライドと調査メモの根拠になった主要な参照先をまとめる。
+このページは、スライドと調査メモの根拠になった主要な参照先をまとめる。
 
 ## Protocol and Concepts
 
@@ -41,6 +41,12 @@ order: 30
 - [Anthropic launch post](https://www.anthropic.com/news/model-context-protocol)
 - [MCP reference servers](https://github.com/modelcontextprotocol/servers)
 - [MCP registry](https://github.com/modelcontextprotocol/registry)
+
+## Technical Presentation Structure
+
+- [MIT Communication Lab: Technical Presentation](https://mitcommlab.mit.edu/meche/commkit/technical-presentation/)
+- [Michael Ernst: How to give a technical presentation](https://homes.cs.washington.edu/~mernst/advice/giving-talk.html)
+- [Google Technical Writing One](https://developers.google.com/tech-writing/one)
 
 ## OAuth, OIDC, and Authorization Standards
 
