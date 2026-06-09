@@ -22,6 +22,7 @@ section {
   font-size: 30px;
   line-height: 1.45;
   letter-spacing: 0;
+  overflow: clip;
   padding: 54px 64px;
 }
 
@@ -788,6 +789,15 @@ section.dense img.diagram {
 
 section.compact img.diagram {
   max-block-size: 405px;
+}
+
+section.compact img.diagram.diagram-wide-flow {
+  margin-block-start: -54px;
+}
+
+section.dense img.diagram.diagram-sequence {
+  margin-block-start: -12px;
+  max-block-size: 540px;
 }
 
 section.map {
