@@ -929,40 +929,15 @@ _class: dense ch05
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 <hr>
 <!--
-_class: dense ch05
+_class: compact visual ch05
 -->
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 <h2 id="remote-authで覚える3点"><a href="#remote-authで覚える3点">Remote authで覚える3点</a></h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>観点</th><th>意味</th><th>失敗すると</th></tr></thead><tbody><tr><td>誰の権限か</td><td>user / agent / service accountを区別する</td><td>agentが過剰権限で動く</td></tr><tr><td>どのscopeか</td><td>read/write、対象project、操作範囲を絞る</td><td>予期しないwriteや漏えいが起きる</td></tr><tr><td>tokenの宛先</td><td>tokenが使えるMCP server / backendを固定する</td><td>別serverへのtoken再利用が起きる</td></tr></tbody></table>
-<p>Remote MCPの難所はJSON-RPCではなく、<strong>tokenの宛先・scope・委任境界を壊さないこと</strong>。</p>
-<p class="caption">Protected Resource Metadata、OIDC Discovery、PKCE、Dynamic Client Registrationは、この3点を実装で支える仕組み。</p>
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-<hr>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/remote-auth-boundary.svg" alt="Remote MCP authorization boundary with authority scope and token audience">
+</div>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+---
 <!--
 _class: dense ch05
 -->
@@ -1126,49 +1101,15 @@ _class: compact ch06
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 <hr>
 <!--
-_class: dense ch06
+_class: compact visual ch06
 -->
 <p class="chapter-label">06 / AWSケーススタディ</p>
 <h2 id="gatewayとidentityが補うもの"><a href="#gatewayとidentityが補うもの">GatewayとIdentityが補うもの</a></h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>要素</th><th>役割</th><th>MCPとの関係</th></tr></thead><tbody><tr><td>AgentCore Gateway</td><td>MCP endpoint、tool aggregation、target routing</td><td><code>tools/list</code> / <code>tools/call</code>の入口</td></tr><tr><td>Gateway inbound auth</td><td>agent/clientがGatewayへ入る認証</td><td>OAuth JWT、IAM SigV4、authenticate-onlyなど</td></tr><tr><td>Gateway outbound auth</td><td>Gatewayがtargetへ出る認証</td><td>IAM、OAuth、API key、token passthroughなど</td></tr><tr><td>AgentCore Identity</td><td>OAuth provider、token vault、workload identity</td><td>2LO/3LO/OBO tokenを管理</td></tr><tr><td>OBO token exchange</td><td>inbound user tokenをdownstream向けtokenへ交換</td><td>user + agent identityを維持した委任</td></tr></tbody></table>
-<p>GatewayはMCP transportだけでなく、認証・認可・credential管理の運用面を補う。</p>
-<p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-<hr>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/agentcore-gateway-identity-map.svg" alt="AgentCore Gateway and Identity responsibility map">
+</div>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+---
 <!--
 _class: dense ch06
 -->
@@ -1246,45 +1187,15 @@ _class: compact ch07
 <p class="source-note">出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 <hr>
 <!--
-_class: dense ch07
+_class: compact visual ch07
 -->
 <p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 <h2 id="webmcpとは何を読む仕組みか"><a href="#webmcpとは何を読む仕組みか">WebMCPとは何を読む仕組みか</a></h2>
-<p>WebMCPは、web page自身が「この画面でagentに使わせたい機能」をbrowser agentへ宣言するproposed web standard。</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>誰が</th><th>何を実装/読む</th><th>結果</th></tr></thead><tbody><tr><td>Web app</td><td><code>document.modelContext.registerTool()</code> またはform属性</td><td>tool名、説明、JSON Schema、実行関数を登録</td></tr><tr><td>Browser</td><td>live tab内のtool catalog、DOM、session/cookie、権限</td><td>pageにいる時だけagentへ能力を見せる</td></tr><tr><td>Browser agent</td><td>tool一覧とschema</td><td>click推測ではなく、明示された関数/フォームとして呼ぶ</td></tr><tr><td>User</td><td>visible UIと確認dialog</td><td>何が実行されたかを画面上で確認できる</td></tr></tbody></table>
-<p>MCPがbackend/serviceをどこからでも使える接続面なら、WebMCPは<strong>いま開いているWeb UIをagent-readableにする接続面</strong>。</p>
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-<hr>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/webmcp-surface-map.svg" alt="WebMCP surface map compared with backend MCP and Browser MCP">
+</div>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+---
 <!--
 _class: compact ch07
 -->
@@ -1517,27 +1428,15 @@ _class: compact ch08
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 <hr>
 <!--
-_class: dense ch08
+_class: compact visual ch08
 -->
 <p class="chapter-label">08 / ガバナンスと導入</p>
 <h2 id="コンテキスト効率を意識したmcp設計"><a href="#コンテキスト効率を意識したmcp設計">コンテキスト効率を意識したMCP設計</a></h2>
-<p>「Token-aware」とは、<strong>agentに読ませる情報量を意識すること</strong>。</p>
-<p>MCPでは、tool一覧、description、schema、実行結果、error、logもmodel contextに入る。</p>
-<p>つまり、全部見せるMCPは <strong>遅い / 高い / 誤選択が増える</strong>。</p>
-<p>設計ルール:</p>
-<ul>
-<li>tool catalog: 似たtoolを増やしすぎない</li>
-<li>tool result: raw JSON/log全量ではなく、summary + stable IDを返す</li>
-<li>large context: actionはtool、読み物や大きな文書はresourceに分ける</li>
-<li>write action: read/writeを分け、危険操作はconfirmationを要求する</li>
-</ul>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>避けたい: call_api(method, path, body) -> raw JSON / raw logを全部返す</span></span></code></pre>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>search_incidents(query, severity, limit) -> summary + incident_id</span></span>
-<span class="line"><span>get_incident_detail(incident_id, fields) -> bounded structured detail</span></span>
-<span class="line"><span>summarize_incident(incident_id) -> agent-ready summary</span></span></code></pre>
-<p>要点: agentに必要なのは「全データ」ではなく、<strong>次の判断に十分な最小context</strong>。</p>
-<p class="source-note">出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="https://www.atlassian.com/blog/atlassian-engineering/mcp-compression-saving-tokens-in-sre-agent-systems">Atlassian MCP compression</a>; <a href="https://arxiv.org/abs/2603.20313">Semantic Tool Discovery</a>; <a href="https://arxiv.org/abs/2505.03275">RAG-MCP</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-<hr>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/context-efficiency-pipeline.svg" alt="Context efficient MCP design pipeline from search to detail to summary">
+</div>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+---
 <!--
 _class: compact ch08
 -->
