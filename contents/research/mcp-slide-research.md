@@ -660,8 +660,22 @@ MCP host/client
 - MCP tools specはtoolを「model-controlled」と説明しており、modelがcontextとuser promptに基づいてtoolを発見・呼び出せる設計である。ただしhuman-in-the-loopや承認UIが推奨される。
 - Anthropic docsは、Claude APIに`tools`を渡すと、tool定義、tool設定、user system promptからtool use用のspecial system promptが構築されると説明している。つまりdescriptionとschemaは単なるドキュメントではなく、model input tokenとして扱われる。
 - Anthropic docsは、Claudeがuser requestとtool descriptionに基づいてtoolを呼ぶか判断すると説明している。`tool_choice`でauto/any/specific/noneを制御でき、strict tool useでschema一致を強められる。
-- OpenAI Cookbookは、`tools` parameterがfunction仕様をmodelへ渡し、modelが仕様に沿ったargumentsを生成できるようにするためのものだと説明している。APIやmodelは関数を実行せず、実行はapplication側の責任である。
+- OpenAI docsは、tool callを「modelがpromptを見て、使えるtoolが必要だと判断した場合に返す特殊なresponse」と説明している。tool calling flowでも、applicationがtool定義を渡し、modelからtool callを受け取り、application側で実行して、tool outputを再びmodelへ渡す流れが示されている。
+- OpenAI MCP docsは、remote MCP serverを`tools` parameterで指定するとResponses APIがtool listを取得し、modelが使うと判断した場合に`mcp_call` output itemが作られると説明している。このitemにはmodelがtool callに使うと決めた`arguments`とserverの`output`が含まれる。
 - Gemini docsも、function callingではmodelが必要性を判断してstructured dataでfunctionとparametersを出力し、applicationが実行して結果を戻す、と説明している。
+
+#### Claude Code / Codexも同じ方法でtoolを呼んでいるのか
+
+結論として、**概念的には同じhost-mediated tool callingで説明できる**。ただし公開情報の粒度は製品ごとに違うため、「直接確認できること」と「公開情報からの推論」を分ける。
+
+| 対象 | 公開情報で確認できること | この資料での扱い |
+|---|---|---|
+| Claude API | Claudeはuser requestとtool descriptionを見てtoolを呼ぶか判断し、client toolでは`tool_use` blockを返す。clientは実行後に`tool_result`を返す。`tools` parameterからtool use用special system promptが構築される。fine-grained streamingでは`input_json_delta.partial_json`としてtool inputが断片的に流れる。 | modelが構造化tool callを生成している直接根拠として扱える。 |
+| OpenAI Responses API | function calling docsは、modelがtool callを返し、applicationがその入力でcodeを実行し、tool outputを返すmulti-step flowを説明している。MCP docsは`mcp_list_tools`と`mcp_call` output itemを示し、`arguments`はJSON stringで記録される。 | model tool call + host/API実行loopの直接根拠として扱える。 |
+| Claude Code | Claude Code docsは、MCP serverがClaude Codeへtools、database、API accessを与えること、`/mcp`で管理すること、MCP toolsがdeferred loading / Tool Searchで必要時にcontextへ入ること、MCP output token警告やOAuth認証をhost側で扱うことを説明している。 | Claude CodeがhostとしてMCP server/tool/context/approvalを管理する直接根拠。内部でClaude APIのどのserializationを使うかは公開docsからは断定しない。 |
+| Codex | Codex manualは、MCPがmodelをtools/contextへ接続し、Codex CLI/IDE extensionがSTDIO/Streamable HTTP server、server instructions、OAuth、tool allow/deny、approval modeを扱うと説明している。Codex config referenceにも`mcp_servers.*`とper-tool approvalがある。 | CodexがhostとしてMCP server/tool/context/approvalを管理する直接根拠。内部のmodel入出力形式は、OpenAI tool calling / MCP docsと整合するhost-mediated patternとして説明する。 |
+
+「tool callのテキスト生成」という言い方は、自然文のcommandをそのまま実行するという意味ではない。より正確には、modelがtoken列として`name`と`arguments`を含む構造化出力を生成し、host/runtimeがそれをparse、validate、approve、executeする。Claudeのfine-grained streamingではtool inputが`partial_json`文字列として流れるため、この境界が見えやすい。OpenAI MCP docsでも`mcp_call.arguments`がJSON stringとして示されている。
 
 したがってMCP server開発者が「チューニング」する対象は、まずLLM model本体ではなく、tool surfaceである。
 
@@ -3188,6 +3202,28 @@ internal adoptionでは、roadmapをoperating checklistとして読む。
 - tool changeとtool-call audit logをmonitorする。
 - read-only、write、destructive toolを分ける。
 - security reviewの時間を確保する。MCPを「ただのAPI wrapper」と扱わない。
+
+#### slide画像生成promptと文字入り図解の扱い
+
+MCP説明スライドの概念図は、生成画像をそのまま使うより、slide-nativeな図解として設計し、重要な文字は最終画像内へ決定的に入れる方がよい。理由は、OpenAI Image API docsが、GPT Image modelsは改善されている一方で、precise text placement/clarityとlayout-sensitive compositionにはまだ失敗し得ると明記しているため。Marp上で画像に文字を重ねられない場合でも、SVGまたはHTML-to-PNGで文字を画像ファイル内に焼き込めば、読みやすさと再現性を保てる。
+
+今回のprompt/制作方針は次の通り。
+
+- promptは「illustration」ではなく「presentation slide diagram」「workflow diagram」「editorial explainer graphic」として書く。OpenAI cookbookは、slides/charts/diagram-heavy assetsではcanvas、hierarchy、real text/data、visual language、readable typography、spacing、generic stock-photo treatment回避を指定することを勧めている。
+- Google CloudのGemini guidanceとMicrosoft Copilot guidanceは、specificity、context/intent、step-by-step、style、scene/setting、colors/detailsを明示することを共通して勧めている。これはAIっぽい曖昧な絵を避けるため、subjectだけでなく用途・読者・構図・制約をpromptに入れる根拠になる。
+- Adobe Firefly guidanceもdescriptive、specific、originalなpromptを推奨している。スライドでは「AI」「future」「network」などの抽象語だけにせず、何を比較し、どの順で読むかを明示する。
+- 避ける表現: glowing brain、robot、neon circuitry、bokeh、gradient blob、glassmorphism、generic stock-photo people、fake UI text、意味のないicon collage。
+- 採用する表現: white background、flat geometric zones、clear arrows、large label areas、limited palette、high contrast typography、repo theme colors。
+
+このため、今回の3枚の画像はGPT Images風のbitmapではなく、文字入りSVG図解として置き換えた。画像内に含める文言は、`LLMだけでは外部systemへ直接触れない`、`MCP connection contract`、`MCP Serverはbackendそのものではない`、`Skill = how to proceed / MCP = what to access or execute`のように、スライドの理解を支える最小限の言葉に絞った。
+
+Sources:
+
+- [OpenAI Image generation docs: limitations](https://developers.openai.com/api/docs/guides/image-generation#limitations)
+- [OpenAI Cookbook: GPT Image Generation Models Prompting Guide](https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide)
+- [Google Cloud: Gemini image generation best practices](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/capabilities/gemini-image-generation-best-practices)
+- [Adobe Firefly: Writing effective text prompts](https://helpx.adobe.com/firefly/web/generate-images-with-text-to-image/generate-images-using-text-prompts/writing-effective-text-prompts.html)
+- [Microsoft Copilot: Image prompting 101](https://www.microsoft.com/en-us/microsoft-copilot/for-individuals/do-more-with-ai/ai-art-prompting-guide/image-prompting-101)
 
 #### sourceの信頼性メモ
 

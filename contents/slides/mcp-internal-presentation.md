@@ -52,15 +52,10 @@ _class: compact visual ch00
 ## LLMが外部systemへ出る入口
 
 <div class="visual-hero">
-  <img class="generated-visual" src="generated/llm-to-external-systems.png" alt="LLM inside an application boundary connecting to external systems through a structured gateway" />
-  <div class="visual-note-grid">
-    <div><strong>LLMだけでは外部systemに触れない</strong><span>Hostの境界内で、依頼とcontextを解釈する。</span></div>
-    <div><strong>MCPが接続メニューを渡す</strong><span>tool / resource / promptをschema付きで公開する。</span></div>
-    <div><strong>Hostが承認と実行を仲介する</strong><span>必要なscopeとuser approvalを通してbackendへ届く。</span></div>
-  </div>
+  <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels" />
 </div>
 
-<p class="source-note">画像: GPT Imagesで生成、Codexで配置; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+<p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
 
@@ -242,17 +237,8 @@ _class: compact ch01
 
 ## Host / Client / Serverとは？
 
-<div class="visual-split">
-<div class="stack">
-  <div class="panel strong"><h3>Host</h3><p>user、model、tool承認、接続設定をまとめる。</p></div>
-  <div class="panel teal"><h3>MCP Client</h3><p>Host内でserverごとのsessionとprotocol通信を持つ。</p></div>
-  <div class="panel"><h3>MCP Server / Backend</h3><p>agent向けに機能を宣言し、既存APIやDBを呼び出す。</p></div>
-  <div class="callout">MCP serverはbackendそのものではなく、<strong>agent向けadapter</strong>として設計する。</div>
-</div>
-<figure class="visual-frame">
-  <img class="generated-visual" src="generated/mcp-boundary-zones.png" alt="Four boundary zones showing user host, client, MCP server, and backend systems" />
-  <figcaption>左から、user/host、client、MCP server、backend。境界ごとに責務と承認を分ける。</figcaption>
-</figure>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/mcp-boundary-zones.svg" alt="User, Host, MCP Client, MCP Server, and Backend responsibilities with Japanese labels" />
 </div>
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
@@ -334,13 +320,9 @@ _class: dense ch01
 
 ## MCPの1回の呼び出し
 
-```text
-1. HostがMCP serverへ接続する
-2. Hostがtools/listで使えるtoolとschemaを受け取る
-3. LLMがuser依頼とtool定義を見てtool callを提案する
-4. Hostが必要ならuser承認を取り、tools/callを送る
-5. MCP serverがbackendを呼び、structured resultを返す
-```
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/mcp-call-loop.svg" alt="MCP call loop from host connection to structured result" />
+</div>
 
 ポイントは、LLMが勝手に外部APIを叩くのではなく、**Hostが接続・承認・実行を仲介する**こと。
 
@@ -356,18 +338,8 @@ _class: dense ch01
 
 ## SkillsとMCPの違い
 
-Skillは「どう進めるか」を持つ。MCPは「何を読める/実行できるか」を持つ。
-
-<div class="visual-split skill">
-<div class="stack">
-  <div class="panel strong"><h3>Agent Skill</h3><p>workflow、判断、検証、出力形式を固定する。repo固有手順やlocal build/testに向く。</p></div>
-  <div class="panel teal"><h3>MCP server</h3><p>外部systemのdata/actionをAIが呼べる形で公開する。SaaS、DB、社内APIに向く。</p></div>
-  <div class="callout">結論: <strong>Skill = how to proceed / MCP = what to access or execute</strong>。</div>
-</div>
-<figure class="visual-frame">
-  <img class="generated-visual" src="generated/skill-mcp-layers.png" alt="Two complementary layers: workflow guidance and protected external access" />
-  <figcaption>左は手順と検証、右は外部data/actionへの接続。両方が揃うと反復作業が安定する。</figcaption>
-</figure>
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/skill-mcp-layers.svg" alt="Agent Skill as how to proceed and MCP Server as what to access or execute" />
 </div>
 
 <p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
@@ -416,11 +388,9 @@ _class: compact ch02
 
 ## CLI / Browser / MCPの違い
 
-| 方式 | agentが見るもの | 強い場面 | 弱い場面 |
-|---|---|---|---|
-| CLI | command + stdout/stderr | local test、build、git、devops | flags/env/output量に依存 |
-| Browser | UI、DOM、screenshot、DevTools | visual QA、live UI、session依存 | layout/selector/loadingに依存 |
-| MCP | tool/resource schema + structured result | repeatableなAPI/data/action | server設計と運用が必要 |
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/interface-choice-map.svg" alt="Comparison of CLI Browser and MCP interfaces for agents" />
+</div>
 
 判断軸は「人間向けインターフェースか、agent向け契約か」。
 
@@ -1145,24 +1115,11 @@ _class: dense ch05
 
 ## Q. tool callのテキストはどう生成される？
 
-**A. MCP serverではなく、hostがLLMへtool定義を渡し、LLMがtool_use/tool_callを生成する。**
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/tool-call-text-generation.svg" alt="Tool call is generated as structured model output then executed by host" />
+</div>
 
-```text
-MCP server: tools/list -> tool metadata
-  # tool名、description、input/output schemaを返す
-Host/client: providerのtools/function schemaへ変換
-  # Anthropic/OpenAI/Geminiなどの形式へmapする
-LLM: user prompt + system prompt + tool definitionsからtool callを生成
-  # MCP serverではなくmodelがnameとargumentsを選ぶ
-Host/client: tool callをMCP tools/callへ変換
-  # 実行はhostが仲介し、serverへJSON-RPCで送る
-MCP server: backend APIを実行してresultを返す
-```
-
-公開情報では、Anthropicはtool定義からspecial system promptを構築すると説明している。
-OpenAI/Geminiもtool/function schemaをmodel inputとして渡し、実行はapplication側が担う。
-
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="https://www.jsonrpc.org/specification">JSON-RPC 2.0</a>; <a href="https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-13">OAuth 2.1</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview">Anthropic tool use</a>; <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools">Anthropic define tools</a>; <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function calling</a>; <a href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp">OpenAI MCP</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
 ---
 
