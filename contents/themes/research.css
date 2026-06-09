@@ -694,6 +694,22 @@ section.compact img.diagram {
   max-block-size: 405px;
 }
 
+section.map {
+  font-size: 22px;
+}
+
+section.map img.concept-map {
+  margin-block-start: 0;
+  max-block-size: 350px;
+}
+
+section.map p {
+  color: var(--rd-muted);
+  font-size: 0.9em;
+  line-height: 1.36;
+  margin-block-start: 0.4em;
+}
+
 section.note {
   color: var(--rd-muted);
   font-size: 20px;
@@ -740,6 +756,12 @@ section.note {
   padding: 22px;
 }
 
+section.dense .logo-panel {
+  gap: 12px;
+  min-block-size: 292px;
+  padding: 16px;
+}
+
 .logo-hero {
   align-items: center;
   display: grid;
@@ -752,6 +774,11 @@ section.note {
   block-size: 112px;
   inline-size: 112px;
   object-fit: contain;
+}
+
+section.dense .logo-hero img {
+  block-size: 84px;
+  inline-size: 84px;
 }
 
 .logo-hero strong {
@@ -813,6 +840,11 @@ section.note {
   grid-template-columns: 42px 1fr;
   min-block-size: 72px;
   text-align: left;
+}
+
+section.dense .concept-card {
+  min-block-size: 58px;
+  padding: 9px 10px;
 }
 
 .concept-mark {
