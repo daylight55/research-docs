@@ -34,10 +34,10 @@ section::after {
 .source-note {
   bottom: 22px;
   color: rgba(73, 88, 110, 0.68);
-  font-size: 0.32em !important;
-  line-height: 1.25;
+  font-size: 11px !important;
+  line-height: 1.35;
   margin: 0;
-  max-inline-size: 560px;
+  max-inline-size: 760px;
   position: absolute;
   right: 94px;
   text-align: right;
