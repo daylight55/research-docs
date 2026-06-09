@@ -41,7 +41,7 @@ copy_slide_screenshots() {
   mkdir -p "$dest"
   while IFS= read -r file; do
     cp "$file" "$dest/$(basename "$file")"
-  done < <(find contents/slides/screenshots -maxdepth 1 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" -o -name "*.gif" \) | sort)
+  done < <(find contents/slides/screenshots -maxdepth 1 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" -o -name "*.gif" -o -name "*.svg" \) | sort)
 }
 
 copy_slide_generated() {
@@ -49,7 +49,7 @@ copy_slide_generated() {
   mkdir -p "$dest"
   while IFS= read -r file; do
     cp "$file" "$dest/$(basename "$file")"
-  done < <(find contents/slides/generated -maxdepth 1 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" -o -name "*.gif" \) | sort)
+  done < <(find contents/slides/generated -maxdepth 1 -type f \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.webp" -o -name "*.gif" -o -name "*.svg" \) | sort)
 }
 
 if [ -d contents/slides/diagrams ]; then

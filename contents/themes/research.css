@@ -649,11 +649,11 @@ img.diagram {
   box-shadow: var(--rd-shadow);
   display: block;
   inline-size: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 section.visual .generated-visual {
-  max-block-size: 316px;
+  max-block-size: 442px;
 }
 
 .visual-hero {
@@ -728,7 +728,7 @@ section.visual .generated-visual {
 }
 
 .visual-frame .generated-visual {
-  max-block-size: 356px;
+  max-block-size: 390px;
 }
 
 .visual-frame figcaption {
