@@ -44,6 +44,27 @@ _class: compact map ch00
 ---
 
 <!--
+_class: compact visual ch00
+-->
+
+<p class="chapter-label">00 / 全体像</p>
+
+## LLMが外部systemへ出る入口
+
+<div class="visual-hero">
+  <img class="generated-visual" src="generated/llm-to-external-systems.png" alt="LLM inside an application boundary connecting to external systems through a structured gateway" />
+  <div class="visual-note-grid">
+    <div><strong>LLMだけでは外部systemに触れない</strong><span>Hostの境界内で、依頼とcontextを解釈する。</span></div>
+    <div><strong>MCPが接続メニューを渡す</strong><span>tool / resource / promptをschema付きで公開する。</span></div>
+    <div><strong>Hostが承認と実行を仲介する</strong><span>必要なscopeとuser approvalを通してbackendへ届く。</span></div>
+  </div>
+</div>
+
+<p class="source-note">画像: GPT Imagesで生成、Codexで配置; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
 _class: compact ch00
 -->
 
@@ -221,27 +242,17 @@ _class: compact ch01
 
 ## Host / Client / Serverとは？
 
-<div class="logo-split wide-visual">
-<div class="logo-copy">
-
-<img class="diagram" src="diagrams/mcp-architecture.svg" alt="MCP Host Client Server architecture" />
-
-- Host: user、model、tool承認、接続設定をまとめる
-- Client: MCP protocolを話す通信部品
-- Server: agent向けに機能を宣言して実行する
-- Backend: 既存のSaaS、API、DB、社内system
-
-MCP serverはbackendそのものではなく、**agent向けadapter**として設計する。
-
+<div class="visual-split">
+<div class="stack">
+  <div class="panel strong"><h3>Host</h3><p>user、model、tool承認、接続設定をまとめる。</p></div>
+  <div class="panel teal"><h3>MCP Client</h3><p>Host内でserverごとのsessionとprotocol通信を持つ。</p></div>
+  <div class="panel"><h3>MCP Server / Backend</h3><p>agent向けに機能を宣言し、既存APIやDBを呼び出す。</p></div>
+  <div class="callout">MCP serverはbackendそのものではなく、<strong>agent向けadapter</strong>として設計する。</div>
 </div>
-<div class="logo-panel">
-  <div class="logo-grid">
-    <div class="brand-card"><img src="logos/anthropic.svg" alt="Anthropic logo" /><strong>Host</strong><span>Claude / Desktop / Code</span></div>
-    <div class="brand-card"><img src="logos/cursor.svg" alt="Cursor logo" /><strong>IDE Host</strong><span>Cursorなどの開発環境</span></div>
-    <div class="brand-card"><img src="logos/model-context-protocol.svg" alt="MCP logo" /><strong>Client</strong><span>protocol通信の境界</span></div>
-    <div class="brand-card"><img src="logos/github.svg" alt="GitHub logo" /><strong>Server / Backend</strong><span>GitHub、SaaS、社内API</span></div>
-  </div>
-</div>
+<figure class="visual-frame">
+  <img class="generated-visual" src="generated/mcp-boundary-zones.png" alt="Four boundary zones showing user host, client, MCP server, and backend systems" />
+  <figcaption>左から、user/host、client、MCP server、backend。境界ごとに責務と承認を分ける。</figcaption>
+</figure>
 </div>
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://www.anthropic.com/news/model-context-protocol">Anthropic MCP launch</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
@@ -347,14 +358,17 @@ _class: dense ch01
 
 Skillは「どう進めるか」を持つ。MCPは「何を読める/実行できるか」を持つ。
 
-| 判断軸 | Agent Skill | MCP server |
-|---|---|---|
-| 主目的 | workflow、判断、検証、出力形式を固定する | 外部systemのdata/actionをAIが呼べる形で公開する |
-| 契約 | Markdown手順、references、必要ならscript | tool/resource/prompt schema、transport、auth |
-| 権限境界 | hostの作業環境やsecret運用に寄る | server/gateway側でscope、approval、auditを置ける |
-| 向く処理 | repo固有手順、local build/test、変換、検証 | SaaS、DB、社内API、共有connector、権限付きwrite |
-
-結論: **Skill = how to proceed / MCP = what to access or execute**。
+<div class="visual-split skill">
+<div class="stack">
+  <div class="panel strong"><h3>Agent Skill</h3><p>workflow、判断、検証、出力形式を固定する。repo固有手順やlocal build/testに向く。</p></div>
+  <div class="panel teal"><h3>MCP server</h3><p>外部systemのdata/actionをAIが呼べる形で公開する。SaaS、DB、社内APIに向く。</p></div>
+  <div class="callout">結論: <strong>Skill = how to proceed / MCP = what to access or execute</strong>。</div>
+</div>
+<figure class="visual-frame">
+  <img class="generated-visual" src="generated/skill-mcp-layers.png" alt="Two complementary layers: workflow guidance and protected external access" />
+  <figcaption>左は手順と検証、右は外部data/actionへの接続。両方が揃うと反復作業が安定する。</figcaption>
+</figure>
+</div>
 
 <p class="source-note">出典: <a href="https://agentskills.io/specification">Agent Skills spec</a>; <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 

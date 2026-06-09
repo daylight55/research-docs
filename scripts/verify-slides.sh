@@ -22,6 +22,11 @@ if [ -d "$deck_dir/logos" ]; then
   cp -R "$deck_dir/logos" "$out_dir/logos"
 fi
 
+if [ -d "$deck_dir/generated" ]; then
+  rm -rf "$out_dir/generated"
+  cp -R "$deck_dir/generated" "$out_dir/generated"
+fi
+
 if [ -d "$deck_dir/screenshots" ]; then
   rm -rf "$out_dir/screenshots-assets"
   cp -R "$deck_dir/screenshots" "$out_dir/screenshots-assets"
