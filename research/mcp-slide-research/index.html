@@ -1124,6 +1124,62 @@
 <li><strong>Modification</strong>: 終盤を「導入前に決める判断 -> server設計で守ること -> context効率 -> 導入の進め方 -> 残る争点 -> 判断としてのまとめ」に再編した。</li>
 <li><strong>Verdict</strong>: Modified. 具体例を列挙して終わる構成から、導入判断へ収束する構成へ改善した。</li>
 </ul>
+<h4 id="章ごとの接続レビュー"><a href="#章ごとの接続レビュー">章ごとの接続レビュー</a></h4>
+<p>直近の見直しでは、00章以外の章についても「章に入った瞬間に何を見ているか分かるか」「前章から低レイヤ詳細へ急に落ちていないか」を確認した。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="right">Chapter</th><th>違和感</th><th>Why it blocks beginners</th><th>Reflected change</th></tr></thead><tbody><tr><td align="right">02 比較と判断軸</td><td><code>なぜMCPが必要なのか</code>が、00章と01章の定義を繰り返して見える</td><td>読者はすでにMCPの位置と定義を見ているため、ここでまた必要性を説明すると章の役割がぼやける</td><td><code>どの入口を選ぶべきか</code>に変更し、CLI / Browser / MCPを選択肢として並べた</td></tr><tr><td align="right">03 MCP server構築</td><td>比較章から急にFastAPI/FastMCPのコードに入る</td><td>初学者が「このコードを覚える章」と誤解し、adapter設計の章だと分かりにくい</td><td><code>構築章で見る境界</code>を追加し、既存API / MCP adapter / route policyを先に分けた</td></tr><tr><td align="right">04 Remote MCP</td><td>localからRemoteへ進む意味は章扉と最初の比較表で説明できている</td><td>ここは維持でよい。具体設定に入る前にlocal/Remote差分が置かれている</td><td>変更なし</td></tr><tr><td align="right">05 Protocol / Auth / JSON-RPC</td><td>transport表から始まるため、Remote接続・認証・JSON-RPC・tool callの話が混ざって見える</td><td>transport、auth、message、model tool callは別レイヤーなのに、同じ仕様詳細に見える</td><td><code>この章で見る3層</code>を追加し、Transport / Auth / JSON-RPCを分けてから詳細へ入る</td></tr><tr><td align="right">06 AWSケーススタディ</td><td>AWS製品紹介に見えるリスクはあるが、<code>なぜAWSを例に見るのか</code>で位置づけを説明している</td><td>Remote MCPの運用責務を具体化するケースとして読める</td><td>変更なし</td></tr><tr><td align="right">07 開発ワークフロー</td><td><code>具体MCPは3分類で見る</code>というタイトルが、固有MCP紹介に見える</td><td>章の目的はツール名暗記ではなく、作業面で接続面を選ぶこと</td><td><code>作業面で分類する</code>へ変更し、固有tool名は代表例として読むようにした</td></tr><tr><td align="right">08 ガバナンスと導入</td><td>前章の具体例を導入判断へ戻す役割が明確</td><td><code>導入前に決める5つの判断</code>から始まり、締めへ戻る流れは自然</td><td>変更なし</td></tr></tbody></table>
 <h4 id="ゼロベース読み手レビュー"><a href="#ゼロベース読み手レビュー">ゼロベース読み手レビュー</a></h4>
 <p>「MCPを初めて聞くが、LLMやAPIはある程度知っている」読者として、前置きなしに細かい固有ツールへ入っていないかを再確認した。前回のレビューは終盤の締めに寄りすぎていたため、今回は章間の接続と、具体ツールの説明に入る必然性を重点的に見た。</p>
 
