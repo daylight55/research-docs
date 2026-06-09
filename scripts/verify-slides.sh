@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-deck="${1:-contents/templates/slides/example.md}"
+deck="${1:-docs/slide-examples/research-layouts.md}"
 name="$(basename "$deck" .md)"
 out_dir="dist"
 html="$out_dir/$name.html"

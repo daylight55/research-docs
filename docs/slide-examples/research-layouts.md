@@ -114,7 +114,7 @@ paginate: true
   </div>
   <div class="step">
     <div class="step-number">2</div>
-    <div><strong>パターンを選ぶ</strong><br><span class="text-muted">`contents/templates/slides/example.md` から近いレイアウトを使う。</span></div>
+    <div><strong>パターンを選ぶ</strong><br><span class="text-muted">`docs/slide-examples/research-layouts.md` から近いレイアウトを使う。</span></div>
   </div>
   <div class="step">
     <div class="step-number">3</div>

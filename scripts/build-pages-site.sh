@@ -93,6 +93,6 @@ while IFS= read -r file; do
   rel="$(content_rel "$file")"
   mkdir -p "$out_dir/$(dirname "$rel")"
   cp "$file" "$out_dir/$rel"
-done < <(find contents -path "contents/templates" -prune -o -type f \( -name "*.md" -o -name "*.mdx" \) -print | sort)
+done < <(find contents -type f \( -name "*.md" -o -name "*.mdx" \) -print | sort)
 
 touch "$out_dir/.nojekyll"

@@ -8,7 +8,6 @@ const docs = defineCollection({
     pattern: [
       "{topics,slides,research,sources,tasks}/**/*.{md,mdx}",
       "*/{overview,slides,research,sources,tasks}/**/*.{md,mdx}",
-      "!templates/**",
     ],
     generateId: ({ entry }) => {
       const parts = entry.split("/");
