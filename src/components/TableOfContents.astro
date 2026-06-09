@@ -61,12 +61,15 @@ function buildToc(headings: MarkdownHeading[]) {
     })
     .filter((item) => item !== null);
 
-  function setActiveTocLink(slug) {
+  function setActiveTocLink(slug, shouldScroll = true) {
     for (const link of tocLinks) {
       const isActive = link.getAttribute("data-toc-link") === slug;
       link.classList.toggle("active", isActive);
       if (isActive) {
         link.setAttribute("aria-current", "location");
+        if (shouldScroll) {
+          link.scrollIntoView({ block: "center", inline: "nearest" });
+        }
       } else {
         link.removeAttribute("aria-current");
       }
@@ -74,7 +77,7 @@ function buildToc(headings: MarkdownHeading[]) {
   }
 
   if (linkedHeadings.length > 0) {
-    setActiveTocLink(linkedHeadings[0].link.getAttribute("data-toc-link"));
+    setActiveTocLink(linkedHeadings[0].link.getAttribute("data-toc-link"), false);
   }
 
   if ("IntersectionObserver" in window) {
