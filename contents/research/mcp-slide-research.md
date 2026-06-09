@@ -717,32 +717,7 @@ Mermaid source: [`mcp-tool-call-generation-flow.mmd`](../slides/diagrams/mcp-too
 
 社内発表では「MCPのために社内LLMをfine-tuneする」ではなく、「MCPによってLLMに渡されるtool surfaceが明示化されるため、評価・改善・権限制御がしやすくなる」と説明するのが正確である。
 
-### 14. MCP接続にLLM専用fine-tuningは必要か
-
-結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP `tools/call`へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。
-
-ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。
-
-- OpenAI function calling guideは、function定義がmodelの入力tokenとしてsystem messageに注入され、modelが訓練された形式で解釈すると説明している。つまり「MCP serverがmodelを直接操作する」のではなく、hostがtool定義をprovider APIに渡す。
-- OpenAI Structured Outputsの公開記事は、schema adherenceを高めるために、model trainingで複雑なschema理解を改善し、さらにJSON Schemaから有効なnext tokenだけを許可するconstrained decodingを組み合わせたと説明している。これは「modelが賢い」だけでなく、runtime側でも形式違反を抑える設計である。
-- OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。
-- OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。
-- Anthropic define tools docsは、tool定義、tool設定、user system promptからspecial system promptを構築すると説明している。また、descriptionがtool use性能に最も強く効く要素だと説明し、複雑なtoolではinput examplesの追加を推奨している。
-- Anthropic advanced tool use記事は、大量toolをそのままcontextに入れるとtoken overheadが大きくなるため、tool search、programmatic tool calling、tool use examplesで精度とtoken効率を改善できると説明している。
-- Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。
-
-この情報をMCP文脈へ翻訳すると、次のようになる。
-
-| レイヤー | 誰が担うか | MCP server開発者の設計対象 |
-|---|---|---|
-| MCP protocol | host/client/server SDK | JSON-RPC lifecycle、transport、auth、schema validation |
-| tool metadata | MCP server | name、description、inputSchema、outputSchema、annotations |
-| tool call generation | LLM + host/model API | provider固有のtool/function calling能力 |
-| model tuning | model providerまたはmodel owner | tool選択精度、schema遵守、multi-tool planning |
-
-社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。
-
-### 15. Authorization: なぜOAuth 2.1とaudienceが重要か
+### 14. Authorization: なぜOAuth 2.1とaudienceが重要か
 
 Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。
 
@@ -792,7 +767,7 @@ OAuth関連の用語は多く見えるが、Remote MCPで必要なのは「token
 
 2025-11-25のMCP changelogでは、OIDC discovery support、Client ID Metadata Documents、incremental scope consentが認証まわりの重要変更として入っている。これはRemote MCPが「ローカル開発便利ツール」から「enterpriseで接続・同意・委任を管理するprotocol」へ進んでいることを示す。
 
-### 16. MCPのリスクを初学者にどう説明するか
+### 15. MCPのリスクを初学者にどう説明するか
 
 MCP serverは便利な連携部品である一方、外部データを読み、外部操作を実行できる。したがって「installして終わり」ではない。
 
