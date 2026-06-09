@@ -1,0 +1,12 @@
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, Arial, sans-serif", "primaryColor": "#f8fafc", "primaryTextColor": "#17202a", "primaryBorderColor": "#7aa2c7", "lineColor": "#6b7a8c", "secondaryColor": "#eaf4ef", "tertiaryColor": "#f6efe2"}}}%%
+sequenceDiagram
+  participant S as MCP Server
+  participant H as Host / MCP Client
+  participant M as LLM
+
+  S->>H: tools/list: name, description, schema
+  H->>M: provider tool schema in context
+  M-->>H: tool call: name + arguments
+  H->>S: tools/call JSON-RPC
+  S-->>H: tool result
+  H->>M: result back into context
