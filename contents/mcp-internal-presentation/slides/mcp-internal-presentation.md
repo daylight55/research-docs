@@ -1498,32 +1498,7 @@ _class: section ch08
 
 # ガバナンスと導入
 
-争点、ロードマップ、社内展開へ広げる
-
-<p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
-
----
-
-<!--
-_class: dense ch08
--->
-
-<p class="chapter-label">08 / ガバナンスと導入</p>
-
-## 今後の争点
-
-| 争点 | 問い |
-|---|---|
-| server trust | そのserver/toolは本当に信頼できるか |
-| tool metadata | descriptionに隠れた指示をどう検知するか |
-| auth boundary | user / host / client / server / backendの誰に権限があるか |
-| registry | public MCP serverを誰が審査するか |
-| stdio | local MCPを「任意コード実行」として扱えているか |
-| large catalog | 数千toolからどう選ばせるか |
-| UI / Apps | tool結果がinteractive UIになると何をsandboxするか |
-| audit | agentが何を見て何を実行したか追えるか |
-
-争点はprotocol syntaxではなく、**trust boundaryと運用責任**。
+ここまでの概念を、導入判断と運用設計へ回収する
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -1535,18 +1510,39 @@ _class: compact ch08
 
 <p class="chapter-label">08 / ガバナンスと導入</p>
 
-## MCP server設計の重要ルール
+## 導入前に決める5つの判断
 
-- trusted serverだけ接続する
-- read/writeを分け、writeは承認を要求する
-- token passthroughを避け、audience/scopeを検証する
-- tool結果はsummary + ID + paginationで返す
-- huge logやfull documentをdefaultで返さない
-- `search -> read detail -> act` の順にtoolを設計する
-- dangerous toolは名前とdescriptionで危険性を明示する
-- audit log、rate limit、timeout、cancellationを入れる
+<p class="lead">ここまでの話は「MCPを入れるか」ではなく、「agentにどこまで任せるか」を決める話に収束する。</p>
 
-最重要は「便利にする」より「誤用しにくくする」。
+<div class="grid two">
+  <div class="panel strong"><h3>1. 対象業務</h3><p>反復するservice/data/action境界か。一度きりのshell作業ならMCP化しない。</p></div>
+  <div class="panel teal"><h3>2. 公開面</h3><p>tool名、description、schema、result sizeをagentが迷わない粒度へ絞る。</p></div>
+  <div class="panel amber"><h3>3. 権限</h3><p>user / host / server / backendのどこでscope、approval、auditを持つか決める。</p></div>
+  <div class="panel"><h3>4. 信頼</h3><p>trusted server、allowlist、metadata検査、local stdioの実行リスクを扱う。</p></div>
+</div>
+
+**5. 運用予算:** quota、rate limit、timeout、fallbackをworkflowとして設計する。
+
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
+_class: compact ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## MCP server設計で守ること
+
+<div class="grid two">
+  <div class="panel strong"><h3>公開する前に絞る</h3><p>admin/debug/internal endpointは出さない。read/writeを分け、writeは承認を要求する。</p></div>
+  <div class="panel teal"><h3>結果を小さく返す</h3><p>huge logやfull documentを避け、summary + stable ID + paginationにする。</p></div>
+  <div class="panel amber"><h3>tokenを混ぜない</h3><p>token passthroughに頼らず、audience、scope、downstream authを検証する。</p></div>
+  <div class="panel"><h3>運用で止められる</h3><p>audit log、rate limit、timeout、cancellation、dangerous tool表示を入れる。</p></div>
+</div>
+
+最重要は「便利にする」より、**誤用しにくい接続面にする**こと。
 
 <p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://www.nsa.gov/Press-Room/Press-Releases-Statements/Press-Release-View/Article/4496698/nsa-releases-security-design-considerations-for-ai-driven-automation-leveraging/">NSA MCP guidance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -1575,7 +1571,7 @@ _class: compact ch08
 
 <p class="chapter-label">08 / ガバナンスと導入</p>
 
-## 社内導入の進め方
+## 導入の進め方
 
 1. まずread-only MCPを作る
 2. OpenAPIからcandidate toolを生成する
@@ -1593,21 +1589,42 @@ _class: compact ch08
 ---
 
 <!--
+_class: dense ch08
+-->
+
+<p class="chapter-label">08 / ガバナンスと導入</p>
+
+## 最後に残る争点
+
+| 争点 | 何を決め続けるか |
+|---|---|
+| server trust | trusted server / allowlist / registry審査をどう更新するか |
+| tool metadata | descriptionやhidden instructionをどう検査するか |
+| auth boundary | user / host / server / backendの権限をどう分離するか |
+| tool catalog | large catalog、UI / Apps、auditをどう運用に載せるか |
+
+未来の争点は、MCPを使うかどうかではなく、**信頼境界を更新し続けられるか**に集まる。
+
+<p class="source-note">出典: <a href="https://modelcontextprotocol.io/development/roadmap">MCP roadmap</a>; <a href="https://modelcontextprotocol.io/community/governance">MCP governance</a>; <a href="https://blog.trailofbits.com/2025/04/21/jumping-the-line-how-mcp-servers-can-attack-you-before-you-ever-use-them/">Trail of Bits</a>; <a href="https://owasp.org/www-project-mcp-top-10/2025/MCP03-2025%E2%80%93Tool-Poisoning">OWASP MCP Top 10</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
+---
+
+<!--
 _class: compact ch08
 -->
 
 <p class="chapter-label">08 / ガバナンスと導入</p>
 
-## まとめ: MCPで覚えること
+## まとめ: MCPで判断すること
 
 <div class="grid two">
-  <div class="panel strong"><h3>1. 接続契約</h3><p>MCPは、AIが外部systemを読む/実行するための共通ルール。</p></div>
-  <div class="panel teal"><h3>2. 公開面の設計</h3><p>tool名、description、schema、result sizeがagentの行動を決める。</p></div>
-  <div class="panel amber"><h3>3. 権限境界</h3><p>auth、scope、approval、audit、quotaをserver/host境界で扱う。</p></div>
-  <div class="panel"><h3>4. Workflow化</h3><p>Skillには、どの順序でMCPを使い、何を検証するかを書く。</p></div>
+  <div class="panel strong"><h3>1. 何を任せるか</h3><p>反復するdata/action/workflowだけをMCPの対象にする。</p></div>
+  <div class="panel teal"><h3>2. 何を見せるか</h3><p>tool/resource/promptをagentが選べる粒度で公開する。</p></div>
+  <div class="panel amber"><h3>3. どこで守るか</h3><p>auth、scope、approval、audit、quotaを境界ごとに置く。</p></div>
+  <div class="panel"><h3>4. どう運用するか</h3><p>Skillに利用順、検証、fallbackを書き、実タスクで小さく育てる。</p></div>
 </div>
 
-**MCPは、AI向けの安全な接続メニューを作る標準。**
+**MCPは、AI向けの安全な接続メニューを作り、運用できる単位に切り出す標準。**
 
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 
