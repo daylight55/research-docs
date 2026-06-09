@@ -1,12 +1,13 @@
-<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP社内発表調査メモ | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-11/_astro/DocsLayout.Bkd5yp1z.css"></head> <body> <div class="site-shell" data-sidebar="open"> <header class="topbar"> <button class="sidebar-toggle" type="button" aria-controls="theme-sidebar" aria-expanded="true" data-sidebar-toggle> <span class="sidebar-toggle-icon" aria-hidden="true"></span> <span class="visually-hidden">調査テーマ一覧を開閉する</span> </button> <a class="brand" href="/research-docs/pr-preview/pr-11/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>Research themes and reports</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-11/#research-themes">Themes</a> <a href="/research-docs/pr-preview/pr-11/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-11/research/mcp-slide-research/">Research log</a> <a href="/research-docs/pr-preview/pr-11/llms.txt">llms.txt</a> </nav> </header> <div class="content-grid"> <aside id="theme-sidebar" class="sidebar" aria-label="Research theme navigation"> <div class="sidebar-title">Research themes</div> <section class="nav-section" aria-label="MCP internal presentation"> <h2><a class="active" href="/research-docs/pr-preview/pr-11/themes/mcp-internal-presentation/">MCP internal presentation</a></h2> </section> </aside> <main class="main-panel">  <article class="document document-with-index"> <div class="document-content"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP社内発表調査メモ</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p> <div class="action-row">  <a class="secondary-action" href="/research-docs/pr-preview/pr-11/research/mcp-slide-research.md">Raw Markdown</a> </div> </header> <div class="markdown-body"> <h1 id="mcp社内発表調査メモ"><a href="#mcp社内発表調査メモ">MCP社内発表調査メモ</a></h1>
+<!DOCTYPE html><html lang="ja"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。"><title>MCP社内発表調査メモ | research-docs</title><link rel="stylesheet" href="/research-docs/pr-preview/pr-11/_astro/DocsLayout.Bkd5yp1z.css"></head> <body> <div class="site-shell" data-sidebar="closed" data-sidebar-default="closed"> <header class="topbar"> <button class="sidebar-toggle" type="button" aria-controls="theme-sidebar" aria-expanded="false" data-sidebar-toggle> <span class="sidebar-toggle-icon" aria-hidden="true"></span> <span class="visually-hidden">調査テーマ一覧を開閉する</span> </button> <a class="brand" href="/research-docs/pr-preview/pr-11/"> <span class="brand-mark">RD</span> <span> <strong>research-docs</strong> <small>Research themes and reports</small> </span> </a> <nav class="top-actions" aria-label="Primary"> <a href="/research-docs/pr-preview/pr-11/#research-themes">Themes</a> <a href="/research-docs/pr-preview/pr-11/slides/mcp-internal-presentation/deck/">Slide deck</a> <a href="/research-docs/pr-preview/pr-11/research/mcp-slide-research/">Research log</a> <a href="/research-docs/pr-preview/pr-11/llms.txt">llms.txt</a> </nav> </header> <div class="content-grid"> <aside id="theme-sidebar" class="sidebar" aria-label="Research theme navigation"> <div class="sidebar-title">Research themes</div> <section class="nav-section" aria-label="MCP internal presentation"> <h2><a class="active" href="/research-docs/pr-preview/pr-11/themes/mcp-internal-presentation/">MCP internal presentation</a></h2> </section> </aside> <main class="main-panel">  <article class="document document-with-index"> <div class="document-content"> <header class="doc-header"> <p class="eyebrow">research</p> <h1>MCP社内発表調査メモ</h1> <p>MCP概要、JSON-RPC payload、接続プロトコル、API-to-MCP設計、Remote MCP、WebMCP、AWS AgentCore、開発向けMCPランキングの詳細調査メモ。</p> <div class="action-row">  <a class="secondary-action" href="/research-docs/pr-preview/pr-11/research/mcp-slide-research.md">Raw Markdown</a> </div> </header> <div class="markdown-body"> <h1 id="mcp社内発表調査メモ"><a href="#mcp社内発表調査メモ">MCP社内発表調査メモ</a></h1>
 <p>日付: 2026-06-07
 最終整理: 2026-06-09</p>
 <p>このメモは日付順ではなく、発表資料を作るときに読みやすい順へ再編成している。先に結論とスライド構成を確認し、その後に基礎概念、比較、実装、仕様詳細、エコシステム、ロードマップ、制作メモへ進む。</p>
 <h2 id="このメモの読み方"><a href="#このメモの読み方">このメモの読み方</a></h2>
 <ul>
 <li>まず「結論と発表構成」で、今回の発表で何を伝えるかを把握する。</li>
-<li>次に「MCPの基礎理解」で、Host / Client / Server、Resources / Prompts / Tools、基本フローを押さえる。</li>
+<li>次に「MCPの基礎理解」で、問題設定、定義、Host / Client / Server、Resources / Prompts / Tools、呼び出しの流れを順番に押さえる。</li>
 <li>その後、「外部操作surface」「server設計」「Protocol/Auth」「Use case」「Roadmap」の順に深掘りする。</li>
+<li>概念説明は、問題 -> 定義 -> 構成要素 -> primitive -> 呼び出し -> transport/auth -> 設計 -> 比較 -> ecosystemの順に読む。</li>
 <li>スライド本文へ直接使う内容は前半、裏取りや詳細仕様は中盤以降、制作上の確認事項は末尾に置く。</li>
 </ul>
 <h2 id="調査方針と一次情報"><a href="#調査方針と一次情報">調査方針と一次情報</a></h2>
@@ -53,6 +54,21 @@
 <li>transportはlocal stdioとremote Streamable HTTPに分かれる。</li>
 <li>production MCPの中心はtrust: OAuth、consent、scope、auditing、server allowlist。</li>
 <li>今後はregistry + remote servers + MCP Apps + durable agent tasks。</li>
+</ol>
+<h3 id="概念説明の推奨順序"><a href="#概念説明の推奨順序">概念説明の推奨順序</a></h3>
+<p>最終資料を誰が読んでも理解できるようにするなら、次の順序がよい。</p>
+<ol>
+<li>LLMは外部システムを知らない、だから接続規約が必要。</li>
+<li>MCPはAIアプリと外部システムをつなぐ標準protocol。</li>
+<li>Host / Client / Serverで責務を分ける。</li>
+<li>Resources / Tools / Promptsで「読む・実行する・作業テンプレート」を分ける。</li>
+<li>stdio / Streamable HTTPでlocalとremoteを分ける。</li>
+<li>Authとconsentがproductionの本体。</li>
+<li>既存APIはOpenAPIを整えてMCP adapterで公開する。</li>
+<li>descriptionはモデル向けのUIとして設計する。</li>
+<li>WebMCPとブラウザ操作MCPでfrontendもagent対応する。</li>
+<li>AWS MCPやGitHub MCPなど、開発workflowに効くMCPから導入する。</li>
+<li>最後にリスク、管理、ロードマップを説明する。</li>
 </ol>
 <h3 id="推奨slide-structure"><a href="#推奨slide-structure">推奨slide structure</a></h3>
 <p>deckはpure Q&#x26;Aにしない。core conceptは通常の説明storyで進め、engineerが反論しそうな箇所やdecision ruleが必要な箇所にQ&#x26;A slideを挿入する。</p>
@@ -482,7 +498,17 @@
 
 <table><thead><tr><th>Requirement</th><th>Evidence</th><th>Status</th></tr></thead><tbody><tr><td>初学者が順番に理解できる</td><td>Slides 2-6で概念図、一文定義、結論、通し例、流れを提示。Slides 8-14で基本用語、1回の呼び出し、Skill/MCPの違いを説明。</td><td>Proved by current deck structure</td></tr><tr><td>抽象語や前提が説明されている</td><td><code>agent</code>, <code>Host</code>, <code>Client</code>, <code>Server</code>, <code>Tool</code>, <code>Resource</code>, <code>Prompt</code>, <code>Protocol</code>, <code>Transport</code>, <code>Auth</code>を本編前半で定義。レビュー表で抽象語の言い換えを記録。</td><td>Proved by slide text and review notes</td></tr><tr><td>中級者にも骨太な理解がある</td><td>Slides 28-33でMCP server設計、アンチパターン、route policy、description設計を扱う。Slides 39-49でtransport/auth/JSON-RPC/tool-call境界を扱う。Slides 65-68でtrust boundary、server設計ルール、context効率を扱う。</td><td>Proved by coverage in current deck</td></tr><tr><td>冒頭の概念図からピースを埋める流れ</td><td>Slide 2に概念図、Slide 6に埋めるピース表。各章がHost/Client/Server、Tool/Resource/Prompt、Transport/Auth、Workflow/Governanceへ対応。</td><td>Proved by slide sequence</td></tr><tr><td>冗長・変動しやすい情報が整理されている</td><td>GitHub stars、Figma rate limit具体値、MCP Apps/Tasks詳細、長いCLI設定例を本編から削除し、レビュー記録にcut candidatesを明記。</td><td>Proved by diff and review notes</td></tr><tr><td>調査情報が追跡できる</td><td>Current specification確認、source links、research memo、References appendixを保持。</td><td>Proved by research memo and references slides</td></tr><tr><td>レビュー観点が再利用可能</td><td><code>.agents/skills/beginner-slide-reviewer/SKILL.md</code>を追加し、初学者視点のレビュー軸と出力形式を定義。</td><td>Proved by skill file</td></tr><tr><td>future agentがrepo構成を把握できる</td><td><code>AGENTS.md</code>にREADME/docs由来の概要、content architecture、commands、local skillsを集約。</td><td>Proved by AGENTS.md</td></tr><tr><td>レンダリング品質</td><td><code>npm run slide:mcp:verify</code>で76 screenshot生成。Playwright DOM overflow check returns <code>[]</code>。</td><td>Proved by command output</td></tr><tr><td>repo validation</td><td><code>npm test</code> passes 4 tests. <code>npm run build:site</code> builds 6 pages and deck HTML.</td><td>Proved by command output</td></tr></tbody></table>
 <h2 id="mcpの基礎理解"><a href="#mcpの基礎理解">MCPの基礎理解</a></h2>
-<h3 id="mcpとは何か"><a href="#mcpとは何か">MCPとは何か</a></h3>
+<h3 id="1-mcpが解こうとしている問題"><a href="#1-mcpが解こうとしている問題">1. MCPが解こうとしている問題</a></h3>
+<p>LLMは文章を読む・書く・推論する能力を持つが、そのままでは社内システム、GitHub、AWS、ブラウザ、DB、SaaSの「現在の状態」を知らない。モデルの学習時点より後に生まれたAPIや社内仕様も知らない。人間が毎回ログ、Issue、API仕様、画面状態をコピーして貼ると、遅い、漏れる、権限管理が曖昧になる、再現性が低い。</p>
+<p>MCPはこの問題を「AIアプリと外部システムをつなぐ標準プロトコル」として解く。各AIアプリがGitHub連携、Slack連携、AWS連携、社内API連携を個別に実装するのではなく、AIアプリ側はMCP clientを実装し、各システム側はMCP serverを実装する。これにより、同じMCP serverをClaude、Codex、Cursor、VS Code系ツールなど複数のhostから使える。</p>
+<p>初心者向けの要点:</p>
+<ul>
+<li>MCPはAIモデルそのものではない。</li>
+<li>MCPはAPIそのものでもない。</li>
+<li>MCPは「AIが外部の文脈を読み、必要な操作を安全に呼び出すための接続規約」。</li>
+<li>既存APIをMCP化すると、モデルはAPI仕様を推測せず、名前・説明・入力schema付きのtoolとして呼び出せる。</li>
+</ul>
+<h3 id="2-mcpとは何か"><a href="#2-mcpとは何か">2. MCPとは何か</a></h3>
 <p>公式定義では、MCPはLLM applicationと外部data source/toolの統合を標準化するopen protocol。JSON-RPC 2.0、stateful session、capability negotiationを使う。</p>
 <p>基本アーキテクチャ用語:</p>
 <ul>
@@ -494,58 +520,7 @@
 <ul>
 <li>Language Server Protocolがeditor横断でprogramming language supportを標準化したように、MCPはAI client横断でtool/context integrationを標準化することを狙う。</li>
 </ul>
-<h3 id="主要概念"><a href="#主要概念">主要概念</a></h3>
-<p>Server側primitive:</p>
-<ul>
-<li>Resources: file、schema、document、database metadata、business objectなど、読めるcontext/data。</li>
-<li>Prompts: 再利用可能なprompt template/workflow。通常はuserが選ぶ。</li>
-<li>Tools: search、API call、database query、issue作成、browser automation、payment link作成などの呼び出し可能なoperation。基本はmodel-controlled。</li>
-</ul>
-<p>Client側primitive:</p>
-<ul>
-<li>Roots: hostが提供するfilesystem/URI boundary。</li>
-<li>Sampling: serverがclient経由で開始するLLM call。</li>
-<li>Elicitation: serverが追加のuser inputを求める仕組み。</li>
-<li>Tasks: 2025-11-25 specに入った、durable request trackingとdeferred result retrievalの実験的機能。</li>
-</ul>
-<p>重要な捉え方:</p>
-<ul>
-<li>Resourcesはcontext。</li>
-<li>Promptsはworkflow。</li>
-<li>Toolsはaction。</li>
-<li>Host/client isolationは単なる実装詳細ではなくsecurity boundary。</li>
-</ul>
-<h3 id="基本フロー"><a href="#基本フロー">基本フロー</a></h3>
-<ol>
-<li>HostがMCP serverを設定または発見する。</li>
-<li>Hostがそのserver向けのMCP clientを作る。</li>
-<li>Clientとserverがinitializeする。
-<ul>
-<li>protocol versionを交渉する</li>
-<li>capabilityを交換する</li>
-<li>implementation metadataを交換する</li>
-</ul>
-</li>
-<li>Clientが必要に応じてresources/prompts/toolsを発見する。</li>
-<li>Modelまたはuserが関連capabilityを選ぶ。</li>
-<li>Hostがapproval、permission、context controlを適用する。</li>
-<li>ClientがserverへJSON-RPC requestを送る。</li>
-<li>Serverがtool result、resource、prompt、log、progress、errorを返す。</li>
-<li>Transport経由でshutdownする。</li>
-</ol>
-<h3 id="初心者向け詳細メモ-2026-06-07"><a href="#初心者向け詳細メモ-2026-06-07">初心者向け詳細メモ, 2026-06-07</a></h3>
-<p>このsectionは、最終発表のための初心者向けsource material。実装詳細へ進む前に、MCPの下にある概念を意図的に説明する。</p>
-<h4 id="1-mcpが解こうとしている問題"><a href="#1-mcpが解こうとしている問題">1. MCPが解こうとしている問題</a></h4>
-<p>LLMは文章を読む・書く・推論する能力を持つが、そのままでは社内システム、GitHub、AWS、ブラウザ、DB、SaaSの「現在の状態」を知らない。モデルの学習時点より後に生まれたAPIや社内仕様も知らない。人間が毎回ログ、Issue、API仕様、画面状態をコピーして貼ると、遅い、漏れる、権限管理が曖昧になる、再現性が低い。</p>
-<p>MCPはこの問題を「AIアプリと外部システムをつなぐ標準プロトコル」として解く。各AIアプリがGitHub連携、Slack連携、AWS連携、社内API連携を個別に実装するのではなく、AIアプリ側はMCP clientを実装し、各システム側はMCP serverを実装する。これにより、同じMCP serverをClaude、Codex、Cursor、VS Code系ツールなど複数のhostから使える。</p>
-<p>初心者向けの要点:</p>
-<ul>
-<li>MCPはAIモデルそのものではない。</li>
-<li>MCPはAPIそのものでもない。</li>
-<li>MCPは「AIが外部の文脈を読み、必要な操作を安全に呼び出すための接続規約」。</li>
-<li>既存APIをMCP化すると、モデルはAPI仕様を推測せず、名前・説明・入力schema付きのtoolとして呼び出せる。</li>
-</ul>
-<h4 id="2-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い"><a href="#2-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い">2. MCPの位置づけ: tool calling、OpenAPI、API Gatewayとの違い</a></h4>
+<h3 id="3-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い"><a href="#3-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い">3. MCPの位置づけ: tool calling、OpenAPI、API Gatewayとの違い</a></h3>
 <p>MCPはFunction CallingやTool Callingの代替ではない。Function Callingは「モデルが関数呼び出し形式の出力を返せる」モデル/アプリ内の仕組み。MCPは「その関数群をどこから発見し、どう実行し、どう権限・transport・session・metadataを扱うか」を標準化する仕組み。</p>
 <p>OpenAPIはHTTP APIの契約を記述する仕様。MCPはAI clientに対してResources、Tools、Promptsを提供するプロトコル。OpenAPIはMCP serverを作るための良い入力になり得るが、OpenAPIをそのまま全部MCP公開するのは危険。admin、internal、write系endpointは、AIが呼んでよい操作かを別途判断する必要がある。</p>
 <p>API Gatewayは人間/アプリケーション向けAPIの入口。MCP serverはAI agent向けの入口。両者は役割が異なる。実運用では、既存API Gatewayの後ろにあるAPIをMCP adapterから呼び出す構成がわかりやすい。</p>
@@ -581,7 +556,7 @@
 
 
 <table><thead><tr><th>仕組み</th><th>主な役割</th><th>MCPとの関係</th></tr></thead><tbody><tr><td>Function Calling</td><td>モデルが関数呼び出しを表現する</td><td>MCP tool呼び出しの内側で使われることがある</td></tr><tr><td>OpenAPI</td><td>HTTP APIの契約</td><td>MCP server生成の入力になる</td></tr><tr><td>API Gateway</td><td>APIの入口、認証、rate limit</td><td>MCP adapterが既存APIを呼ぶ入口になり得る</td></tr><tr><td>MCP</td><td>AI clientと外部tool/contextの接続規約</td><td>発見、schema、実行、transport、auth、sessionを扱う</td></tr></tbody></table>
-<h4 id="3-hostclientserverを誰が担うか"><a href="#3-hostclientserverを誰が担うか">3. Host、Client、Serverを誰が担うか</a></h4>
+<h3 id="4-hostclientserverを誰が担うか"><a href="#4-hostclientserverを誰が担うか">4. Host、Client、Serverを誰が担うか</a></h3>
 <p>MCPの構成はHost、Client、Serverに分かれる。公式仕様では、Hostは複数のclientを作り、各clientが1つのserverと1対1のsessionを持つ。ServerはResources、Tools、Promptsを公開する。重要なのは、Hostがserver間の境界とユーザー承認を管理する点である。</p>
 <p>具体例:</p>
 <ul>
@@ -590,7 +565,28 @@
 <li>GitHub MCP Server、Chrome DevTools MCP、社内Inventory MCPなどがServer。</li>
 </ul>
 <p>この分離により、GitHub MCP serverはSlack MCP serverのデータを勝手に読めない。各serverは「自分に渡された入力」と「自分が持つ権限」の範囲でだけ動く。これは実装上の都合ではなく、MCPのセキュリティ境界である。</p>
-<h4 id="4-resourcestoolspromptsの違い"><a href="#4-resourcestoolspromptsの違い">4. Resources、Tools、Promptsの違い</a></h4>
+<h3 id="5-主要概念"><a href="#5-主要概念">5. 主要概念</a></h3>
+<p>Server側primitive:</p>
+<ul>
+<li>Resources: file、schema、document、database metadata、business objectなど、読めるcontext/data。</li>
+<li>Prompts: 再利用可能なprompt template/workflow。通常はuserが選ぶ。</li>
+<li>Tools: search、API call、database query、issue作成、browser automation、payment link作成などの呼び出し可能なoperation。基本はmodel-controlled。</li>
+</ul>
+<p>Client側primitive:</p>
+<ul>
+<li>Roots: hostが提供するfilesystem/URI boundary。</li>
+<li>Sampling: serverがclient経由で開始するLLM call。</li>
+<li>Elicitation: serverが追加のuser inputを求める仕組み。</li>
+<li>Tasks: 2025-11-25 specに入った、durable request trackingとdeferred result retrievalの実験的機能。</li>
+</ul>
+<p>重要な捉え方:</p>
+<ul>
+<li>Resourcesはcontext。</li>
+<li>Promptsはworkflow。</li>
+<li>Toolsはaction。</li>
+<li>Host/client isolationは単なる実装詳細ではなくsecurity boundary。</li>
+</ul>
+<h3 id="6-resourcestoolspromptsの違い"><a href="#6-resourcestoolspromptsの違い">6. Resources、Tools、Promptsの違い</a></h3>
 <p>初心者が最初につまずくのは、ResourcesとToolsの違いである。</p>
 <ul>
 <li>Resourceは読むもの。</li>
@@ -625,7 +621,7 @@
 
 <table><thead><tr><th>種類</th><th>例</th><th>モデルから見た意味</th></tr></thead><tbody><tr><td>Resource</td><td><code>file:///README.md</code>、DB schema、issue本文、API仕様</td><td>判断材料として読む</td></tr><tr><td>Tool</td><td><code>create_pull_request</code>、<code>search_docs</code>、<code>reserve_inventory</code></td><td>外部世界に問い合わせる、または変更する</td></tr><tr><td>Prompt</td><td><code>review_pr</code>、<code>summarize_incident</code></td><td>作業の型を呼び出す</td></tr></tbody></table>
 <p>Toolは特に強力で、外部API実行、ファイル変更、ブラウザ操作、クラウド操作、決済操作まで可能になる。だからToolは「便利な関数」ではなく「権限を持った操作」として扱う。説明文、入力schema、出力schema、承認UI、監査ログが重要になる。</p>
-<h4 id="5-capability-negotiationとは何か"><a href="#5-capability-negotiationとは何か">5. Capability negotiationとは何か</a></h4>
+<h3 id="7-capability-negotiationとは何か"><a href="#7-capability-negotiationとは何か">7. Capability negotiationとは何か</a></h3>
 <p>MCPでは、clientとserverが接続時に「自分が何をサポートしているか」を宣言する。これがcapability negotiationである。</p>
 <p>なぜ必要か:</p>
 <ul>
@@ -635,29 +631,25 @@
 <li>protocol versionによって利用可能な機能が異なる。</li>
 </ul>
 <p>MCPでは、接続後に「このserverはtools capabilityを宣言しているからtools/listできる」「このclientはsamplingを宣言していないからserverからLLM呼び出しを依頼してはいけない」という判断ができる。これはWeb APIでいうfeature negotiationや、LSPでのcapabilities交換に近い。</p>
-<h4 id="6-transport-stdioとstreamable-http"><a href="#6-transport-stdioとstreamable-http">6. Transport: stdioとStreamable HTTP</a></h4>
-<p>MCPのmessageはJSON-RPC 2.0で表現される。そのmessageをどの経路で運ぶかがtransportである。</p>
-<p>stdio:</p>
+<h3 id="8-基本フロー"><a href="#8-基本フロー">8. 基本フロー</a></h3>
+<ol>
+<li>HostがMCP serverを設定または発見する。</li>
+<li>Hostがそのserver向けのMCP clientを作る。</li>
+<li>Clientとserverがinitializeする。
 <ul>
-<li>clientがserverプロセスをローカルで起動する。</li>
-<li>stdin/stdoutでJSON-RPC messageをやり取りする。</li>
-<li>filesystem、local git、local browser、developer toolに向く。</li>
-<li>stdoutはprotocol用なので、ログをstdoutに書くと壊れる。ログはstderrへ出す。</li>
+<li>protocol versionを交渉する</li>
+<li>capabilityを交換する</li>
+<li>implementation metadataを交換する</li>
 </ul>
-<p>Streamable HTTP:</p>
-<ul>
-<li>serverがHTTP endpointを公開する。</li>
-<li>remote MCP、SaaS、社内共通server、組織管理に向く。</li>
-<li>2025-03-26以降の方向性としてHTTP+SSEを置き換える標準transport。</li>
-<li>HTTP POST/GET、SSE streaming、session id、protocol version header、Origin validationなどを扱う。</li>
-</ul>
-<p>実務上の選び方:</p>
-<ul>
-<li>個人開発・ローカルツール: stdio。</li>
-<li>社内共通・Claude custom connector・SaaS連携: Streamable HTTP。</li>
-<li>旧SSE serverは残っているが、新規ならHTTPを優先する。</li>
-</ul>
-<h4 id="61-json-rpcで実際に何が送られるか"><a href="#61-json-rpcで実際に何が送られるか">6.1 JSON-RPCで実際に何が送られるか</a></h4>
+</li>
+<li>Clientが必要に応じてresources/prompts/toolsを発見する。</li>
+<li>Modelまたはuserが関連capabilityを選ぶ。</li>
+<li>Hostがapproval、permission、context controlを適用する。</li>
+<li>ClientがserverへJSON-RPC requestを送る。</li>
+<li>Serverがtool result、resource、prompt、log、progress、errorを返す。</li>
+<li>Transport経由でshutdownする。</li>
+</ol>
+<h3 id="9-json-rpcで実際に何が送られるか"><a href="#9-json-rpcで実際に何が送られるか">9. JSON-RPCで実際に何が送られるか</a></h3>
 <p>MCPのmessageはJSON-RPC 2.0のrequest、response、notificationとして表現される。JSON-RPC 2.0自体はtransport-agnosticなRPC仕様で、requestには<code>jsonrpc: "2.0"</code>、<code>method</code>、必要に応じて<code>params</code>、response対応のための<code>id</code>が入る。<code>id</code>がないrequestはnotificationで、responseを返さない。MCPはこの汎用RPC envelopeの<code>method</code>名として<code>initialize</code>、<code>tools/list</code>、<code>tools/call</code>、<code>resources/read</code>などを定義している。</p>
 <p>MCPの実務理解では、次の4種類を押さえると十分。</p>
 
@@ -856,7 +848,29 @@
 <li><code>structuredContent</code>と<code>outputSchema</code>を使うと、後続tool callやUI表示で壊れにくい。</li>
 <li><code>content</code>へ巨大なraw logを入れず、summary、stable ID、paginationを返す。</li>
 </ul>
-<h4 id="62-json-rpcはtransportでどう運ばれるか"><a href="#62-json-rpcはtransportでどう運ばれるか">6.2 JSON-RPCはtransportでどう運ばれるか</a></h4>
+<h3 id="10-transport-stdioとstreamable-http"><a href="#10-transport-stdioとstreamable-http">10. Transport: stdioとStreamable HTTP</a></h3>
+<p>MCPのmessageはJSON-RPC 2.0で表現される。そのmessageをどの経路で運ぶかがtransportである。</p>
+<p>stdio:</p>
+<ul>
+<li>clientがserverプロセスをローカルで起動する。</li>
+<li>stdin/stdoutでJSON-RPC messageをやり取りする。</li>
+<li>filesystem、local git、local browser、developer toolに向く。</li>
+<li>stdoutはprotocol用なので、ログをstdoutに書くと壊れる。ログはstderrへ出す。</li>
+</ul>
+<p>Streamable HTTP:</p>
+<ul>
+<li>serverがHTTP endpointを公開する。</li>
+<li>remote MCP、SaaS、社内共通server、組織管理に向く。</li>
+<li>2025-03-26以降の方向性としてHTTP+SSEを置き換える標準transport。</li>
+<li>HTTP POST/GET、SSE streaming、session id、protocol version header、Origin validationなどを扱う。</li>
+</ul>
+<p>実務上の選び方:</p>
+<ul>
+<li>個人開発・ローカルツール: stdio。</li>
+<li>社内共通・Claude custom connector・SaaS連携: Streamable HTTP。</li>
+<li>旧SSE serverは残っているが、新規ならHTTPを優先する。</li>
+</ul>
+<h3 id="11-json-rpcはtransportでどう運ばれるか"><a href="#11-json-rpcはtransportでどう運ばれるか">11. JSON-RPCはtransportでどう運ばれるか</a></h3>
 <p>stdio:</p>
 <ul>
 <li>clientがserver processを起動する。</li>
@@ -888,7 +902,7 @@
 <li>HTTP利用時は交渉済みversionを<code>MCP-Protocol-Version</code> headerで送る。</li>
 <li>Remote/local HTTP serverはOrigin validation、localhost bind、authを設計する。</li>
 </ul>
-<h4 id="63-tool説明文はどのようにllmへ渡るか"><a href="#63-tool説明文はどのようにllmへ渡るか">6.3 tool説明文はどのようにLLMへ渡るか</a></h4>
+<h3 id="12-tool説明文はどのようにllmへ渡るか"><a href="#12-tool説明文はどのようにllmへ渡るか">12. tool説明文はどのようにLLMへ渡るか</a></h3>
 <p>MCP serverがLLMへ直接promptを送るわけではない。基本フローは次の通り。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>MCP server</span></span>
 <span class="line"><span>  -> tools/listでtool metadataを返す</span></span>
@@ -915,52 +929,7 @@
 <li>output: structuredContent、stable IDs、summary、paginationで次の判断を助ける。</li>
 <li>error: retry可能な制約とmissing scopeを短く返す。</li>
 </ol>
-<h4 id="64-mcp接続にllm専用fine-tuningは必要か"><a href="#64-mcp接続にllm専用fine-tuningは必要か">6.4 MCP接続にLLM専用fine-tuningは必要か</a></h4>
-<p>結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP <code>tools/call</code>へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。</p>
-<p>ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。</p>
-<ul>
-<li>OpenAI function calling guideは、function定義がmodelの入力tokenとしてsystem messageに注入され、modelが訓練された形式で解釈すると説明している。つまり「MCP serverがmodelを直接操作する」のではなく、hostがtool定義をprovider APIに渡す。</li>
-<li>OpenAI Structured Outputsの公開記事は、schema adherenceを高めるために、model trainingで複雑なschema理解を改善し、さらにJSON Schemaから有効なnext tokenだけを許可するconstrained decodingを組み合わせたと説明している。これは「modelが賢い」だけでなく、runtime側でも形式違反を抑える設計である。</li>
-<li>OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。</li>
-<li>OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。</li>
-<li>Anthropic define tools docsは、tool定義、tool設定、user system promptからspecial system promptを構築すると説明している。また、descriptionがtool use性能に最も強く効く要素だと説明し、複雑なtoolではinput examplesの追加を推奨している。</li>
-<li>Anthropic advanced tool use記事は、大量toolをそのままcontextに入れるとtoken overheadが大きくなるため、tool search、programmatic tool calling、tool use examplesで精度とtoken効率を改善できると説明している。</li>
-<li>Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。</li>
-</ul>
-<p>この情報をMCP文脈へ翻訳すると、次のようになる。</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>レイヤー</th><th>誰が担うか</th><th>MCP server開発者の設計対象</th></tr></thead><tbody><tr><td>MCP protocol</td><td>host/client/server SDK</td><td>JSON-RPC lifecycle、transport、auth、schema validation</td></tr><tr><td>tool metadata</td><td>MCP server</td><td>name、description、inputSchema、outputSchema、annotations</td></tr><tr><td>tool call generation</td><td>LLM + host/model API</td><td>provider固有のtool/function calling能力</td></tr><tr><td>model tuning</td><td>model providerまたはmodel owner</td><td>tool選択精度、schema遵守、multi-tool planning</td></tr></tbody></table>
-<p>社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。</p>
-<h4 id="65-なぜllmはmcp-tool-callを出せるのか"><a href="#65-なぜllmはmcp-tool-callを出せるのか">6.5 なぜLLMはMCP tool callを出せるのか</a></h4>
+<h3 id="13-なぜllmはmcp-tool-callを出せるのか"><a href="#13-なぜllmはmcp-tool-callを出せるのか">13. なぜLLMはMCP tool callを出せるのか</a></h3>
 <p>MCPを初めて見ると、「なぜLLMが<code>tools/call</code>のJSON-RPCを正しく書けるのか」と見えがちである。しかし実際には、LLMがMCP protocolを直接喋っているとは限らない。多くのhostでは、LLMはprovider固有のtool call形式で<code>name</code>と<code>arguments</code>を出し、host/clientがそれをMCP <code>tools/call</code>へ変換する。</p>
 <p><img alt="MCP tool call generation flow" loading="lazy" decoding="async" width="1280" height="520" src="/research-docs/pr-preview/pr-11/_astro/mcp-tool-call-generation-flow.B7lX7wM3_ZgVqJe.svg" srcset=""></p>
 <p>Mermaid source: <a href="../slides/diagrams/mcp-tool-call-generation-flow.mmd"><code>mcp-tool-call-generation-flow.mmd</code></a></p>
@@ -1047,7 +1016,52 @@
 <li>それでも改善しない場合だけ、function/tool calling向けfine-tuningやRFTを検討する。</li>
 </ol>
 <p>社内発表では「MCPのために社内LLMをfine-tuneする」ではなく、「MCPによってLLMに渡されるtool surfaceが明示化されるため、評価・改善・権限制御がしやすくなる」と説明するのが正確である。</p>
-<h4 id="7-authorization-なぜoauth-21とaudienceが重要か"><a href="#7-authorization-なぜoauth-21とaudienceが重要か">7. Authorization: なぜOAuth 2.1とaudienceが重要か</a></h4>
+<h3 id="14-mcp接続にllm専用fine-tuningは必要か"><a href="#14-mcp接続にllm専用fine-tuningは必要か">14. MCP接続にLLM専用fine-tuningは必要か</a></h3>
+<p>結論: 通常は不要。MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ正しく渡し、modelがtool callを生成し、hostがMCP <code>tools/call</code>へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。</p>
+<p>ただし、tool/function calling自体の精度を高めるfine-tuningや学習は公開情報として存在する。</p>
+<ul>
+<li>OpenAI function calling guideは、function定義がmodelの入力tokenとしてsystem messageに注入され、modelが訓練された形式で解釈すると説明している。つまり「MCP serverがmodelを直接操作する」のではなく、hostがtool定義をprovider APIに渡す。</li>
+<li>OpenAI Structured Outputsの公開記事は、schema adherenceを高めるために、model trainingで複雑なschema理解を改善し、さらにJSON Schemaから有効なnext tokenだけを許可するconstrained decodingを組み合わせたと説明している。これは「modelが賢い」だけでなく、runtime側でも形式違反を抑える設計である。</li>
+<li>OpenAI Cookbookは、function数が増える、taskが複雑になると誤ったtool invocationやhallucinated invocationが増えることがあり、まずfunction定義とprompt engineeringを改善し、それでも不十分ならfunction calling向けfine-tuningを検討する、という順序を示している。</li>
+<li>OpenAIのreinforcement fine-tuning docsは、tool callsを行うmodelを訓練する場合、各datapointに利用可能tool setを提供し、graderがtool call内容に基づいてrewardを付ける必要があると説明している。</li>
+<li>Anthropic define tools docsは、tool定義、tool設定、user system promptからspecial system promptを構築すると説明している。また、descriptionがtool use性能に最も強く効く要素だと説明し、複雑なtoolではinput examplesの追加を推奨している。</li>
+<li>Anthropic advanced tool use記事は、大量toolをそのままcontextに入れるとtoken overheadが大きくなるため、tool search、programmatic tool calling、tool use examplesで精度とtoken効率を改善できると説明している。</li>
+<li>Hugging Face Agents Courseは、open modelをfunction-calling向けにfine-tuneするにはdataが必要で、base modelから始めるとinstruction following、chat、function-callingを学ばせる必要が増えるため、instruction-tuned modelを出発点にするのが実用的だと説明している。</li>
+</ul>
+<p>この情報をMCP文脈へ翻訳すると、次のようになる。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>レイヤー</th><th>誰が担うか</th><th>MCP server開発者の設計対象</th></tr></thead><tbody><tr><td>MCP protocol</td><td>host/client/server SDK</td><td>JSON-RPC lifecycle、transport、auth、schema validation</td></tr><tr><td>tool metadata</td><td>MCP server</td><td>name、description、inputSchema、outputSchema、annotations</td></tr><tr><td>tool call generation</td><td>LLM + host/model API</td><td>provider固有のtool/function calling能力</td></tr><tr><td>model tuning</td><td>model providerまたはmodel owner</td><td>tool選択精度、schema遵守、multi-tool planning</td></tr></tbody></table>
+<p>社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。逆に、大量の類似toolから正しいtoolを選ぶ必要があり、十分なeval dataがあるプロダクトでは、tool-use向けfine-tuningやtool-use evalが検討対象になる。</p>
+<h3 id="15-authorization-なぜoauth-21とaudienceが重要か"><a href="#15-authorization-なぜoauth-21とaudienceが重要か">15. Authorization: なぜOAuth 2.1とaudienceが重要か</a></h3>
 <p>Remote MCPでは、serverが誰に何を許可するかを明確にする必要がある。MCP authorization specはOAuth 2.1をベースにしている。Protected Resource Metadata、Authorization Server Metadata / OIDC Discovery、PKCE、Resource Indicators、Client ID Metadata Documentsなどが関係する。</p>
 <p><img alt="Remote MCP OAuth connection flow" loading="lazy" decoding="async" width="1430" height="849" src="/research-docs/pr-preview/pr-11/_astro/mcp-remote-auth-flow.CRQBA-es_GTWVF.svg" srcset=""></p>
 <p>初心者向けに言うと、Remote MCPの認証で避けたい事故は3つ。</p>
@@ -1178,176 +1192,7 @@
 
 <table><thead><tr><th>概念</th><th>なぜ必要か</th><th>実装上のポイント</th></tr></thead><tbody><tr><td>Protected Resource Metadata</td><td>clientが「このMCP serverを守るauthorization serverはどこか」を発見する。</td><td>MCP serverは<code>.well-known/oauth-protected-resource</code>または<code>WWW-Authenticate</code>でmetadataを示す。</td></tr><tr><td>Authorization Server Metadata / OIDC Discovery</td><td>clientがauthorization endpoint、token endpoint、PKCE対応などを知る。</td><td>auth serverはRFC 8414 metadataまたはOIDC Discoveryを提供する。</td></tr><tr><td>Resource Indicators</td><td>token request時に対象resourceを明示し、audience-bound tokenを得る。</td><td>clientはauth/token requestに<code>resource</code>を含め、serverはtoken audienceを検証する。</td></tr><tr><td>Client ID Metadata Document</td><td>URL形式のclient_idでclient metadataを公開し、事前登録なしの接続をしやすくする。</td><td>2025-11-25 specで推奨方向になった。SSRF対策が必要。</td></tr><tr><td>Dynamic Client Registration</td><td>unknown clientがauthorization serverにclient登録する。</td><td>互換/fallbackとして扱い、誰でも登録できる状態にしない。</td></tr><tr><td>Step-up authorization</td><td>scope不足時に必要scopeだけ追加同意してretryする。</td><td>403 + <code>WWW-Authenticate</code> + <code>insufficient_scope</code>を読み、再認可する。</td></tr><tr><td>Token passthrough禁止</td><td>inbound tokenをdownstream APIに流用すると権限境界が壊れる。</td><td>GatewayやserverはOBO/token exchangeなどで別tokenを取得する。</td></tr></tbody></table>
 <p>2025-11-25のMCP changelogでは、OIDC discovery support、Client ID Metadata Documents、incremental scope consentが認証まわりの重要変更として入っている。これはRemote MCPが「ローカル開発便利ツール」から「enterpriseで接続・同意・委任を管理するprotocol」へ進んでいることを示す。</p>
-<h4 id="8-既存apiをmcp化するときの設計原則"><a href="#8-既存apiをmcp化するときの設計原則">8. 既存APIをMCP化するときの設計原則</a></h4>
-<p>既存APIをMCP対応させる最短路は、API本体を書き換えることではない。APIはそのまま残し、MCP adapterを追加する。</p>
-<p><img alt="Existing API to MCP adapter flow" loading="lazy" decoding="async" width="1804" height="336" src="/research-docs/pr-preview/pr-11/_astro/mcp-api-adapter-flow.CspnJBJg_ZwIWWk.svg" srcset=""></p>
-<p>推奨構成:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>FastAPI app -> OpenAPI schema -> MCP adapter -> MCP client</span></span>
-<span class="line"><span>                         |</span></span>
-<span class="line"><span>                         +-> route policy / description policy / auth policy</span></span></code></pre>
-<p>設計原則:</p>
-<ul>
-<li>既存APIをsource of truthにする。</li>
-<li>OpenAPIをAI向け契約として整える。</li>
-<li>MCP adapterは公開面を絞る場所にする。</li>
-<li>API handlerを直接importして呼ぶより、まずはHTTP clientで既存APIを呼ぶほうが安全。</li>
-<li>direct service-layer callは高速だが、auth、middleware、logging、validationを再実装する必要がある。</li>
-</ul>
-<p>FastMCPはOpenAPI specからMCP serverを作れる。FastMCP v2.8以降のdefault mappingは「全routeをtool化」する方向なので、productionではRouteMapで明示的に除外・allowlist化するのが重要である。admin/internal/debug endpointを除外し、write系endpointを特別扱いする。</p>
-<h4 id="9-tool-descriptionはapi-docsではなくモデル向けuiである"><a href="#9-tool-descriptionはapi-docsではなくモデル向けuiである">9. Tool descriptionはAPI docsではなくモデル向けUIである</a></h4>
-<p>Tool descriptionは人間向けのAPI説明ではない。モデルが「このtoolを使うべきか」「どの入力で呼ぶべきか」「呼ぶと外部世界が変わるか」を判断するためのUIである。</p>
-<p>良いdescriptionに含めるもの:</p>
-<ul>
-<li>このtoolが何をするか。</li>
-<li>いつ使うべきか。</li>
-<li>いつ使ってはいけないか。</li>
-<li>入力の形式、単位、制約。</li>
-<li>read-onlyか、状態変更があるか。</li>
-<li>ユーザー確認が必要か。</li>
-<li>返すstructured outputの形。</li>
-<li>似たtoolとの使い分け。</li>
-</ul>
-<p>悪いdescription:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>在庫endpoint。</span></span></code></pre>
-<p>良いdescription:</p>
-<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>userの明示確認後にinventory itemのstockをreserveする。</span></span>
-<span class="line"><span>available stockを減らす。正確なSKUと正のquantityが必要。</span></span>
-<span class="line"><span>reserved quantityとremaining stockを返す。price quoteやorder creationには使わない。</span></span></code></pre>
-<p>descriptionに「必ず確認する」と書くだけでは不十分である。server側でもwrite操作のauth、idempotency、audit log、rate limitを実装する。</p>
-<h4 id="10-webmcpはmcpの置き換えではない"><a href="#10-webmcpはmcpの置き換えではない">10. WebMCPはMCPの置き換えではない</a></h4>
-<p>ChromeのWebMCP docsは、WebMCPとMCPを「競合ではなく補完」と位置づけている。MCPはbackend/service layer向けで、どのplatformからでも利用できる永続的なserver。WebMCPはfrontend/live web UI向けで、ユーザーが開いているtabに紐づくエフェメラルな仕組みである。</p>
-<p>使い分け:</p>
-<ul>
-<li>MCP: core business logic、API操作、DB検索、バックグラウンド処理、社内システム連携。</li>
-<li>WebMCP: ユーザーが開いているWeb画面上の操作、DOMやCookieやlive sessionに紐づく機能。</li>
-<li>Playwright MCP / Chrome DevTools MCP: 開発時に実際のブラウザを操作・検査するためのbridge。</li>
-</ul>
-<p>WebアプリをAI agent対応にする場合、「backendはMCP」「frontendはWebMCP」「開発・検証はPlaywright MCP / Chrome DevTools MCP」という三層で考えると整理しやすい。</p>
-<h4 id="11-claudecodexopenaiでのremote-mcpの考え方"><a href="#11-claudecodexopenaiでのremote-mcpの考え方">11. Claude、Codex、OpenAIでのRemote MCPの考え方</a></h4>
-<p>Claude Codeではremote HTTP serverが推奨され、<code>claude mcp add --transport http &#x3C;name> &#x3C;url></code> で追加できる。SSEはdeprecated扱いで、可能ならHTTPを使う。stdio serverはローカルプロセスとして起動され、filesystemやlocal browserのような手元環境に強い。</p>
-<p>Claude.ai custom connectorsではRemote MCP server URLを設定し、必要に応じてOAuth client情報を入れる。Team/Enterpriseでは管理者がconnectorを組織に追加し、メンバーが個別に接続する。Remote MCP serverはAnthropic cloud infrastructureから到達可能である必要があるため、VPN内やprivate networkだけに置いたserverはそのままでは使えない。</p>
-<p>OpenAIのResponses APIやDeep Research系docsでもMCP connectorsが使われる。ここで重要なのは、MCPは特定vendorの閉じた機能ではなく、複数clientが採用するintegration layerになっていること。ただし、各clientのsupported transport、tool search、output limit、OAuth実装、approval UXは異なる。社内MCP serverを作るなら、公式spec準拠を軸にしつつ、主要clientごとの差分をテストする。</p>
-<h4 id="12-aws-mcp--agent-toolkit-for-awsの意味"><a href="#12-aws-mcp--agent-toolkit-for-awsの意味">12. AWS MCP / Agent Toolkit for AWSの意味</a></h4>
-<p>AWS MCP Serverは2026-05-06にGAし、Agent Toolkit for AWSの中核になった。AWSの発表では、managed remote MCP serverとして、coding agentがAWSへ安全にアクセスするための小さな固定tool setを提供すると説明されている。</p>
-<p>主なtool:</p>
-<ul>
-<li><code>call_aws</code>: 15,000+ AWS API operationをIAM credentialsで実行。</li>
-<li><code>search_documentation</code>: 最新AWS documentationを検索。</li>
-<li><code>read_documentation</code>: AWS docs/best practicesを読む。</li>
-<li><code>run_script</code>: sandboxed server-side Pythonで複数API呼び出しや集計を1 round-tripにまとめる。</li>
-</ul>
-<p>運用上の価値:</p>
-<ul>
-<li>最新docsをその場で引けるため、modelのknowledge cutoffを補える。</li>
-<li>IAM context keys、IAM/SCP、CloudWatch <code>AWS-MCP</code> metrics、CloudTrailでagent操作を人間操作と分けて管理できる。</li>
-<li>read-onlyから始め、write権限は明示的に分離できる。</li>
-</ul>
-<p>社内発表では「AWS MCPは便利なAWS操作tool」ではなく、「agentにAWS権限を渡すときの監査・権限制御モデル」として説明するのが重要。</p>
-<h4 id="13-開発向けmcpの現状ランキング-2026-06-07"><a href="#13-開発向けmcpの現状ランキング-2026-06-07">13. 開発向けMCPの現状ランキング, 2026-06-07</a></h4>
-<p>GitHub API / <code>gh api</code> で2026-06-07に再取得したstar数。star数は人気・認知のsignalであり、品質や安全性の保証ではない。大規模product repoとMCP専用repoが混ざるため、採用判断ではmaintainer、release頻度、security posture、client互換性を見る。</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>Repo</th><th align="right">Stars</th><th>Notes</th></tr></thead><tbody><tr><td><code>mendableai/firecrawl</code></td><td align="right">129,670</td><td>Web search/scrape/crawl product repo。MCP server単体ではない。</td></tr><tr><td><code>modelcontextprotocol/servers</code></td><td align="right">86,854</td><td>reference servers集。公式/参考実装の入口。</td></tr><tr><td><code>upstash/context7</code></td><td align="right">56,904</td><td>current docs lookup。coding agent向けdocs contextで強い。</td></tr><tr><td><code>ChromeDevTools/chrome-devtools-mcp</code></td><td align="right">43,030</td><td>Chrome DevTools for coding agents。frontend debug/perfに強い。</td></tr><tr><td><code>microsoft/playwright-mcp</code></td><td align="right">33,574</td><td>live browser操作、E2E生成、UI再現に強い。</td></tr><tr><td><code>github/github-mcp-server</code></td><td align="right">30,495</td><td>official GitHub MCP server。repo/issue/PR/search。</td></tr><tr><td><code>oraios/serena</code></td><td align="right">25,036</td><td>semantic code retrieval/editing。大規模repo向け。</td></tr><tr><td><code>GLips/Figma-Context-MCP</code></td><td align="right">15,012</td><td>Figma layout contextをcoding agentへ渡す。</td></tr><tr><td><code>awslabs/mcp</code></td><td align="right">9,224</td><td>AWS service-specific open-source MCP servers。</td></tr><tr><td><code>modelcontextprotocol/registry</code></td><td align="right">6,896</td><td>MCP server discovery/publishing基盤。</td></tr><tr><td><code>firecrawl/firecrawl-mcp-server</code></td><td align="right">6,510</td><td>Firecrawl official MCP server。</td></tr><tr><td><code>browserbase/mcp-server-browserbase</code></td><td align="right">3,365</td><td>managed browser automation。</td></tr><tr><td><code>supabase/mcp</code></td><td align="right">2,723</td><td>Supabase project/database連携。</td></tr><tr><td><code>stripe/ai</code></td><td align="right">1,591</td><td>Stripe AI/agent toolkit。</td></tr><tr><td><code>mongodb-js/mongodb-mcp-server</code></td><td align="right">1,044</td><td>MongoDB/Atlas連携。</td></tr><tr><td><code>getsentry/sentry-mcp</code></td><td align="right">720</td><td>Sentry issues/errors。</td></tr></tbody></table>
-<p>初期導入のおすすめ:</p>
-<ol>
-<li>GitHub MCP: PR/issue/code search/CI。</li>
-<li>Context7: 依存ライブラリの最新docs。</li>
-<li>Playwright MCP: UI操作、E2E生成、回帰再現。</li>
-<li>Chrome DevTools MCP: console/network/performance/Lighthouse。</li>
-<li>Serena: 大規模repoのsemantic retrieval/editing。</li>
-<li>Firecrawl MCP: web調査、公式docs取り込み。</li>
-<li>AWS MCP / Agent Toolkit: AWS docs/API/CloudWatch/CloudTrail。</li>
-<li>Figma/Sentry/Supabase/MongoDB/Stripe: チームの業務領域に合わせて追加。</li>
-</ol>
-<h4 id="14-mcpのリスクを初学者にどう説明するか"><a href="#14-mcpのリスクを初学者にどう説明するか">14. MCPのリスクを初学者にどう説明するか</a></h4>
+<h3 id="16-mcpのリスクを初学者にどう説明するか"><a href="#16-mcpのリスクを初学者にどう説明するか">16. MCPのリスクを初学者にどう説明するか</a></h3>
 <p>MCP serverは便利な連携部品である一方、外部データを読み、外部操作を実行できる。したがって「installして終わり」ではない。</p>
 <p>主要リスク:</p>
 <ul>
@@ -1370,21 +1215,6 @@
 <li>Remote MCPはOAuth/audience/scope/expiryを確認する。</li>
 <li>ローカルstdio serverは実行commandと権限をレビューする。</li>
 </ul>
-<h4 id="15-初学者向けの説明順序"><a href="#15-初学者向けの説明順序">15. 初学者向けの説明順序</a></h4>
-<p>最終資料を誰が読んでも理解できるようにするなら、次の順序がよい。</p>
-<ol>
-<li>LLMは外部システムを知らない、だから接続規約が必要。</li>
-<li>MCPはAIアプリと外部システムをつなぐ標準protocol。</li>
-<li>Host / Client / Serverで責務を分ける。</li>
-<li>Resources / Tools / Promptsで「読む・実行する・作業テンプレート」を分ける。</li>
-<li>stdio / Streamable HTTPでlocalとremoteを分ける。</li>
-<li>Authとconsentがproductionの本体。</li>
-<li>既存APIはOpenAPIを整えてMCP adapterで公開する。</li>
-<li>descriptionはモデル向けのUIとして設計する。</li>
-<li>WebMCPとブラウザ操作MCPでfrontendもagent対応する。</li>
-<li>AWS MCPやGitHub MCPなど、開発workflowに効くMCPから導入する。</li>
-<li>最後にリスク、管理、ロードマップを説明する。</li>
-</ol>
 <h2 id="外部操作surfaceとしての位置づけ"><a href="#外部操作surfaceとしての位置づけ">外部操作surfaceとしての位置づけ</a></h2>
 <h3 id="2026-06-08追加調査-mcpを含むllm-action-surfaceの広がり"><a href="#2026-06-08追加調査-mcpを含むllm-action-surfaceの広がり">2026-06-08追加調査: MCPを含むLLM action surfaceの広がり</a></h3>
 <p>この発表ではMCPを主題にするが、MCPだけが「LLMが外部世界を扱う方法」ではない。2026年時点では、function calling、built-in tools、connectors、Remote MCP、ChatGPT Apps / Apps SDK、Codex plugins/apps、browser use、computer use、WebMCP、Agent2Agentのように、LLMが情報を取得し、構造化された指示を出し、実アクションへつなげる選択肢が増えている。</p>
@@ -1505,6 +1335,15 @@
 <li>MCPはtool名、description、schema、structured result、pagination/output capを設計できるため、反復service/data/actionではcontextを小さく保ちやすい。</li>
 <li>ただしMCPも、巨大なtool catalogを全部model contextへ入れるとtoken overheadが大きい。Anthropicの公開例はこのリスクを定量的に示している。</li>
 </ul>
+<h3 id="webmcpはmcpの置き換えではない"><a href="#webmcpはmcpの置き換えではない">WebMCPはMCPの置き換えではない</a></h3>
+<p>ChromeのWebMCP docsは、WebMCPとMCPを「競合ではなく補完」と位置づけている。MCPはbackend/service layer向けで、どのplatformからでも利用できる永続的なserver。WebMCPはfrontend/live web UI向けで、ユーザーが開いているtabに紐づくエフェメラルな仕組みである。</p>
+<p>使い分け:</p>
+<ul>
+<li>MCP: core business logic、API操作、DB検索、バックグラウンド処理、社内システム連携。</li>
+<li>WebMCP: ユーザーが開いているWeb画面上の操作、DOMやCookieやlive sessionに紐づく機能。</li>
+<li>Playwright MCP / Chrome DevTools MCP: 開発時に実際のブラウザを操作・検査するためのbridge。</li>
+</ul>
+<p>WebアプリをAI agent対応にする場合、「backendはMCP」「frontendはWebMCP」「開発・検証はPlaywright MCP / Chrome DevTools MCP」という三層で考えると整理しやすい。</p>
 <h3 id="cli--mcp--browser-operation比較"><a href="#cli--mcp--browser-operation比較">CLI / MCP / browser operation比較</a></h3>
 <p>このsectionでは、適切なMCP serverがある場合にengineering teamがMCPを優先すべき理由を説明する。ただしCLIとbrowser automationもtoolboxには残す。</p>
 <h4 id="何を比較しているか"><a href="#何を比較しているか">何を比較しているか</a></h4>
@@ -1890,6 +1729,42 @@
 <li><code>--category-experimental-webmcp</code>: WebMCP debugging toolを有効化する。Chrome flagが必要。</li>
 </ul>
 <h2 id="mcp-server設計と実装"><a href="#mcp-server設計と実装">MCP server設計と実装</a></h2>
+<h3 id="既存apiをmcp化するときの設計原則"><a href="#既存apiをmcp化するときの設計原則">既存APIをMCP化するときの設計原則</a></h3>
+<p>既存APIをMCP対応させる最短路は、API本体を書き換えることではない。APIはそのまま残し、MCP adapterを追加する。</p>
+<p><img alt="Existing API to MCP adapter flow" loading="lazy" decoding="async" width="1804" height="336" src="/research-docs/pr-preview/pr-11/_astro/mcp-api-adapter-flow.CspnJBJg_ZwIWWk.svg" srcset=""></p>
+<p>推奨構成:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>FastAPI app -> OpenAPI schema -> MCP adapter -> MCP client</span></span>
+<span class="line"><span>                         |</span></span>
+<span class="line"><span>                         +-> route policy / description policy / auth policy</span></span></code></pre>
+<p>設計原則:</p>
+<ul>
+<li>既存APIをsource of truthにする。</li>
+<li>OpenAPIをAI向け契約として整える。</li>
+<li>MCP adapterは公開面を絞る場所にする。</li>
+<li>API handlerを直接importして呼ぶより、まずはHTTP clientで既存APIを呼ぶほうが安全。</li>
+<li>direct service-layer callは高速だが、auth、middleware、logging、validationを再実装する必要がある。</li>
+</ul>
+<p>FastMCPはOpenAPI specからMCP serverを作れる。FastMCP v2.8以降のdefault mappingは「全routeをtool化」する方向なので、productionではRouteMapで明示的に除外・allowlist化するのが重要である。admin/internal/debug endpointを除外し、write系endpointを特別扱いする。</p>
+<h3 id="tool-descriptionはapi-docsではなくモデル向けuiである"><a href="#tool-descriptionはapi-docsではなくモデル向けuiである">Tool descriptionはAPI docsではなくモデル向けUIである</a></h3>
+<p>Tool descriptionは人間向けのAPI説明ではない。モデルが「このtoolを使うべきか」「どの入力で呼ぶべきか」「呼ぶと外部世界が変わるか」を判断するためのUIである。</p>
+<p>良いdescriptionに含めるもの:</p>
+<ul>
+<li>このtoolが何をするか。</li>
+<li>いつ使うべきか。</li>
+<li>いつ使ってはいけないか。</li>
+<li>入力の形式、単位、制約。</li>
+<li>read-onlyか、状態変更があるか。</li>
+<li>ユーザー確認が必要か。</li>
+<li>返すstructured outputの形。</li>
+<li>似たtoolとの使い分け。</li>
+</ul>
+<p>悪いdescription:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>在庫endpoint。</span></span></code></pre>
+<p>良いdescription:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>userの明示確認後にinventory itemのstockをreserveする。</span></span>
+<span class="line"><span>available stockを減らす。正確なSKUと正のquantityが必要。</span></span>
+<span class="line"><span>reserved quantityとremaining stockを返す。price quoteやorder creationには使わない。</span></span></code></pre>
+<p>descriptionに「必ず確認する」と書くだけでは不十分である。server側でもwrite操作のauth、idempotency、audit log、rate limitを実装する。</p>
 <h3 id="mcp-server構築-engineer向けpattern"><a href="#mcp-server構築-engineer向けpattern">MCP server構築: engineer向けpattern</a></h3>
 <p>社内向けに有用なのは「MCPとは何か」だけではなく、「既存システムをmodelが使えるtoolとして安全に公開するにはどうするか」。実用上は3つのpatternがある。</p>
 <ol>
@@ -2220,6 +2095,10 @@
 <span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"summary"</span><span style="color:#E1E4E8">)</span></span>
 <span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"description"</span><span style="color:#E1E4E8">)</span></span>
 <span class="line"><span style="color:#F97583">            assert</span><span style="color:#E1E4E8"> operation.get(</span><span style="color:#9ECBFF">"responses"</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="claudecodexopenaiでのremote-mcpの考え方"><a href="#claudecodexopenaiでのremote-mcpの考え方">Claude、Codex、OpenAIでのRemote MCPの考え方</a></h3>
+<p>Claude Codeではremote HTTP serverが推奨され、<code>claude mcp add --transport http &#x3C;name> &#x3C;url></code> で追加できる。SSEはdeprecated扱いで、可能ならHTTPを使う。stdio serverはローカルプロセスとして起動され、filesystemやlocal browserのような手元環境に強い。</p>
+<p>Claude.ai custom connectorsではRemote MCP server URLを設定し、必要に応じてOAuth client情報を入れる。Team/Enterpriseでは管理者がconnectorを組織に追加し、メンバーが個別に接続する。Remote MCP serverはAnthropic cloud infrastructureから到達可能である必要があるため、VPN内やprivate networkだけに置いたserverはそのままでは使えない。</p>
+<p>OpenAIのResponses APIやDeep Research系docsでもMCP connectorsが使われる。ここで重要なのは、MCPは特定vendorの閉じた機能ではなく、複数clientが採用するintegration layerになっていること。ただし、各clientのsupported transport、tool search、output limit、OAuth実装、approval UXは異なる。社内MCP serverを作るなら、公式spec準拠を軸にしつつ、主要clientごとの差分をテストする。</p>
 <h3 id="claude向けremote-mcp-構築と利用"><a href="#claude向けremote-mcp-構築と利用">Claude向けRemote MCP: 構築と利用</a></h3>
 <p>Claudeはlocal stdio MCP serverにもRemote MCP serverにも接続できる。Claude.ai custom connectorやteam-wide利用では、Remote MCPが該当するarchitectureになる。</p>
 <p>最小deploy構成:</p>
@@ -3269,6 +3148,126 @@
 <li>cloud documentation、API call、metrics、audit-friendly operation向けにAWS MCP / Agent Toolkit for AWS。</li>
 <li>design-to-codeまたはruntime triageがworkflowの中心ならFigma/Sentry MCP。</li>
 </ol>
+<h3 id="開発向けmcpの現状ランキング-2026-06-07"><a href="#開発向けmcpの現状ランキング-2026-06-07">開発向けMCPの現状ランキング, 2026-06-07</a></h3>
+<p>GitHub API / <code>gh api</code> で2026-06-07に再取得したstar数。star数は人気・認知のsignalであり、品質や安全性の保証ではない。大規模product repoとMCP専用repoが混ざるため、採用判断ではmaintainer、release頻度、security posture、client互換性を見る。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Repo</th><th align="right">Stars</th><th>Notes</th></tr></thead><tbody><tr><td><code>mendableai/firecrawl</code></td><td align="right">129,670</td><td>Web search/scrape/crawl product repo。MCP server単体ではない。</td></tr><tr><td><code>modelcontextprotocol/servers</code></td><td align="right">86,854</td><td>reference servers集。公式/参考実装の入口。</td></tr><tr><td><code>upstash/context7</code></td><td align="right">56,904</td><td>current docs lookup。coding agent向けdocs contextで強い。</td></tr><tr><td><code>ChromeDevTools/chrome-devtools-mcp</code></td><td align="right">43,030</td><td>Chrome DevTools for coding agents。frontend debug/perfに強い。</td></tr><tr><td><code>microsoft/playwright-mcp</code></td><td align="right">33,574</td><td>live browser操作、E2E生成、UI再現に強い。</td></tr><tr><td><code>github/github-mcp-server</code></td><td align="right">30,495</td><td>official GitHub MCP server。repo/issue/PR/search。</td></tr><tr><td><code>oraios/serena</code></td><td align="right">25,036</td><td>semantic code retrieval/editing。大規模repo向け。</td></tr><tr><td><code>GLips/Figma-Context-MCP</code></td><td align="right">15,012</td><td>Figma layout contextをcoding agentへ渡す。</td></tr><tr><td><code>awslabs/mcp</code></td><td align="right">9,224</td><td>AWS service-specific open-source MCP servers。</td></tr><tr><td><code>modelcontextprotocol/registry</code></td><td align="right">6,896</td><td>MCP server discovery/publishing基盤。</td></tr><tr><td><code>firecrawl/firecrawl-mcp-server</code></td><td align="right">6,510</td><td>Firecrawl official MCP server。</td></tr><tr><td><code>browserbase/mcp-server-browserbase</code></td><td align="right">3,365</td><td>managed browser automation。</td></tr><tr><td><code>supabase/mcp</code></td><td align="right">2,723</td><td>Supabase project/database連携。</td></tr><tr><td><code>stripe/ai</code></td><td align="right">1,591</td><td>Stripe AI/agent toolkit。</td></tr><tr><td><code>mongodb-js/mongodb-mcp-server</code></td><td align="right">1,044</td><td>MongoDB/Atlas連携。</td></tr><tr><td><code>getsentry/sentry-mcp</code></td><td align="right">720</td><td>Sentry issues/errors。</td></tr></tbody></table>
+<p>初期導入のおすすめ:</p>
+<ol>
+<li>GitHub MCP: PR/issue/code search/CI。</li>
+<li>Context7: 依存ライブラリの最新docs。</li>
+<li>Playwright MCP: UI操作、E2E生成、回帰再現。</li>
+<li>Chrome DevTools MCP: console/network/performance/Lighthouse。</li>
+<li>Serena: 大規模repoのsemantic retrieval/editing。</li>
+<li>Firecrawl MCP: web調査、公式docs取り込み。</li>
+<li>AWS MCP / Agent Toolkit: AWS docs/API/CloudWatch/CloudTrail。</li>
+<li>Figma/Sentry/Supabase/MongoDB/Stripe: チームの業務領域に合わせて追加。</li>
+</ol>
+<h3 id="aws-mcp--agent-toolkit-for-awsの意味"><a href="#aws-mcp--agent-toolkit-for-awsの意味">AWS MCP / Agent Toolkit for AWSの意味</a></h3>
+<p>AWS MCP Serverは2026-05-06にGAし、Agent Toolkit for AWSの中核になった。AWSの発表では、managed remote MCP serverとして、coding agentがAWSへ安全にアクセスするための小さな固定tool setを提供すると説明されている。</p>
+<p>主なtool:</p>
+<ul>
+<li><code>call_aws</code>: 15,000+ AWS API operationをIAM credentialsで実行。</li>
+<li><code>search_documentation</code>: 最新AWS documentationを検索。</li>
+<li><code>read_documentation</code>: AWS docs/best practicesを読む。</li>
+<li><code>run_script</code>: sandboxed server-side Pythonで複数API呼び出しや集計を1 round-tripにまとめる。</li>
+</ul>
+<p>運用上の価値:</p>
+<ul>
+<li>最新docsをその場で引けるため、modelのknowledge cutoffを補える。</li>
+<li>IAM context keys、IAM/SCP、CloudWatch <code>AWS-MCP</code> metrics、CloudTrailでagent操作を人間操作と分けて管理できる。</li>
+<li>read-onlyから始め、write権限は明示的に分離できる。</li>
+</ul>
+<p>社内発表では「AWS MCPは便利なAWS操作tool」ではなく、「agentにAWS権限を渡すときの監査・権限制御モデル」として説明するのが重要。</p>
 <h3 id="aws-mcpとagent-toolkit-for-aws"><a href="#aws-mcpとagent-toolkit-for-aws">AWS MCPとAgent Toolkit for AWS</a></h3>
 <p>AWSは2026-05-06にAWS MCP Serverのgeneral availabilityを発表した。現在はAgent Toolkit for AWSの一部。</p>
 <p>要点:</p>
@@ -4001,4 +4000,4 @@
 <li>length: 10分、20分、45分のどれか。</li>
 <li>exampleはCodex workflow、Claude/Cursor workflow、company-wide agent platformのどれに寄せるか。</li>
 <li>GitHub/Figma/Sentry/Firecrawl MCP usageのようなlive demoを含めるか。</li>
-</ul> </div> </div> <aside class="document-index" aria-label="現在読んでいる箇所"> <nav class="document-toc" aria-label="現在読んでいる箇所"> <p class="toc-title">Index</p> <ul class="toc-list"> <li class="toc-item"> <a class="toc-link" href="#mcp社内発表調査メモ" data-toc-link="mcp社内発表調査メモ"> MCP社内発表調査メモ </a>  </li><li class="toc-item"> <a class="toc-link" href="#このメモの読み方" data-toc-link="このメモの読み方"> このメモの読み方 </a>  </li><li class="toc-item"> <a class="toc-link" href="#調査方針と一次情報" data-toc-link="調査方針と一次情報"> 調査方針と一次情報 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#調査方針" data-toc-link="調査方針"> 調査方針 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#結論と発表構成" data-toc-link="結論と発表構成"> 結論と発表構成 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#1枚で伝える主張" data-toc-link="1枚で伝える主張"> 1枚で伝える主張 </a>  </li><li class="toc-item"> <a class="toc-link" href="#発表の要点" data-toc-link="発表の要点"> 発表の要点 </a>  </li><li class="toc-item"> <a class="toc-link" href="#推奨slide-structure" data-toc-link="推奨slide-structure"> 推奨slide structure </a>  </li><li class="toc-item"> <a class="toc-link" href="#2026-06-09初心者視点レビューと構成見直し" data-toc-link="2026-06-09初心者視点レビューと構成見直し"> 2026-06-09初心者視点レビューと構成見直し </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#mcpの基礎理解" data-toc-link="mcpの基礎理解"> MCPの基礎理解 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#mcpとは何か" data-toc-link="mcpとは何か"> MCPとは何か </a>  </li><li class="toc-item"> <a class="toc-link" href="#主要概念" data-toc-link="主要概念"> 主要概念 </a>  </li><li class="toc-item"> <a class="toc-link" href="#基本フロー" data-toc-link="基本フロー"> 基本フロー </a>  </li><li class="toc-item"> <a class="toc-link" href="#初心者向け詳細メモ-2026-06-07" data-toc-link="初心者向け詳細メモ-2026-06-07"> 初心者向け詳細メモ, 2026-06-07 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#外部操作surfaceとしての位置づけ" data-toc-link="外部操作surfaceとしての位置づけ"> 外部操作surfaceとしての位置づけ </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#2026-06-08追加調査-mcpを含むllm-action-surfaceの広がり" data-toc-link="2026-06-08追加調査-mcpを含むllm-action-surfaceの広がり"> 2026-06-08追加調査: MCPを含むLLM action surfaceの広がり </a>  </li><li class="toc-item"> <a class="toc-link" href="#cli--mcp--browser-operation比較" data-toc-link="cli--mcp--browser-operation比較"> CLI / MCP / browser operation比較 </a>  </li><li class="toc-item"> <a class="toc-link" href="#frontend-webmcpとbrowser-operation-mcp" data-toc-link="frontend-webmcpとbrowser-operation-mcp"> Frontend: WebMCPとbrowser-operation MCP </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#mcp-server設計と実装" data-toc-link="mcp-server設計と実装"> MCP server設計と実装 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#mcp-server構築-engineer向けpattern" data-toc-link="mcp-server構築-engineer向けpattern"> MCP server構築: engineer向けpattern </a>  </li><li class="toc-item"> <a class="toc-link" href="#engineer向けmcp-server設計ルール" data-toc-link="engineer向けmcp-server設計ルール"> engineer向けMCP server設計ルール </a>  </li><li class="toc-item"> <a class="toc-link" href="#既存api-serverをadaptする推奨設計" data-toc-link="既存api-serverをadaptする推奨設計"> 既存API serverをadaptする推奨設計 </a>  </li><li class="toc-item"> <a class="toc-link" href="#claude向けremote-mcp-構築と利用" data-toc-link="claude向けremote-mcp-構築と利用"> Claude向けRemote MCP: 構築と利用 </a>  </li><li class="toc-item"> <a class="toc-link" href="#複数agent向けmcp-configuration戦略" data-toc-link="複数agent向けmcp-configuration戦略"> 複数agent向けMCP configuration戦略 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#protocoltransportauthgovernance" data-toc-link="protocoltransportauthgovernance"> Protocol、Transport、Auth、Governance </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#接続protocol--transport" data-toc-link="接続protocol--transport"> 接続protocol / transport </a>  </li><li class="toc-item"> <a class="toc-link" href="#認証仕様" data-toc-link="認証仕様"> 認証仕様 </a>  </li><li class="toc-item"> <a class="toc-link" href="#保守と仕様governance" data-toc-link="保守と仕様governance"> 保守と仕様governance </a>  </li><li class="toc-item"> <a class="toc-link" href="#歴史" data-toc-link="歴史"> 歴史 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#use-caseと主要ecosystem" data-toc-link="use-caseと主要ecosystem"> Use caseと主要ecosystem </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#主なuse-case" data-toc-link="主なuse-case"> 主なuse case </a>  </li><li class="toc-item"> <a class="toc-link" href="#よく知られたmcp-server--surface" data-toc-link="よく知られたmcp-server--surface"> よく知られたMCP server / surface </a>  </li><li class="toc-item"> <a class="toc-link" href="#aws-mcpとagent-toolkit-for-aws" data-toc-link="aws-mcpとagent-toolkit-for-aws"> AWS MCPとAgent Toolkit for AWS </a>  </li><li class="toc-item"> <a class="toc-link" href="#agentcore-gateway-and-identityでaws上にremote-mcpを構築する" data-toc-link="agentcore-gateway-and-identityでaws上にremote-mcpを構築する"> AgentCore Gateway and IdentityでAWS上にRemote MCPを構築する </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#現状論争ロードマップ" data-toc-link="現状論争ロードマップ"> 現状、論争、ロードマップ </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#現状ロードマップ論争非developer領域への拡大-2026-06-08" data-toc-link="現状ロードマップ論争非developer領域への拡大-2026-06-08"> 現状、ロードマップ、論争、非developer領域への拡大, 2026-06-08 </a>  </li><li class="toc-item"> <a class="toc-link" href="#今後の重要点" data-toc-link="今後の重要点"> 今後の重要点 </a>  </li><li class="toc-item"> <a class="toc-link" href="#roadmapの主題" data-toc-link="roadmapの主題"> roadmapの主題 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#スライド制作メモ" data-toc-link="スライド制作メモ"> スライド制作メモ </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#marp-slide制作方法" data-toc-link="marp-slide制作方法"> Marp slide制作方法 </a>  </li><li class="toc-item"> <a class="toc-link" href="#最終deckへの確認事項" data-toc-link="最終deckへの確認事項"> 最終deckへの確認事項 </a>  </li> </ul> </li> </ul> </nav> <script type="module">const r=Array.from(document.querySelectorAll("[data-toc-link]")),o=r.map(t=>{if(!(t instanceof HTMLAnchorElement))return null;const e=decodeURIComponent(t.hash.slice(1)),n=document.getElementById(e);return n?{heading:n,link:t}:null}).filter(t=>t!==null);function s(t){for(const e of r){const n=e.getAttribute("data-toc-link")===t;e.classList.toggle("active",n),n?e.setAttribute("aria-current","location"):e.removeAttribute("aria-current")}}o.length>0&&s(o[0].link.getAttribute("data-toc-link"));if("IntersectionObserver"in window){const t=new Map,e=new IntersectionObserver(n=>{for(const i of n)i.isIntersecting?t.set(i.target.id,i.boundingClientRect.top):t.delete(i.target.id);const c=Array.from(t.entries()).sort((i,l)=>i[1]-l[1])[0];c&&s(c[0])},{rootMargin:"-112px 0px -65% 0px",threshold:[0,1]});for(const n of o)e.observe(n.heading)}for(const t of r)t.addEventListener("click",()=>{const e=t.getAttribute("data-toc-link");e&&s(e)});</script> </aside> </article>  </main> </div> </div> <script type="module">const o=document.querySelector(".site-shell"),a=document.querySelector("[data-sidebar-toggle]"),t=document.querySelector("#theme-sidebar"),n=window.localStorage.getItem("researchDocsSidebar"),d=n??(window.matchMedia("(max-width: 900px)").matches?"closed":"open");function r(e){o?.setAttribute("data-sidebar",e),a?.setAttribute("aria-expanded",String(e==="open")),t instanceof HTMLElement&&(t.inert=e!=="open")}r(d);a?.addEventListener("click",()=>{const e=o?.getAttribute("data-sidebar")==="open"?"closed":"open";r(e),window.localStorage.setItem("researchDocsSidebar",e)});</script> </body> </html>
+</ul> </div> </div> <aside class="document-index" aria-label="現在読んでいる箇所"> <nav class="document-toc" aria-label="現在読んでいる箇所"> <p class="toc-title">Index</p> <ul class="toc-list"> <li class="toc-item"> <a class="toc-link" href="#mcp社内発表調査メモ" data-toc-link="mcp社内発表調査メモ"> MCP社内発表調査メモ </a>  </li><li class="toc-item"> <a class="toc-link" href="#このメモの読み方" data-toc-link="このメモの読み方"> このメモの読み方 </a>  </li><li class="toc-item"> <a class="toc-link" href="#調査方針と一次情報" data-toc-link="調査方針と一次情報"> 調査方針と一次情報 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#調査方針" data-toc-link="調査方針"> 調査方針 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#結論と発表構成" data-toc-link="結論と発表構成"> 結論と発表構成 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#1枚で伝える主張" data-toc-link="1枚で伝える主張"> 1枚で伝える主張 </a>  </li><li class="toc-item"> <a class="toc-link" href="#発表の要点" data-toc-link="発表の要点"> 発表の要点 </a>  </li><li class="toc-item"> <a class="toc-link" href="#概念説明の推奨順序" data-toc-link="概念説明の推奨順序"> 概念説明の推奨順序 </a>  </li><li class="toc-item"> <a class="toc-link" href="#推奨slide-structure" data-toc-link="推奨slide-structure"> 推奨slide structure </a>  </li><li class="toc-item"> <a class="toc-link" href="#2026-06-09初心者視点レビューと構成見直し" data-toc-link="2026-06-09初心者視点レビューと構成見直し"> 2026-06-09初心者視点レビューと構成見直し </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#mcpの基礎理解" data-toc-link="mcpの基礎理解"> MCPの基礎理解 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#1-mcpが解こうとしている問題" data-toc-link="1-mcpが解こうとしている問題"> 1. MCPが解こうとしている問題 </a>  </li><li class="toc-item"> <a class="toc-link" href="#2-mcpとは何か" data-toc-link="2-mcpとは何か"> 2. MCPとは何か </a>  </li><li class="toc-item"> <a class="toc-link" href="#3-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い" data-toc-link="3-mcpの位置づけ-tool-callingopenapiapi-gatewayとの違い"> 3. MCPの位置づけ: tool calling、OpenAPI、API Gatewayとの違い </a>  </li><li class="toc-item"> <a class="toc-link" href="#4-hostclientserverを誰が担うか" data-toc-link="4-hostclientserverを誰が担うか"> 4. Host、Client、Serverを誰が担うか </a>  </li><li class="toc-item"> <a class="toc-link" href="#5-主要概念" data-toc-link="5-主要概念"> 5. 主要概念 </a>  </li><li class="toc-item"> <a class="toc-link" href="#6-resourcestoolspromptsの違い" data-toc-link="6-resourcestoolspromptsの違い"> 6. Resources、Tools、Promptsの違い </a>  </li><li class="toc-item"> <a class="toc-link" href="#7-capability-negotiationとは何か" data-toc-link="7-capability-negotiationとは何か"> 7. Capability negotiationとは何か </a>  </li><li class="toc-item"> <a class="toc-link" href="#8-基本フロー" data-toc-link="8-基本フロー"> 8. 基本フロー </a>  </li><li class="toc-item"> <a class="toc-link" href="#9-json-rpcで実際に何が送られるか" data-toc-link="9-json-rpcで実際に何が送られるか"> 9. JSON-RPCで実際に何が送られるか </a>  </li><li class="toc-item"> <a class="toc-link" href="#10-transport-stdioとstreamable-http" data-toc-link="10-transport-stdioとstreamable-http"> 10. Transport: stdioとStreamable HTTP </a>  </li><li class="toc-item"> <a class="toc-link" href="#11-json-rpcはtransportでどう運ばれるか" data-toc-link="11-json-rpcはtransportでどう運ばれるか"> 11. JSON-RPCはtransportでどう運ばれるか </a>  </li><li class="toc-item"> <a class="toc-link" href="#12-tool説明文はどのようにllmへ渡るか" data-toc-link="12-tool説明文はどのようにllmへ渡るか"> 12. tool説明文はどのようにLLMへ渡るか </a>  </li><li class="toc-item"> <a class="toc-link" href="#13-なぜllmはmcp-tool-callを出せるのか" data-toc-link="13-なぜllmはmcp-tool-callを出せるのか"> 13. なぜLLMはMCP tool callを出せるのか </a>  </li><li class="toc-item"> <a class="toc-link" href="#14-mcp接続にllm専用fine-tuningは必要か" data-toc-link="14-mcp接続にllm専用fine-tuningは必要か"> 14. MCP接続にLLM専用fine-tuningは必要か </a>  </li><li class="toc-item"> <a class="toc-link" href="#15-authorization-なぜoauth-21とaudienceが重要か" data-toc-link="15-authorization-なぜoauth-21とaudienceが重要か"> 15. Authorization: なぜOAuth 2.1とaudienceが重要か </a>  </li><li class="toc-item"> <a class="toc-link" href="#16-mcpのリスクを初学者にどう説明するか" data-toc-link="16-mcpのリスクを初学者にどう説明するか"> 16. MCPのリスクを初学者にどう説明するか </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#外部操作surfaceとしての位置づけ" data-toc-link="外部操作surfaceとしての位置づけ"> 外部操作surfaceとしての位置づけ </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#2026-06-08追加調査-mcpを含むllm-action-surfaceの広がり" data-toc-link="2026-06-08追加調査-mcpを含むllm-action-surfaceの広がり"> 2026-06-08追加調査: MCPを含むLLM action surfaceの広がり </a>  </li><li class="toc-item"> <a class="toc-link" href="#webmcpはmcpの置き換えではない" data-toc-link="webmcpはmcpの置き換えではない"> WebMCPはMCPの置き換えではない </a>  </li><li class="toc-item"> <a class="toc-link" href="#cli--mcp--browser-operation比較" data-toc-link="cli--mcp--browser-operation比較"> CLI / MCP / browser operation比較 </a>  </li><li class="toc-item"> <a class="toc-link" href="#frontend-webmcpとbrowser-operation-mcp" data-toc-link="frontend-webmcpとbrowser-operation-mcp"> Frontend: WebMCPとbrowser-operation MCP </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#mcp-server設計と実装" data-toc-link="mcp-server設計と実装"> MCP server設計と実装 </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#既存apiをmcp化するときの設計原則" data-toc-link="既存apiをmcp化するときの設計原則"> 既存APIをMCP化するときの設計原則 </a>  </li><li class="toc-item"> <a class="toc-link" href="#tool-descriptionはapi-docsではなくモデル向けuiである" data-toc-link="tool-descriptionはapi-docsではなくモデル向けuiである"> Tool descriptionはAPI docsではなくモデル向けUIである </a>  </li><li class="toc-item"> <a class="toc-link" href="#mcp-server構築-engineer向けpattern" data-toc-link="mcp-server構築-engineer向けpattern"> MCP server構築: engineer向けpattern </a>  </li><li class="toc-item"> <a class="toc-link" href="#engineer向けmcp-server設計ルール" data-toc-link="engineer向けmcp-server設計ルール"> engineer向けMCP server設計ルール </a>  </li><li class="toc-item"> <a class="toc-link" href="#既存api-serverをadaptする推奨設計" data-toc-link="既存api-serverをadaptする推奨設計"> 既存API serverをadaptする推奨設計 </a>  </li><li class="toc-item"> <a class="toc-link" href="#claudecodexopenaiでのremote-mcpの考え方" data-toc-link="claudecodexopenaiでのremote-mcpの考え方"> Claude、Codex、OpenAIでのRemote MCPの考え方 </a>  </li><li class="toc-item"> <a class="toc-link" href="#claude向けremote-mcp-構築と利用" data-toc-link="claude向けremote-mcp-構築と利用"> Claude向けRemote MCP: 構築と利用 </a>  </li><li class="toc-item"> <a class="toc-link" href="#複数agent向けmcp-configuration戦略" data-toc-link="複数agent向けmcp-configuration戦略"> 複数agent向けMCP configuration戦略 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#protocoltransportauthgovernance" data-toc-link="protocoltransportauthgovernance"> Protocol、Transport、Auth、Governance </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#接続protocol--transport" data-toc-link="接続protocol--transport"> 接続protocol / transport </a>  </li><li class="toc-item"> <a class="toc-link" href="#認証仕様" data-toc-link="認証仕様"> 認証仕様 </a>  </li><li class="toc-item"> <a class="toc-link" href="#保守と仕様governance" data-toc-link="保守と仕様governance"> 保守と仕様governance </a>  </li><li class="toc-item"> <a class="toc-link" href="#歴史" data-toc-link="歴史"> 歴史 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#use-caseと主要ecosystem" data-toc-link="use-caseと主要ecosystem"> Use caseと主要ecosystem </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#主なuse-case" data-toc-link="主なuse-case"> 主なuse case </a>  </li><li class="toc-item"> <a class="toc-link" href="#よく知られたmcp-server--surface" data-toc-link="よく知られたmcp-server--surface"> よく知られたMCP server / surface </a>  </li><li class="toc-item"> <a class="toc-link" href="#開発向けmcpの現状ランキング-2026-06-07" data-toc-link="開発向けmcpの現状ランキング-2026-06-07"> 開発向けMCPの現状ランキング, 2026-06-07 </a>  </li><li class="toc-item"> <a class="toc-link" href="#aws-mcp--agent-toolkit-for-awsの意味" data-toc-link="aws-mcp--agent-toolkit-for-awsの意味"> AWS MCP / Agent Toolkit for AWSの意味 </a>  </li><li class="toc-item"> <a class="toc-link" href="#aws-mcpとagent-toolkit-for-aws" data-toc-link="aws-mcpとagent-toolkit-for-aws"> AWS MCPとAgent Toolkit for AWS </a>  </li><li class="toc-item"> <a class="toc-link" href="#agentcore-gateway-and-identityでaws上にremote-mcpを構築する" data-toc-link="agentcore-gateway-and-identityでaws上にremote-mcpを構築する"> AgentCore Gateway and IdentityでAWS上にRemote MCPを構築する </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#現状論争ロードマップ" data-toc-link="現状論争ロードマップ"> 現状、論争、ロードマップ </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#現状ロードマップ論争非developer領域への拡大-2026-06-08" data-toc-link="現状ロードマップ論争非developer領域への拡大-2026-06-08"> 現状、ロードマップ、論争、非developer領域への拡大, 2026-06-08 </a>  </li><li class="toc-item"> <a class="toc-link" href="#今後の重要点" data-toc-link="今後の重要点"> 今後の重要点 </a>  </li><li class="toc-item"> <a class="toc-link" href="#roadmapの主題" data-toc-link="roadmapの主題"> roadmapの主題 </a>  </li> </ul> </li><li class="toc-item"> <a class="toc-link" href="#スライド制作メモ" data-toc-link="スライド制作メモ"> スライド制作メモ </a> <ul class="toc-list toc-list-nested"> <li class="toc-item"> <a class="toc-link" href="#marp-slide制作方法" data-toc-link="marp-slide制作方法"> Marp slide制作方法 </a>  </li><li class="toc-item"> <a class="toc-link" href="#最終deckへの確認事項" data-toc-link="最終deckへの確認事項"> 最終deckへの確認事項 </a>  </li> </ul> </li> </ul> </nav> <script type="module">const r=Array.from(document.querySelectorAll("[data-toc-link]")),o=r.map(t=>{if(!(t instanceof HTMLAnchorElement))return null;const e=decodeURIComponent(t.hash.slice(1)),n=document.getElementById(e);return n?{heading:n,link:t}:null}).filter(t=>t!==null);function s(t){for(const e of r){const n=e.getAttribute("data-toc-link")===t;e.classList.toggle("active",n),n?e.setAttribute("aria-current","location"):e.removeAttribute("aria-current")}}o.length>0&&s(o[0].link.getAttribute("data-toc-link"));if("IntersectionObserver"in window){const t=new Map,e=new IntersectionObserver(n=>{for(const i of n)i.isIntersecting?t.set(i.target.id,i.boundingClientRect.top):t.delete(i.target.id);const c=Array.from(t.entries()).sort((i,l)=>i[1]-l[1])[0];c&&s(c[0])},{rootMargin:"-112px 0px -65% 0px",threshold:[0,1]});for(const n of o)e.observe(n.heading)}for(const t of r)t.addEventListener("click",()=>{const e=t.getAttribute("data-toc-link");e&&s(e)});</script> </aside> </article>  </main> </div> </div> <script type="module">const t=document.querySelector(".site-shell"),r=document.querySelector("[data-sidebar-toggle]"),a=document.querySelector("#theme-sidebar"),o=t?.getAttribute("data-sidebar-default")??"open",n=window.localStorage.getItem("researchDocsSidebar"),s=window.matchMedia("(max-width: 900px)").matches?"closed":"open",c=o==="closed"?o:n??s;function d(e){t?.setAttribute("data-sidebar",e),r?.setAttribute("aria-expanded",String(e==="open")),a instanceof HTMLElement&&(a.inert=e!=="open")}d(c);r?.addEventListener("click",()=>{const e=t?.getAttribute("data-sidebar")==="open"?"closed":"open";d(e),window.localStorage.setItem("researchDocsSidebar",e)});</script> </body> </html>
