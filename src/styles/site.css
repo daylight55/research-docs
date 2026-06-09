@@ -176,7 +176,7 @@ a {
 
 .content-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  grid-template-columns: minmax(176px, 220px) minmax(0, 1fr);
   margin-inline: auto;
   max-inline-size: 1600px;
   transition: grid-template-columns 180ms ease;
@@ -191,7 +191,7 @@ a {
   min-block-size: calc(100dvh - 68px);
   opacity: 1;
   overflow: hidden;
-  padding: 28px 22px;
+  padding: 24px 16px;
   position: sticky;
   top: 68px;
   transition:
@@ -208,10 +208,10 @@ a {
 
 .sidebar-title {
   color: var(--ink);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  margin-block-end: 18px;
+  margin-block-end: 14px;
   text-transform: uppercase;
 }
 
@@ -220,7 +220,7 @@ a {
 }
 
 .nav-section h2 {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   letter-spacing: 0;
   line-height: 1.35;
   margin: 0;
@@ -231,7 +231,7 @@ a {
   border-radius: 8px;
   color: var(--ink);
   display: block;
-  padding: 10px;
+  padding: 8px;
   text-decoration: none;
 }
 
@@ -275,7 +275,7 @@ a {
 
 .main-panel {
   min-inline-size: 0;
-  padding: clamp(26px, 5vw, 64px);
+  padding: clamp(24px, 4vw, 52px);
 }
 
 .document {
@@ -286,9 +286,9 @@ a {
 .document-with-index {
   align-items: start;
   display: grid;
-  gap: clamp(26px, 4vw, 54px);
-  grid-template-columns: minmax(0, 1fr) minmax(210px, 270px);
-  max-inline-size: 1380px;
+  gap: clamp(20px, 3vw, 38px);
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 210px);
+  max-inline-size: 1440px;
 }
 
 .document-content {
@@ -508,9 +508,10 @@ h1 {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
+  font-size: 1.06rem;
   inline-size: 100%;
   overflow-x: clip;
-  padding: clamp(22px, 4vw, 44px);
+  padding: clamp(24px, 3.6vw, 48px);
 }
 
 .markdown-body :where(p, li, blockquote) {
@@ -584,7 +585,7 @@ h1 {
 
 .document-toc {
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.86rem;
   max-block-size: calc(100dvh - 126px);
   overflow-y: auto;
   padding-inline-start: 4px;
@@ -593,10 +594,10 @@ h1 {
 
 .toc-title {
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.14em;
-  margin: 0 0 18px;
+  margin: 0 0 14px;
   text-transform: uppercase;
 }
 
@@ -618,7 +619,7 @@ h1 {
   color: var(--muted);
   display: block;
   line-height: 1.35;
-  padding: 7px 4px 7px 12px;
+  padding: 6px 3px 6px 10px;
   text-decoration: none;
   text-wrap: pretty;
 }
