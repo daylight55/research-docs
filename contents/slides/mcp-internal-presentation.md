@@ -250,13 +250,13 @@ _class: compact visual ch01
 
 <p class="chapter-label">01 / 基本概念</p>
 
-## 用語が登場する場所
+## MCPの公開面と通信面
 
 <div class="visual-hero">
-  <img class="generated-visual" src="generated/mcp-concepts-appear-map.svg" alt="Where Tool Resource Prompt Protocol and Transport appear in an MCP client server connection" />
+  <img class="generated-visual" src="generated/mcp-concepts-appear-map.svg" alt="MCP has a server publication surface and a client server communication surface" />
 </div>
 
-<p class="caption">次の2枚は、この図の右側と中央を順に拡大する。</p>
+<p class="caption">MCPは「serverが何を公開するか」と「client/serverがどう会話するか」を分けて見ると追いやすい。</p>
 
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25">MCP spec</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle">MCP lifecycle</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/transports">MCP transports</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -269,6 +269,8 @@ _class: compact ch01
 <p class="chapter-label">01 / 基本概念</p>
 
 ## Tool / Resource / Promptとは？
+
+ここでは、MCP ServerがHostへ見せる**公開面の細部**を見る。
 
 <div class="logo-split">
 <div class="logo-copy">
@@ -306,6 +308,8 @@ _class: compact ch01
 <p class="chapter-label">01 / 基本概念</p>
 
 ## Protocol / Transportとは？
+
+ここでは、MCP ClientとServerが会話する**通信面の細部**を見る。
 
 - Protocol: どんなmessageを、どんな順序でやり取りするか
 - Transport: そのmessageをどう運ぶか
