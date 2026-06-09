@@ -9,10 +9,10 @@
     "test": "vitest run",
     "build:site": "scripts/build-pages-site.sh site",
     "template:topic": "scaffdog generate research-topic",
-    "slide:html": "marp contents/templates/slides/example.md --html --theme contents/marp-themes/research.css --output dist/example.html",
-    "slide:pdf": "marp contents/templates/slides/example.md --html --theme contents/marp-themes/research.css --pdf --allow-local-files --output dist/example.pdf",
+    "slide:html": "marp contents/templates/slides/example.md --html --theme src/styles/marp-themes/research.css --output dist/example.html",
+    "slide:pdf": "marp contents/templates/slides/example.md --html --theme src/styles/marp-themes/research.css --pdf --allow-local-files --output dist/example.pdf",
     "slide:verify": "bash scripts/verify-slides.sh contents/templates/slides/example.md",
-    "slide:mcp:html": "marp contents/mcp-internal-presentation/slides/mcp-internal-presentation.md --html --theme contents/marp-themes/research.css --output dist/mcp-internal-presentation.html && node scripts/patch-marp-deck.mjs dist/mcp-internal-presentation.html",
+    "slide:mcp:html": "marp contents/mcp-internal-presentation/slides/mcp-internal-presentation.md --html --theme src/styles/marp-themes/research.css --output dist/mcp-internal-presentation.html && node scripts/patch-marp-deck.mjs dist/mcp-internal-presentation.html",
     "slide:mcp:verify": "bash scripts/verify-slides.sh contents/mcp-internal-presentation/slides/mcp-internal-presentation.md"
   },
   "dependencies": {

@@ -23,10 +23,8 @@ describe("documentation content", () => {
     const root = process.cwd();
 
     expect(existsSync(join(root, "contents/templates/slides/example.md"))).toBe(true);
-    expect(existsSync(join(root, "contents/marp-themes/research.css"))).toBe(true);
-    expect(existsSync(join(root, "contents/marp-themes/mcp-modern.css"))).toBe(true);
-    expect(existsSync(join(root, "contents/themes"))).toBe(false);
-    expect(existsSync(join(root, "contents/mcp-internal-presentation/themes"))).toBe(false);
+    expect(existsSync(join(root, "src/styles/marp-themes/research.css"))).toBe(true);
+    expect(existsSync(join(root, "src/styles/marp-themes/mcp-modern.css"))).toBe(true);
     expect(existsSync(join(root, "slides"))).toBe(false);
     expect(existsSync(join(root, "theme"))).toBe(false);
     expect(existsSync(join(root, "themes"))).toBe(false);

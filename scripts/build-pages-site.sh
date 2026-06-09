@@ -5,7 +5,7 @@ out_dir="${1:-site}"
 topic_dir="contents/mcp-internal-presentation"
 slide_dir="$topic_dir/slides"
 slide_src="$slide_dir/mcp-internal-presentation.md"
-theme_css="contents/marp-themes/research.css"
+theme_css="src/styles/marp-themes/research.css"
 
 rm -rf "$out_dir"
 
