@@ -373,9 +373,13 @@ section.lead p {
 section.compact {
   --slide-pad-inline: 72px;
   --slide-pad-bottom: 54px;
+  --slide-chapter-label-size: 13px;
+  --slide-chapter-label-top: 28px;
+  --slide-title-font-size: 36px;
+  --slide-title-line-height: 1.22;
   --slide-title-top: 58px;
   --slide-body-top: 112px;
-  --slide-title-height: 70px;
+  --slide-title-height: 74px;
   font-size: 24px;
   padding: var(--slide-body-top) var(--slide-pad-inline) var(--slide-pad-bottom);
   position: relative;
@@ -388,9 +392,13 @@ section.compact h2 {
 section.dense {
   --slide-pad-inline: 72px;
   --slide-pad-bottom: 54px;
+  --slide-chapter-label-size: 13px;
+  --slide-chapter-label-top: 28px;
+  --slide-title-font-size: 36px;
+  --slide-title-line-height: 1.22;
   --slide-title-top: 58px;
-  --slide-body-top: 106px;
-  --slide-title-height: 64px;
+  --slide-body-top: 112px;
+  --slide-title-height: 74px;
   font-size: 21px;
   padding: var(--slide-body-top) var(--slide-pad-inline) var(--slide-pad-bottom);
   position: relative;
@@ -483,9 +491,11 @@ section.rank td:nth-child(3) {
 
 section.compact > .chapter-label:first-child,
 section.dense > .chapter-label:first-child {
-  inset-block-start: 28px;
+  font-size: var(--slide-chapter-label-size);
+  inset-block-start: var(--slide-chapter-label-top);
   inset-inline-start: var(--slide-pad-inline);
   inline-size: max-content;
+  line-height: 1;
   margin: 0;
   max-inline-size: calc(100% - var(--slide-pad-inline) * 2);
   position: absolute;
@@ -495,8 +505,10 @@ section.compact > .chapter-label:first-child + h1,
 section.compact > .chapter-label:first-child + h2,
 section.dense > .chapter-label:first-child + h1,
 section.dense > .chapter-label:first-child + h2 {
+  font-size: var(--slide-title-font-size);
   inset-block-start: var(--slide-title-top);
   inset-inline: var(--slide-pad-inline);
+  line-height: var(--slide-title-line-height);
   margin: 0;
   max-block-size: var(--slide-title-height);
   overflow: clip;
