@@ -851,7 +851,7 @@ _class: section ch04
 
 # Remote MCPと複数Agent設定
 
-Claude接続、project/user/org設定を整理する
+localの便利ツールから、チームで共有する接続面へ進む
 
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -863,25 +863,18 @@ _class: compact ch04
 
 <p class="chapter-label">04 / Remote MCPと複数Agent設定</p>
 
-## ClaudeへRemote MCPを接続する全体像
+## Remote MCPで何が変わる？
 
-Remote MCPはcloud/service側で動くMCP serverをClaude Codeなどから使う形。
+local MCPは「手元のtoolをagentに渡す」形。Remote MCPは「共有serviceを認証付きでagentに渡す」形。
 
-```bash
-# OAuth/DCR対応serverならURLだけで登録できる。
-claude mcp add --transport http inventory https://mcp.example.com/mcp
+| 観点 | local stdio | Remote MCP |
+|---|---|---|
+| 置き場所 | userのmachineでprocess起動 | cloud / service側でserver運用 |
+| 主な用途 | local file、git、script、個人tool | SaaS、社内API、team共有tool |
+| 認証 | local credentialやprofileに寄りやすい | OAuth/token/scopeを明示して扱う |
+| 運用 | 個人設定が中心 | project/user/org設定を分ける |
 
-# bearer token運用ではheaderを明示する。
-claude mcp add --transport http inventory https://mcp.example.com/mcp \
-  --header "Authorization: Bearer $INVENTORY_MCP_TOKEN"
-
-# /mcpで認証状態、list/getで登録内容を確認する。
-/mcp
-claude mcp list
-claude mcp get inventory
-```
-
-productionではHTTPS、OAuth/token validation、rate limit、audit logを前提にする。
+ここから見るべきものは接続コマンドではなく、**誰の権限で共有serviceへ入るか**。
 
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -1218,7 +1211,7 @@ _class: section ch06
 
 # AWSケーススタディ
 
-Remote MCPをGateway/Identityで運用する
+Remote MCPの運用責務を、Gateway/Identityで具体化する
 
 <p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -1230,16 +1223,16 @@ _class: compact ch06
 
 <p class="chapter-label">06 / AWSケーススタディ</p>
 
-## AWS MCP / AgentCoreの位置づけ
+## なぜAWSを例に見るのか
 
-AWS MCP ServerはGA済みのAWS公式MCP入口として、AWS API/knowledge/architecture guidanceをagentに接続する。
+ここはAWS製品紹介ではなく、Remote MCPをproductionで使うと増える責務を見る章。
 
-- AWSサービス操作やknowledge lookupをagent workflowへ入れやすい
-- IAM、region、profile、least privilegeの設計が重要
-- 個人開発ではlocal config、組織ではapproved server + policyで管理する
-- Agent Toolkit for AWSではskillsやMCP serverを組み合わせて開発体験を作れる
+- **Gateway**: MCP endpoint、tool catalog、target routingをまとめる
+- **Identity**: user委任、token、credential境界を扱う
+- **Target**: OpenAPI、Lambda、既存MCP server、AWS serviceへつなぐ
+- **Operation**: IAM、region、least privilege、audit、monitoringを入れる
 
-AWS系は権限が強いので、read-onlyから始め、write系は承認を必須にする。
+AWSの例で覚えることは、特定サービス名ではなく、**Remote MCPを運用単位へ分解する見方**。
 
 <p class="source-note">出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
@@ -1312,7 +1305,29 @@ _class: section ch07
 
 # 開発ワークフローで使うMCP
 
-Figma、Frontend操作、ブラウザMCP、Serenaを位置づける
+具体ツール名ではなく、開発タスクごとの接続面として見る
+
+<p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
+
+---
+
+<!--
+_class: compact ch07
+-->
+
+<p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
+
+## 具体MCPは3分類で見る
+
+ここからはtool名の暗記ではなく、**どの作業面をagentに渡すか**で分類する。
+
+| 作業面 | 見たいもの | 代表例 |
+|---|---|---|
+| backend / service | issue、CI、docs、AWS、DB、社内API | GitHub MCP、AWS MCP、Context7 |
+| live browser / frontend | DOM、session、console、network、実ブラウザ状態 | WebMCP、Playwright MCP、Chrome DevTools MCP |
+| design / code context | design node、component、symbol、references | Figma MCP、Serena |
+
+細かいMCPは、分類してから必要なものだけ選ぶ。
 
 <p class="source-note">出典: <a href="../../../research/mcp-slide-research/">調査メモ</a>; <a href="../../../sources/mcp-source-links/">参照リンク</a></p>
 
