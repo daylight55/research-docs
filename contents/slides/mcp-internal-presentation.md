@@ -1049,6 +1049,7 @@ _class: compact visual ch05
 </div>
 
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization">MCP authorization</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
 ---
 
 <!--
@@ -1258,6 +1259,7 @@ _class: compact visual ch06
 </div>
 
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>; <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-behalf-of-token-exchange.html">AgentCore Identity</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
 ---
 
 <!--
@@ -1330,6 +1332,7 @@ _class: compact visual ch07
 </div>
 
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://developer.chrome.com/docs/ai/webmcp">Chrome WebMCP</a>; <a href="https://developer.chrome.com/docs/ai/webmcp/compare-mcp">WebMCP comparison</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
 ---
 
 <!--
@@ -1541,6 +1544,7 @@ _class: compact visual ch08
 </div>
 
 <p class="source-note">画像: CodexでSVG化; 出典: <a href="https://www.anthropic.com/engineering/advanced-tool-use">Anthropic advanced tool use</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/tools">MCP tools</a>; <a href="https://modelcontextprotocol.io/specification/2025-11-25/server/resources">MCP resources</a>; <a href="../../../research/mcp-late-slide-diagrams/">図解メモ</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
+
 ---
 
 <!--

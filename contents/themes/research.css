@@ -674,6 +674,17 @@ section.visual .generated-visual {
   gap: 12px;
 }
 
+section.compact:not(.visual) .visual-hero,
+section.dense:not(.visual) .visual-hero {
+  justify-items: center;
+}
+
+section.compact:not(.visual) .visual-hero .generated-visual,
+section.dense:not(.visual) .visual-hero .generated-visual {
+  inline-size: min(100%, 1000px);
+  max-block-size: 560px;
+}
+
 .visual-note-grid {
   display: grid;
   gap: 10px;
