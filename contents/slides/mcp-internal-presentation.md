@@ -646,7 +646,7 @@ _class: compact ch03
 
 ## 既存APIをMCP化する流れ
 
-<img class="diagram" src="diagrams/mcp-api-adapter-flow.svg" alt="Existing API to MCP adapter flow" />
+<img class="diagram diagram-wide-flow" src="diagrams/mcp-api-adapter-flow.svg" alt="Existing API to MCP adapter flow" />
 
 既存APIをsource of truthにし、MCP serverは公開範囲、description、schema、出力制限を担うadapterにする。
 
@@ -1008,7 +1008,7 @@ _class: dense ch05
 
 ## Remote MCPの接続フロー
 
-<img class="diagram" src="diagrams/mcp-remote-auth-flow.svg" alt="Remote MCP OAuth connection flow" />
+<img class="diagram diagram-sequence" src="diagrams/mcp-remote-auth-flow.svg" alt="Remote MCP OAuth connection flow" />
 
 <p class="source-note">出典: <a href="https://code.claude.com/docs/en/mcp">Claude Code MCP</a>; <a href="https://code.visualstudio.com/docs/agent-customization/mcp-servers">VS Code MCP</a>; <a href="https://docs.cursor.com/context/model-context-protocol">Cursor MCP</a>; <a href="https://microsoft.github.io/apm/">Microsoft APM</a>; <a href="../../../research/mcp-slide-research/">調査メモ</a></p>
 
