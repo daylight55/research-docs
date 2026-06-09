@@ -64,8 +64,9 @@ function buildToc(headings: MarkdownHeading[]) {
 
   let activeTocSlug = null;
   let followTimeout = 0;
+  const followDelayMs = 48;
 
-  function followActiveTocLink(link, delay = 140) {
+  function followActiveTocLink(link, delay = followDelayMs) {
     if (!(tocContainer instanceof HTMLElement)) return;
 
     window.clearTimeout(followTimeout);
