@@ -40,6 +40,7 @@ Rules:
 - Titles should be short noun phrases or claims. Avoid colons in slide titles.
 - Use full-width Japanese punctuation sparingly. Avoid exclamation marks and decorative emoji.
 - Keep bullets to 3-5 items. If there are more, switch to a grid, matrix, or timeline.
+- For tables whose first column is only `順番`, `step`, or another short index, add `table-narrow-first` to the slide `_class`.
 
 ## Layout Patterns
 
