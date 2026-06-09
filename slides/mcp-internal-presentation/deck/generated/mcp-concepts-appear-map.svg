@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1536" height="864" viewBox="0 0 1536 864" role="img" aria-labelledby="title desc">
-  <title id="title">MCP concepts appear map</title>
-  <desc id="desc">Overview showing where Tool Resource Prompt Protocol and Transport appear in an MCP connection between host client and server.</desc>
+  <title id="title">MCP publication and communication surfaces</title>
+  <desc id="desc">Overview explaining MCP as a server publication surface and a client server communication surface.</desc>
   <defs>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
       <path d="M2 2 L10 6 L2 10 Z" fill="#1b4565"/>
@@ -29,8 +29,8 @@
     </style>
   </defs>
   <rect width="1536" height="864" fill="#f6f8fb"/>
-  <text x="88" y="84" class="title">これから出る用語が登場する場所</text>
-  <text x="88" y="124" class="subtitle">Tool / Resource / Promptはserverが公開するもの。Protocol / Transportはclientとserverの会話を成立させるもの。</text>
+  <text x="88" y="84" class="title">MCPは公開面と通信面を分けて見る</text>
+  <text x="88" y="124" class="subtitle">Serverはagentに使わせる能力を整え、ClientとServerは共通のmessage手順でやり取りする。</text>
 
   <rect class="zone host" x="92" y="190" width="360" height="420" rx="18"/>
   <text x="132" y="242" class="label">Host</text>
@@ -44,10 +44,10 @@
 
   <rect class="zone server" x="1084" y="190" width="360" height="420" rx="18"/>
   <text x="1124" y="242" class="label">MCP Server</text>
-  <text x="1124" y="276" class="small">外部systemをagent向けに公開</text>
+  <text x="1124" y="276" class="small">外部systemをagent向けに整える</text>
 
   <rect class="zone catalog" x="1124" y="322" width="280" height="220" rx="14"/>
-  <text x="1156" y="366" class="label">公開するピース</text>
+  <text x="1156" y="366" class="label">公開面</text>
 
   <rect x="1158" y="394" width="214" height="38" rx="19" fill="#eaf5f4" stroke="#2f9c95"/>
   <text x="1178" y="420" class="small">Tool: 実行するaction</text>
@@ -61,7 +61,7 @@
   <text x="1156" y="636" class="tiny">serverの裏側にある実体</text>
 
   <rect class="lane" x="514" y="286" width="508" height="238" rx="18"/>
-  <text x="556" y="338" class="label">Client と Server の会話</text>
+  <text x="556" y="338" class="label">通信面</text>
   <text x="556" y="380" class="callout">Protocol</text>
   <text x="690" y="380" class="small">messageの形と順序</text>
   <text x="556" y="423" class="mono">initialize -> tools/list -> tools/call</text>
@@ -79,18 +79,18 @@
   <rect x="110" y="674" width="405" height="84" rx="14" fill="#ffffff" stroke="#d9e2ec"/>
   <circle cx="148" cy="716" r="18" fill="#2f9c95"/>
   <text x="142" y="723" class="badge">1</text>
-  <text x="182" y="708" class="small">まずserverが何を公開するかを見る</text>
-  <text x="182" y="738" class="tiny">次のスライド: Tool / Resource / Prompt</text>
+  <text x="182" y="708" class="small">公開面</text>
+  <text x="182" y="738" class="tiny">agentに見せる能力を設計する</text>
 
   <rect x="570" y="674" width="405" height="84" rx="14" fill="#ffffff" stroke="#d9e2ec"/>
   <circle cx="608" cy="716" r="18" fill="#1b4565"/>
   <text x="602" y="723" class="badge">2</text>
-  <text x="642" y="708" class="small">次にmessageをどう運ぶかを見る</text>
-  <text x="642" y="738" class="tiny">次々のスライド: Protocol / Transport</text>
+  <text x="642" y="708" class="small">通信面</text>
+  <text x="642" y="738" class="tiny">messageの形と運び方を揃える</text>
 
   <rect x="1030" y="674" width="405" height="84" rx="14" fill="#ffffff" stroke="#d9e2ec"/>
   <circle cx="1068" cy="716" r="18" fill="#c98220"/>
   <text x="1062" y="723" class="badge">3</text>
-  <text x="1102" y="708" class="small">最後に1回の呼び出しへつなげる</text>
-  <text x="1102" y="738" class="tiny">後のスライド: tools/call と承認</text>
+  <text x="1102" y="708" class="small">実行面</text>
+  <text x="1102" y="738" class="tiny">承認後にbackendへ安全につなぐ</text>
 </svg>

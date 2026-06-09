@@ -561,14 +561,14 @@ Source: <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Mod
 <li>GitHub MCP Server、Chrome DevTools MCP、社内Inventory MCPなどがServer。</li>
 </ul>
 <p>この分離により、GitHub MCP serverはSlack MCP serverのデータを勝手に読めない。各serverは「自分に渡された入力」と「自分が持つ権限」の範囲でだけ動く。これは実装上の都合ではなく、MCPのセキュリティ境界である。</p>
-<h4 id="用語が登場する場所"><a href="#用語が登場する場所">用語が登場する場所</a></h4>
-<p>初学者には、Tool / Resource / PromptやProtocol / Transportを個別定義で並べる前に、それらがMCP接続のどこに出るかを見せる必要がある。用語の位置関係は次のように整理できる。</p>
+<h4 id="mcpを公開面と通信面で見る"><a href="#mcpを公開面と通信面で見る">MCPを公開面と通信面で見る</a></h4>
+<p>初学者には、Tool / Resource / PromptやProtocol / Transportを個別定義で並べる前に、MCPを「公開面」と「通信面」に分けて見せる必要がある。これは用語案内ではなく、MCP全体を理解するための上位概念である。</p>
 <ul>
-<li>Tool / Resource / Prompt: MCP ServerがHost/Clientへ公開するcapability catalog。何ができるか、何を読めるか、どの手順を再利用できるかを表す。</li>
-<li>Protocol: ClientとServerがやり取りするmessageの形と順序。<code>initialize</code>、<code>tools/list</code>、<code>tools/call</code>などがここに入る。</li>
-<li>Transport: そのProtocol messageを実際に運ぶ経路。localならstdio、remoteならStreamable HTTPが代表例。</li>
+<li>公開面: MCP ServerがHost/Clientへ公開するcapability catalog。何ができるか、何を読めるか、どの手順を再利用できるかを表す。</li>
+<li>通信面: ClientとServerが共通のmessage手順で会話する面。<code>initialize</code>、<code>tools/list</code>、<code>tools/call</code>などのProtocolと、それを運ぶstdio/Streamable HTTPなどのTransportがここに入る。</li>
+<li>実行面: 承認やscopeの確認を経て、MCP Serverがbackend API、DB、SaaSなどへ接続する面。</li>
 </ul>
-<p>この順番で見せると、「serverが何を公開するか」と「client/serverがどう会話するか」を混同しにくい。</p>
+<p>この上位概念を先に置くと、その後のTool / Resource / PromptやProtocol / Transportの説明が、個別用語の暗記ではなく「MCPのどの面を詳しく見ているのか」として理解しやすくなる。</p>
 <h3 id="5-主要概念"><a href="#5-主要概念">5. 主要概念</a></h3>
 <p>Server側primitive:</p>
 <ul>
