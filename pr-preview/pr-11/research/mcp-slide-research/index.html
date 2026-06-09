@@ -945,7 +945,9 @@ Source: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/
 <p>MCPを初めて見ると、「なぜLLMが<code>tools/call</code>のJSON-RPCを正しく書けるのか」と見えがちである。しかし実際には、LLMがMCP protocolを直接喋っているとは限らない。多くのhostでは、LLMはprovider固有のtool call形式で<code>name</code>と<code>arguments</code>を出し、host/clientがそれをMCP <code>tools/call</code>へ変換する。</p>
 <p><img alt="MCP tool call generation flow" loading="lazy" decoding="async" width="1280" height="520" src="/research-docs/pr-preview/pr-11/_astro/mcp-tool-call-generation-flow.B7lX7wM3_ZgVqJe.svg" srcset=""></p>
 <p>Mermaid source: <a href="../slides/diagrams/mcp-tool-call-generation-flow.mmd"><code>mcp-tool-call-generation-flow.mmd</code></a></p>
-<p>この仕組みは4つの層に分けると理解しやすい。</p>
+<p>この仕組みを踏まえると、「MCP接続にLLM専用fine-tuningは必要か」への答えは次のようになる。</p>
+<p><strong>結論: 通常は不要。</strong> MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ渡し、modelがtool callを生成し、hostがMCP <code>tools/call</code>へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。</p>
+<p>ただし、tool/function calling自体の精度を高めるfine-tuningや学習は存在する。つまり、問題は「MCPに接続するためのfine-tuning」ではなく、「多数のtoolから正しく選び、schemaに沿った引数を出す能力をどう高めるか」である。</p>
 
 
 
@@ -976,50 +978,9 @@ Source: <a href="https://modelcontextprotocol.io/specification/2025-11-25/basic/
 
 
 
-<table><thead><tr><th>層</th><th>役割</th><th>開発者が設計するもの</th></tr></thead><tbody><tr><td>Protocol layer</td><td>MCPの<code>initialize</code>、<code>tools/list</code>、<code>tools/call</code>、transport、auth</td><td>server SDK、JSON-RPC lifecycle、HTTP/stdio、auth</td></tr><tr><td>Host adapter layer</td><td>MCP tool metadataをOpenAI/Anthropic/Geminiなどのtool schemaへ変換する</td><td>client互換性、tool allowlist、approval、retry</td></tr><tr><td>Model behavior layer</td><td>user requestとtool定義を読み、使うtoolとargumentsを生成する</td><td>name、description、inputSchema、examples、result設計</td></tr><tr><td>Runtime enforcement layer</td><td>schema違反や危険操作を抑える</td><td>strict schema、validation、human approval、policy</td></tr></tbody></table>
-<p>公開情報から見えるprovider側の工夫:</p>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<table><thead><tr><th>工夫</th><th>何をしているか</th><th>MCP設計への示唆</th></tr></thead><tbody><tr><td>Tool定義のcontext注入</td><td>OpenAIはfunction定義がmodel入力tokenに入り、Anthropicはtool定義からspecial system promptを構築すると説明している。</td><td>tool descriptionはdocsではなくmodel向けUIとして書く。</td></tr><tr><td>Tool-use training / post-training</td><td>modelがtool call形式、schema、複数step、拒否を学ぶ。Open modelではfunction calling dataでfine-tuningする例がある。</td><td>自社MCP server側はprovider modelの学習を前提にしすぎず、既存のtool calling能力で扱いやすいsurfaceにする。</td></tr><tr><td>Structured Outputs / strict tools</td><td>schema遵守を高める。OpenAIはschema理解のtrainingとconstrained decodingの組み合わせを説明している。</td><td><code>inputSchema</code>と<code>outputSchema</code>を曖昧にしない。<code>enum</code>、範囲、<code>additionalProperties: false</code>を使う。</td></tr><tr><td>Tool search / deferred loading</td><td>全toolを常時contextに入れず、必要なtoolだけを探して読み込む。</td><td>大量toolを1 serverに詰め込む場合、catalog分割、semantic routing、tool searchを検討する。</td></tr><tr><td>Programmatic tool calling</td><td>modelがcodeでtool orchestrationを書き、途中結果をmodel contextへ戻しすぎない。</td><td>大量データ処理はtool内部またはsandboxed runtimeで集約し、LLMには要約とstable IDを返す。</td></tr><tr><td>Tool-use examples</td><td>JSON Schemaだけでは使い方の慣習が伝わらないため、examplesで複雑な引数関係を示す。</td><td>複雑な社内APIではdescriptionだけでなく例、失敗条件、使い分けを書く。</td></tr></tbody></table>
-<p>したがって「fine-tuningが必要か」という問いへの実務的な答えは、次の順になる。</p>
+<table><thead><tr><th>レイヤー</th><th>誰が担うか</th><th>MCP server開発者の設計対象</th></tr></thead><tbody><tr><td>MCP protocol</td><td>host/client/server SDK</td><td>JSON-RPC lifecycle、transport、auth、schema validation</td></tr><tr><td>tool metadata</td><td>MCP server</td><td>name、description、inputSchema、outputSchema、annotations</td></tr><tr><td>tool call generation</td><td>LLM + host/model API</td><td>provider固有のtool/function calling能力</td></tr><tr><td>model tuning</td><td>model providerまたはmodel owner</td><td>tool選択精度、schema遵守、multi-tool planning</td></tr></tbody></table>
+<p>社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。</p>
+<p>実務上の順序は次の通り。</p>
 <ol>
 <li>MCP serverを正しく実装する。</li>
 <li>tool名、description、schema、output、errorを設計する。</li>

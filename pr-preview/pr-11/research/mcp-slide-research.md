@@ -687,27 +687,22 @@ MCPを初めて見ると、「なぜLLMが`tools/call`のJSON-RPCを正しく書
 
 Mermaid source: [`mcp-tool-call-generation-flow.mmd`](../slides/diagrams/mcp-tool-call-generation-flow.mmd)
 
-この仕組みは4つの層に分けると理解しやすい。
+この仕組みを踏まえると、「MCP接続にLLM専用fine-tuningは必要か」への答えは次のようになる。
 
-| 層 | 役割 | 開発者が設計するもの |
+**結論: 通常は不要。** MCP接続に必要なのは、MCP client/hostがtool metadataをmodel providerのtool/function calling形式へ渡し、modelがtool callを生成し、hostがMCP `tools/call`へ変換すること。公開情報上、MCP専用のLLM fine-tuning要件はない。
+
+ただし、tool/function calling自体の精度を高めるfine-tuningや学習は存在する。つまり、問題は「MCPに接続するためのfine-tuning」ではなく、「多数のtoolから正しく選び、schemaに沿った引数を出す能力をどう高めるか」である。
+
+| レイヤー | 誰が担うか | MCP server開発者の設計対象 |
 |---|---|---|
-| Protocol layer | MCPの`initialize`、`tools/list`、`tools/call`、transport、auth | server SDK、JSON-RPC lifecycle、HTTP/stdio、auth |
-| Host adapter layer | MCP tool metadataをOpenAI/Anthropic/Geminiなどのtool schemaへ変換する | client互換性、tool allowlist、approval、retry |
-| Model behavior layer | user requestとtool定義を読み、使うtoolとargumentsを生成する | name、description、inputSchema、examples、result設計 |
-| Runtime enforcement layer | schema違反や危険操作を抑える | strict schema、validation、human approval、policy |
+| MCP protocol | host/client/server SDK | JSON-RPC lifecycle、transport、auth、schema validation |
+| tool metadata | MCP server | name、description、inputSchema、outputSchema、annotations |
+| tool call generation | LLM + host/model API | provider固有のtool/function calling能力 |
+| model tuning | model providerまたはmodel owner | tool選択精度、schema遵守、multi-tool planning |
 
-公開情報から見えるprovider側の工夫:
+社内APIをMCP化する場合、最初にやるべきことはmodel fine-tuningではなく、既存APIをagent-friendlyなtool catalogへ再設計すること。toolが曖昧、過大、危険、出力が巨大な場合、fine-tuningより先にinterface設計を直す方が効果が高い。
 
-| 工夫 | 何をしているか | MCP設計への示唆 |
-|---|---|---|
-| Tool定義のcontext注入 | OpenAIはfunction定義がmodel入力tokenに入り、Anthropicはtool定義からspecial system promptを構築すると説明している。 | tool descriptionはdocsではなくmodel向けUIとして書く。 |
-| Tool-use training / post-training | modelがtool call形式、schema、複数step、拒否を学ぶ。Open modelではfunction calling dataでfine-tuningする例がある。 | 自社MCP server側はprovider modelの学習を前提にしすぎず、既存のtool calling能力で扱いやすいsurfaceにする。 |
-| Structured Outputs / strict tools | schema遵守を高める。OpenAIはschema理解のtrainingとconstrained decodingの組み合わせを説明している。 | `inputSchema`と`outputSchema`を曖昧にしない。`enum`、範囲、`additionalProperties: false`を使う。 |
-| Tool search / deferred loading | 全toolを常時contextに入れず、必要なtoolだけを探して読み込む。 | 大量toolを1 serverに詰め込む場合、catalog分割、semantic routing、tool searchを検討する。 |
-| Programmatic tool calling | modelがcodeでtool orchestrationを書き、途中結果をmodel contextへ戻しすぎない。 | 大量データ処理はtool内部またはsandboxed runtimeで集約し、LLMには要約とstable IDを返す。 |
-| Tool-use examples | JSON Schemaだけでは使い方の慣習が伝わらないため、examplesで複雑な引数関係を示す。 | 複雑な社内APIではdescriptionだけでなく例、失敗条件、使い分けを書く。 |
-
-したがって「fine-tuningが必要か」という問いへの実務的な答えは、次の順になる。
+実務上の順序は次の通り。
 
 1. MCP serverを正しく実装する。
 2. tool名、description、schema、output、errorを設計する。
