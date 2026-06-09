@@ -610,6 +610,7 @@ td,
 th {
   border-color: var(--rd-soft);
   padding: 0.42em 0.55em;
+  text-align: center;
   vertical-align: top;
 }
 
