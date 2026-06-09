@@ -50,6 +50,8 @@ _class: compact visual ch00
 
 ## LLMが外部systemへ出る入口
 
+<p class="lead">LLMはHostの境界内で判断し、外部systemにはMCPの契約を通じて届く。</p>
+
 <div class="visual-hero">
   <img class="generated-visual" src="generated/llm-to-external-systems.svg" alt="Host boundary, LLM, MCP connection contract, and external systems with explanatory labels" />
 </div>
@@ -236,6 +238,8 @@ _class: compact ch01
 
 ## Host / Client / Serverとは？
 
+<p class="lead">Host、MCP Client、MCP Server、Backendは同じものではなく、責務の境界が違う。</p>
+
 <div class="visual-hero">
   <img class="generated-visual" src="generated/mcp-boundary-zones.svg" alt="User, Host, MCP Client, MCP Server, and Backend responsibilities with Japanese labels" />
 </div>
@@ -251,6 +255,8 @@ _class: compact visual ch01
 <p class="chapter-label">01 / 基本概念</p>
 
 ## MCPの公開面と通信面
+
+<p class="lead">Tool、Resource、Promptはserverが公開する面に、Protocol、Transportはclient/serverが会話する面に出てくる。</p>
 
 <div class="visual-hero">
   <img class="generated-visual" src="generated/mcp-concepts-appear-map.svg" alt="MCP has a server publication surface and a client server communication surface" />
@@ -358,6 +364,8 @@ _class: dense ch01
 <p class="chapter-label">01 / 基本概念</p>
 
 ## SkillsとMCPの違い
+
+<p class="lead">Skillはagentの進め方を固定し、MCPは外部data/actionへの入口を渡す。</p>
 
 <div class="visual-hero">
   <img class="generated-visual" src="generated/skill-mcp-layers.svg" alt="Agent Skill as how to proceed and MCP Server as what to access or execute" />
@@ -992,6 +1000,8 @@ _class: compact visual ch05
 
 ## 認証付きRemote MCPの全体構成
 
+<p class="lead">OAuth tokenでRemote MCP serverへ入り、backend APIは別の実行境界として扱う。</p>
+
 <div class="visual-hero">
   <img class="generated-visual" src="generated/authenticated-remote-mcp-architecture.svg" alt="Authenticated Remote MCP architecture with host authorization server remote MCP server and backend API" />
 </div>
@@ -1043,6 +1053,8 @@ _class: compact visual ch05
 <p class="chapter-label">05 / Protocol / Auth / JSON-RPC</p>
 
 ## Remote authで覚える3点
+
+<p class="lead">難所はJSON-RPCではなく、権限の持ち主、scope、tokenの宛先を壊さないこと。</p>
 
 <div class="visual-hero">
   <img class="generated-visual" src="generated/remote-auth-boundary.svg" alt="Remote MCP authorization boundary with authority scope and token audience" />
@@ -1145,6 +1157,8 @@ _class: dense ch05
 
 ## Q. tool callのテキストはどう生成される？
 
+<p class="lead">tool callは自然文ではなく、modelが生成した構造化出力をHostが解釈して実行する。</p>
+
 <div class="visual-hero">
   <img class="generated-visual" src="generated/tool-call-text-generation.svg" alt="Tool call is generated as structured model output then executed by host" />
 </div>
@@ -1239,6 +1253,8 @@ _class: compact ch06
 
 ## AWSでRemote MCPを構築する構成
 
+<p class="lead">AgentCore GatewayをRemote MCP入口にし、Identityで委任tokenとcredential境界を扱う。</p>
+
 <div class="visual-hero">
   <img class="generated-visual" src="generated/aws-agentcore-remote-mcp-architecture.svg" alt="AWS AgentCore Remote MCP architecture with Gateway Identity targets and backend services" />
 </div>
@@ -1253,6 +1269,8 @@ _class: compact visual ch06
 <p class="chapter-label">06 / AWSケーススタディ</p>
 
 ## GatewayとIdentityが補うもの
+
+<p class="lead">GatewayはMCPとして見せる入口、Identityはdownstreamへ渡すcredentialを補う。</p>
 
 <div class="visual-hero">
   <img class="generated-visual" src="generated/agentcore-gateway-identity-map.svg" alt="AgentCore Gateway and Identity responsibility map" />
@@ -1326,6 +1344,8 @@ _class: compact visual ch07
 <p class="chapter-label">07 / 開発ワークフローで使うMCP</p>
 
 ## WebMCPとは何を読む仕組みか
+
+<p class="lead">Backend MCPではなく、いま開いているWeb UIのDOMやsessionをagent-readableにする接続面。</p>
 
 <div class="visual-hero">
   <img class="generated-visual" src="generated/webmcp-surface-map.svg" alt="WebMCP surface map compared with backend MCP and Browser MCP" />
@@ -1538,6 +1558,8 @@ _class: compact visual ch08
 <p class="chapter-label">08 / ガバナンスと導入</p>
 
 ## コンテキスト効率を意識したMCP設計
+
+<p class="lead">agentに必要なのは全データではなく、次の判断に十分な最小context。</p>
 
 <div class="visual-hero">
   <img class="generated-visual" src="generated/context-efficiency-pipeline.svg" alt="Context efficient MCP design pipeline from search to detail to summary" />

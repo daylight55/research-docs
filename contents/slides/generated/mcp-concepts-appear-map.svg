@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="864" viewBox="0 0 1536 864" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1536" height="700" viewBox="0 100 1536 700" role="img" aria-labelledby="title desc">
   <title id="title">MCP publication and communication surfaces</title>
   <desc id="desc">Overview explaining MCP as a server publication surface and a client server communication surface.</desc>
   <defs>
@@ -28,8 +28,7 @@
       .amberText{fill:#c98220}
     </style>
   </defs>
-  <rect width="1536" height="864" fill="#f6f8fb"/>
-  <text x="88" y="84" class="title">MCPは公開面と通信面を分けて見る</text>
+  
   <text x="88" y="124" class="subtitle">Serverはagentに使わせる能力を整え、ClientとServerは共通のmessage手順でやり取りする。</text>
 
   <rect class="zone host" x="92" y="190" width="360" height="420" rx="18"/>
