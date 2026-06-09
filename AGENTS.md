@@ -47,6 +47,22 @@ The style guide's core rule is: "1スライド1メッセージに絞る". It als
 
 Use existing classes and patterns from the theme. Do not invent one-off inline colors, spacing systems, or decorative layouts. If a slide feels cramped, the style guide says to reduce gaps, convert long lists to grids, move source details to captions, or split the slide.
 
+## Slide Image Generation Workflow
+
+Before generating or revising slide images, use `.agents/skills/slide-image-prompting/SKILL.md`.
+
+Do not generate an image first and then fit the slide around it. The required order is:
+
+1. Write the slide title, lead text, body text, caption, and source note first.
+2. Decide whether the concept actually needs a visual.
+3. Compare three layout/content-density patterns: diagram-heavy, balanced, and text-led.
+4. Choose the slide layout and image frame.
+5. Generate or draw the image to maximize that exact frame.
+6. Keep slide headings, prose explanations, footers, and source notes outside the image.
+7. Render the deck and inspect screenshots for centering, margins, duplicated text, and readability.
+
+For concept diagrams and architecture visuals, the image should contain only the visual relationship: nodes, arrows, boundaries, short labels, and necessary icons. If a generated image contains a slide title, subtitle, paragraph explanation, source note, or visible white image-box margins, revise the asset or layout before treating the slide as done.
+
 ## Commands
 
 Use these commands from the repository root:
@@ -74,7 +90,7 @@ Use these local skills when applicable:
 - `.agents/skills/slide-style-research-docs/SKILL.md`: style and structure guidance for Marp decks
 - `.agents/skills/slide-layout-fix/SKILL.md`: render and screenshot verification workflow
 - `.agents/skills/beginner-slide-reviewer/SKILL.md`: beginner-audience review for slide order, missing premises, abstract wording, and information overload
-- `.agents/skills/slide-image-prompting/SKILL.md`: slide-native image prompt guidance, including how to avoid generic AI-looking visuals and how to place exact text inside final image assets
+- `.agents/skills/slide-image-prompting/SKILL.md`: slide image workflow guidance: draft slide text first, compare three layout/content-density options, choose the image frame, then generate a frame-fit visual without duplicated headings or prose
 
 For MCP presentation work, keep this framing explicit:
 
