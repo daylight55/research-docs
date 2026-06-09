@@ -412,6 +412,21 @@ section.dense pre {
   font-size: 0.72em;
 }
 
+section.compact:has(> table),
+section.dense:has(> table) {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+section.compact:has(> table) > p:not(.chapter-label, .source-note),
+section.dense:has(> table) > p:not(.chapter-label, .source-note) {
+  margin-inline: auto;
+  max-inline-size: 100%;
+  text-align: center;
+}
+
 section.graph {
   font-size: 22px;
 }
@@ -576,11 +591,13 @@ table {
   border-spacing: 0;
   box-shadow: var(--rd-shadow);
   display: table;
-  font-size: 0.72em;
-  inline-size: max-content;
+  font-size: 0.76em;
+  inline-size: 100%;
+  margin-inline: auto;
   max-inline-size: 100%;
   overflow: hidden;
-  width: max-content;
+  table-layout: fixed;
+  width: 100%;
 }
 
 th {
@@ -593,6 +610,7 @@ td,
 th {
   border-color: var(--rd-soft);
   padding: 0.42em 0.55em;
+  vertical-align: top;
 }
 
 .token-bars {
