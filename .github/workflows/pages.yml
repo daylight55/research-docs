@@ -38,8 +38,8 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: pages-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: pages-deploy
+  queue: max
 
 jobs:
   pages:
