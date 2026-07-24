@@ -123,4 +123,4 @@ The Astro site renders every Markdown file under `contents/<topic-id>/{overview,
 
 The Pages build also copies each source Markdown file to the same public path with its `.md` extension and emits `/llms.txt` for crawl discovery.
 
-The GitHub Pages workflow deploys `main` to the root site and publishes pull request previews under `pr-preview/pr-<PR_NUMBER>/`. GitHub Pages must be enabled for the repository with `gh-pages` as the source branch and `/` as the source path. If Pages is unavailable for the repository visibility/plan, the workflow still uploads the built site as an Actions artifact.
+The GitHub Pages workflow deploys `main` to the root site and publishes pull request previews under `pr-preview/pr-<PR_NUMBER>/`. GitHub Pages must be enabled for the repository with `gh-pages` as the source branch and `/` as the source path. Deployments share one queue and wait for the corresponding Pages build to finish before the next `gh-pages` update starts, preventing a newer deployment from cancelling one that is still in progress. After a successful publication, the workflow deletes the temporary `github-pages` artifact.
