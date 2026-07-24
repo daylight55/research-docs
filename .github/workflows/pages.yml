@@ -33,6 +33,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   deployments: write
   pages: read
@@ -91,6 +92,7 @@ jobs:
           commit-message: Deploy GitHub Pages site for ${{ github.sha }}
 
       - name: Wait for main site deployment
+        id: wait-main
         if: github.event_name != 'pull_request' && steps.deploy-main.outputs.deployment-status != 'failed'
         uses: actions/github-script@v9
         with:
@@ -135,6 +137,7 @@ jobs:
             core.setFailed(`Timed out waiting for Pages build for ${targetSha}`);
 
       - name: Deploy pull request preview
+        id: deploy-preview
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: rossjrw/pr-preview-action@v1
         with:
@@ -145,3 +148,39 @@ jobs:
           wait-for-pages-deployment: true
           comment: true
           qr-code: false
+
+      - name: Delete published Pages artifact
+        if: |
+          always() &&
+          (
+            (github.event_name != 'pull_request' && steps.wait-main.outcome == 'success') ||
+            (github.event_name == 'pull_request' && steps.deploy-preview.outcome == 'success')
+          )
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: branch } = await github.rest.git.getRef({
+              owner,
+              repo,
+              ref: "heads/gh-pages",
+            });
+            const targetSha = branch.object.sha;
+            const { data } = await github.rest.actions.listArtifactsForRepo({
+              owner,
+              repo,
+              name: "github-pages",
+              per_page: 100,
+            });
+            const publishedArtifacts = data.artifacts.filter(
+              ({ workflow_run: run }) => run?.head_sha === targetSha,
+            );
+
+            for (const artifact of publishedArtifacts) {
+              await github.rest.actions.deleteArtifact({
+                owner,
+                repo,
+                artifact_id: artifact.id,
+              });
+              core.info(`Deleted published artifact ${artifact.id}`);
+            }

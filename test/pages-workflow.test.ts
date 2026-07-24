@@ -28,4 +28,11 @@ describe("GitHub Pages workflow", () => {
     );
     expect(workflow).toContain("wait-for-pages-deployment: true");
   });
+
+  it("deletes the temporary Pages artifact after publication", () => {
+    expect(workflow).toContain("actions: write");
+    expect(workflow).toContain("Delete published Pages artifact");
+    expect(workflow).toContain("listArtifactsForRepo");
+    expect(workflow).toContain("deleteArtifact");
+  });
 });
