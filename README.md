@@ -1,6 +1,13 @@
 # research-docs
 調べ物まとめ
 
+## 男性の乳首をめぐる研究
+
+- [調査トピック](./contents/male-nipples/overview/male-nipples.md)
+- [男の乳首はなぜ存在するのか](./contents/male-nipples/research/why-men-have-nipples.md): 発生、進化、数理モデル、文化と哲学をつなぐ総合記事。
+- [男の乳首に、そこまでこだわる？](./contents/male-nipples/research/male-nipples-in-art.md): 古代彫刻から写真、現代美術までの具体例をたどる記事。
+- [出典リンク集](./contents/male-nipples/sources/male-nipples-source-links.md): 論文、作品記録、作家の発言など33資料の確認範囲と参照先。
+
 ## Site structure
 
 サイト構成は「調査トピック」を親にして、その配下に overview / slides / research notes / source links / research tasks などを置く。

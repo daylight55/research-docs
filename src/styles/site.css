@@ -535,6 +535,40 @@ h1 {
   overflow-wrap: anywhere;
 }
 
+.document-article .equation {
+  background: var(--bg);
+  border-inline-start: 3px solid var(--accent);
+  margin-block: 1.5rem;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.document-article math {
+  font-size: 1.15em;
+}
+
+.document-article .citations {
+  font-size: 0.75em;
+  margin-inline-start: 0.25em;
+}
+
+.document-article .citations a + a {
+  margin-inline-start: 0.2em;
+}
+
+.document-article .ref-note,
+.document-article figcaption {
+  color: var(--muted);
+  font-size: 0.9em;
+  line-height: 1.75;
+}
+
+.document-article .ref-note {
+  display: block;
+  margin-block-end: 0.7rem;
+}
+
 .markdown-body :where(img, svg) {
   block-size: auto;
   max-inline-size: 100%;
