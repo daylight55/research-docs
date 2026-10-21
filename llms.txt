@@ -20,6 +20,15 @@
   - [Research task: Research task checklist](https://daylight55.github.io/research-docs/tasks/research-tasks/): MCP社内発表資料の調査・構成・検証タスクチェックリスト。
     - Raw Markdown: https://daylight55.github.io/research-docs/tasks/research-tasks.md
 
+- [男性の乳首](https://daylight55.github.io/research-docs/topics/male-nipples/): 男の乳首はなぜ存在し、芸術や社会でどう扱われてきたのか。仕組みと意味を原典から考える。
+  - Raw Markdown: https://daylight55.github.io/research-docs/topics/male-nipples.md
+  - [Article: なぜ存在するのか](https://daylight55.github.io/research-docs/research/why-men-have-nipples/): 生物学、物理学、数学、文化人類学、哲学、美術史から、男性乳首の成り立ちと意味を考える。
+    - Raw Markdown: https://daylight55.github.io/research-docs/research/why-men-have-nipples.md
+  - [Article: 乳首をめぐる美術史](https://daylight55.github.io/research-docs/research/male-nipples-in-art/): 古代彫刻からSNSまで。素材、光、身体感覚、見る側の規範を、美術館の解説と研究論文から読み解く。
+    - Raw Markdown: https://daylight55.github.io/research-docs/research/male-nipples-in-art.md
+  - [Source links: 出典リンク集](https://daylight55.github.io/research-docs/sources/male-nipples-source-links/): 総合記事と芸術の記事で参照した33資料。原著、確認できた範囲、資料の種類を示す。
+    - Raw Markdown: https://daylight55.github.io/research-docs/sources/male-nipples-source-links.md
+
 ## Crawling Notes
 
 - Every rendered document page has a matching raw Markdown URL by appending `.md` to the page URL without its trailing slash.
